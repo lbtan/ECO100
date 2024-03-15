@@ -27,31 +27,30 @@ def book_appointment(time, tutor_netid, student_netid, comments,
     try:
         _engine = sqlalchemy.create_engine(_DATABASE_URL)
 
-        with sqlalchemy.orm.Session(_engine) as session:
+        try:
 
-            query = (session.query(database.Appointment)
-                .filter(database.Appointment.tutor_netid == tutor_netid)
-                .filter(database.Appointment.time == time))
+            with sqlalchemy.orm.Session(_engine) as session:
 
-            try:
+                query = (session.query(database.Appointment)
+                    .filter(database.Appointment.tutor_netid == 
+                            tutor_netid)
+                    .filter(database.Appointment.time == time))
+
                 row = query.one()
                 if row.booked:
                     raise Exception(("Appointment at {} with {} is " +
                                     "booked already").format(time, 
                                     tutor_netid))
-            except Exception as ex:
-                _engine.dispose()
-                print(ex, file=sys.stderr)
-                sys.exit(1)
 
-            row.booked = True
-            row.student_netid = student_netid
-            row.comments = comments
-            row.coursenum = coursenum
+                row.booked = True
+                row.student_netid = student_netid
+                row.comments = comments
+                row.coursenum = coursenum
 
-            session.commit()
-
-        _engine.dispose()
+                session.commit()
+        
+        finally:
+            _engine.dispose()
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -62,22 +61,20 @@ def cancel_appointment(time, tutor_netid):
     try:
         _engine = sqlalchemy.create_engine(_DATABASE_URL)
 
-        with sqlalchemy.orm.Session(_engine) as session:
+        try:
 
-            query = (session.query(database.Appointment)
-                .filter(database.Appointment.tutor_netid == tutor_netid)
-                .filter(database.Appointment.time == time))
+            with sqlalchemy.orm.Session(_engine) as session:
 
-            try:
+                query = (session.query(database.Appointment)
+                    .filter(database.Appointment.tutor_netid == 
+                            tutor_netid)
+                    .filter(database.Appointment.time == time))
+
                 row = query.one()
                 if not row.booked:
                     raise Exception(("Appointment at {} with {} is " +
                                     "not booked").format(time, 
                                     tutor_netid))
-            except Exception as ex:
-                _engine.dispose()
-                print(ex, file=sys.stderr)
-                sys.exit(1)
 
             row.booked = False
             row.student_netid = None
@@ -86,7 +83,8 @@ def cancel_appointment(time, tutor_netid):
 
             session.commit()
 
-        _engine.dispose()
+        finally:
+            _engine.dispose()
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -128,23 +126,22 @@ def delete_appointment(time, tutor_netid):
     try:
         _engine = sqlalchemy.create_engine(_DATABASE_URL)
 
-        with sqlalchemy.orm.Session(_engine) as session:
+        try:
 
-            query = (session.query(database.Appointment)
-                .filter(database.Appointment.tutor_netid == tutor_netid)
-                .filter(database.Appointment.time == time))
+            with sqlalchemy.orm.Session(_engine) as session:
 
-            try:
+                query = (session.query(database.Appointment)
+                    .filter(database.Appointment.tutor_netid == 
+                            tutor_netid)
+                    .filter(database.Appointment.time == time))
+
                 row = query.one() # ensure the appointment time exists
-            except Exception as ex:
-                _engine.dispose()
-                print(ex, file=sys.stderr)
-                sys.exit(1)
-           
-            session.delete(row)
-            session.commit()
             
-        _engine.dispose()
+                session.delete(row)
+                session.commit()
+
+        finally:
+            _engine.dispose()
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -155,24 +152,21 @@ def update_tutor_bio(tutor_netid, bio):
     try:
         _engine = sqlalchemy.create_engine(_DATABASE_URL)
 
-        with sqlalchemy.orm.Session(_engine) as session:
+        try:
 
-            query = session.query(database.Tutor).filter(
-                database.Tutor.netid == tutor_netid
-            )
+            with sqlalchemy.orm.Session(_engine) as session:
 
-            try:
+                query = session.query(database.Tutor).filter(
+                    database.Tutor.netid == tutor_netid
+                )
+
                 row = query.one()
-            except Exception as ex:
-                _engine.dispose()
-                print(ex, file=sys.stderr)
-                sys.exit(1)
+                row.bio = bio
 
-            row.bio = bio
+                session.commit()
 
-            session.commit()
-
-        _engine.dispose()
+        finally:
+            _engine.dispose()
 
     except Exception as ex:
         print(ex, file=sys.stderr)

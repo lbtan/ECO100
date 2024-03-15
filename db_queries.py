@@ -138,20 +138,18 @@ def get_tutor_bio(tutor_netid):
     try:
         _engine = sqlalchemy.create_engine(_DATABASE_URL)
 
-        with sqlalchemy.orm.Session(_engine) as session:
+        try:
 
-            query = session.query(database.Tutor).filter(
-                database.Tutor.netid == tutor_netid
-            )
+            with sqlalchemy.orm.Session(_engine) as session:
 
-            try:
+                query = session.query(database.Tutor).filter(
+                    database.Tutor.netid == tutor_netid
+                )
+
                 row = query.one()
-            except Exception as ex:
-                _engine.dispose()
-                print(ex, file=sys.stderr)
-                sys.exit(1)
-
-        _engine.dispose()
+        
+        finally:
+            _engine.dispose()
 
     except Exception as ex:
         print(ex, file=sys.stderr)
