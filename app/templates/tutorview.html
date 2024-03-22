@@ -17,6 +17,14 @@
         <style>
             body {
                 background-color: #F5F5DC; 
+            }.dark-btn{
+                background-color: #716e6b; 
+                border-color: #817f7e;
+                color: white;
+            }.dark-btn:hover{
+                background-color:#817f7e;
+                color:#716e6b;
+                border-color:  #faf9f8;
             }
             .warm-btn {
                 background-color: #F4A460; 
@@ -36,13 +44,103 @@
             }.link-container {
                 max-width: 300px; 
                 width: 300px;
+            }.custombg-warm{
+                background-color: #f37820;
             }
         </style>
     </head>
 
     <body>
-        <h3 class="mb-4">Welcome! You are logged in as Dumbledore</h3>
+        {% include 'header.html' with context %}
+        You have the following appoinments for this week: 
+        <div class="container" >
+            <!-- Current Appointments Block -->
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header custombg-warm text-white">
+                  Current Appointments
+                </div>
+                <ul class="list-group list-group-flush">
+                  <li class="list-group-item">
+                    3/25 9:30pm, rweasly
+                    <a href="#" class="btn warm-btn float-end">Edit/Cancel</a>
+                  </li>
+                  <li class="list-group-item">
+                    3/30 2:00pm, hgranger
+                    <a href="#" class="btn warm-btn float-end">Edit/Cancel</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+        <hr>
+        <div>
         
+        Schedule:
+        <br>
+        <table border="1">
+            <tr>
+            <thead>
+                <tr>
+                    <td>
+                        <strong> Friday, March 22 </strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong> Tutor </strong>
+                    </td>
+                    <td>
+                        <strong> Times Available</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Dumbledore
+                    </td>
+                    <td>
+                        <button class="btn warm-btn btn-block">3:00 pm</button> <button class="btn warm-btn btn-block">4:00 pm</button>
+                         <button class="btn warm-btn btn-block">9:00 pm</button> <button class="btn dark-btn btn-block">9:30 pm</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Snape
+                    </td>
+                    <td>
+                        <button class="btn warm-btn btn-block">11:00 am</button> <button class="btn dark-btn btn-block">3:30 pm</button>
+                        <button class="btn warm-btn btn-block">6:00 pm</button> 
+                    </td>
+                </tr>
+            </thead>
+            </tr>
+        </table>
+    <br>
+        <table border="1">
+            <thead>
+                    <td>
+                        <strong> Saturday, March 23 </strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong> Tutor </strong>
+                    </td>
+                    <td>
+                        <strong> Times Available</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Dumbledore
+                    </td>
+                    <td>
+                        <button class="btn warm-btn btn-block">10:00 am</button> <button class="btn warm-btn btn-block">3:30 pm</button> 
+                        <button class="btn warm-btn btn-block">8:00 pm</button>
+                    </td>
+            </thead>
+        </table>
+    </div>
+    {% include 'footer.html' with context %}
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

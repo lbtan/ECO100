@@ -43,11 +43,11 @@
     <body>
         <h3 class="mb-4">Welcome! You are logged in as Harry Potter</h3>
         <hr>
-        Your upcoming appointment time is: ______
+        You have an appoinment booked for: 
         <br>
-        <button class="editbtn">View Details</button> <button class="editbtn">Edit/Cancel</button> 
+        <button class="btn warm-btn btn-block">View Details</button> <button class="btn warm-btn btn-block">Edit/Cancel</button> 
         <hr>
-        Schedule an appointment:
+        Available appointments:
         <br>
         <table border="1">
             <tr>
@@ -70,7 +70,8 @@
                         Dumbledore
                     </td>
                     <td>
-                        <button class="editbtn">3:00 pm</button> <button class="editbtn">4:00 pm</button> <button class="editbtn">9:00 pm</button>
+                        <button class="btn warm-btn btn-block">3:00 pm</button> <button class="btn warm-btn btn-block">4:00 pm</button>
+                         <button class="btn warm-btn btn-block">9:00 pm</button>
                     </td>
                 </tr>
                 <tr>
@@ -78,7 +79,7 @@
                         Snape
                     </td>
                     <td>
-                        <button class="editbtn">11:00 am</button> <button class="editbtn">6:00 pm</button> 
+                        <button class="btn warm-btn btn-block">11:00 am</button> <button class="btn warm-btn btn-block">6:00 pm</button> 
                     </td>
                 </tr>
             </thead>
@@ -104,12 +105,12 @@
                         Dumbledore
                     </td>
                     <td>
-                        <button class="editbtn">10:00 am</button> <button class="editbtn">3:30 pm</button> <button class="editbtn">8:00 pm</button>
+                        <button class="btn warm-btn btn-block">10:00 am</button> <button class="btn warm-btn btn-block">3:30 pm</button> 
+                        <button class="btn warm-btn btn-block">8:00 pm</button>
                     </td>
             </thead>
         </table>
-
-        
+        {% include 'footer.html' with context %}
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
