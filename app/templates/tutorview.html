@@ -41,19 +41,25 @@
                 align-items: center;
                 justify-content: center;
                 height: 100vh;
-            }.link-container {
-                max-width: 300px; 
-                width: 300px;
             }.custombg-warm{
                 background-color: #f37820;
+            }.card {
+                margin-top: 10px;
+            }.time-slot {
+                width: calc(100% / 5 - 10px); 
+                margin: 5px;
+                padding: 10px 0;
+                border: 1px solid #ccc;
             }
         </style>
     </head>
 
     <body>
         {% include 'header.html' with context %}
-        You have the following appoinments for this week: 
+        
         <div class="container" >
+            You have the following appoinments for this week: 
+
             <!-- Current Appointments Block -->
             <div class="col-md-6">
               <div class="card">
@@ -73,33 +79,23 @@
               </div>
             </div>
         <hr>
-        <div>
         
-        Schedule:
-        <br>
-        <table border="1">
-            <tr>
+        <h2 class="h2">Schedule</h2>
+
+        <table class="col-md-6" border="1">
             <thead>
+                <tr><strong> Friday, March 22 </strong></tr>
                 <tr>
-                    <td>
-                        <strong> Friday, March 22 </strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong> Tutor </strong>
-                    </td>
-                    <td>
-                        <strong> Times Available</strong>
-                    </td>
+                    <th>Tutor</th>
+                    <th>Times Available</th>
                 </tr>
                 <tr>
                     <td>
                         Dumbledore
                     </td>
                     <td>
-                        <button class="btn warm-btn btn-block">3:00 pm</button> <button class="btn warm-btn btn-block">4:00 pm</button>
-                         <button class="btn warm-btn btn-block">9:00 pm</button> <button class="btn dark-btn btn-block">9:30 pm</button>
+                        <button class="btn warm-btn time-slot">3:00 pm</button> <button class="btn warm-btn btn-block time-slot">4:00 pm</button>
+                         <button class="btn warm-btn  time-slot">9:00 pm</button> <button class="btn dark-btn btn-block time-slot">9:30 pm</button>
                     </td>
                 </tr>
                 <tr>
@@ -107,35 +103,33 @@
                         Snape
                     </td>
                     <td>
-                        <button class="btn warm-btn btn-block">11:00 am</button> <button class="btn dark-btn btn-block">3:30 pm</button>
-                        <button class="btn warm-btn btn-block">6:00 pm</button> 
+                        <button class="btn warm-btn btn-block time-slot">11:00 am</button> <button class="btn dark-btn btn-block time-slot">3:30 pm</button>
+                        <button class="btn warm-btn btn-block time-slot">6:00 pm</button> 
                     </td>
                 </tr>
             </thead>
             </tr>
         </table>
     <br>
-        <table border="1">
+        <table class="col-md-6" border="1">
             <thead>
-                    <td>
+                    <tr>
                         <strong> Saturday, March 23 </strong>
-                    </td>
+                    </tr>
                 </tr>
                 <tr>
-                    <td>
-                        <strong> Tutor </strong>
-                    </td>
-                    <td>
-                        <strong> Times Available</strong>
-                    </td>
+                    <th> Tutor </th>
+                    <th>Times Available</td>
                 </tr>
                 <tr>
                     <td>
                         Dumbledore
                     </td>
                     <td>
-                        <button class="btn warm-btn btn-block">10:00 am</button> <button class="btn warm-btn btn-block">3:30 pm</button> 
-                        <button class="btn warm-btn btn-block">8:00 pm</button>
+                        <button class="btn warm-btn btn-block time-slot">10:00 am</button> 
+                        <button class="btn warm-btn btn-block time-slot">3:30 pm</button> 
+                        <button class="btn warm-btn btn-block time-slot">8:00 pm</button>
+
                     </td>
             </thead>
         </table>
