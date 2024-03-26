@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<!-- =========================================================== -->
+<!-- tutorview.html                                              -->
+<!-- Author: Libo Tan                                            -->
+<!-- =========================================================== -->
+
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+            
+        <title>Dashboard</title>
+        <style>
+            body {
+                background-color: #F5F5DC; 
+            }.dark-btn{
+                background-color: #716e6b; 
+                border-color: #817f7e;
+                color: white;
+            }.dark-btn:hover{
+                background-color:#817f7e;
+                color:#716e6b;
+                border-color:  #faf9f8;
+            }
+            .warm-btn {
+                background-color: #F4A460; 
+                border-color: #DEB887;
+                color: white;
+            }
+            .warm-btn:hover {
+                background-color: #DEB887; 
+                border-color: #F4A460; 
+            }
+            .centered {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+            }.link-container {
+                max-width: 300px; 
+                width: 300px;
+            }.custombg-warm{
+                background-color: #f37820;
+            }
+        </style>
+    </head>
+
+  
+
+    <body>
+        <header class="custombg-warm py-3">
+            <div class="container">
+            <div class="row">
+                <div class="col text-center text-white">
+                <h1 class="my-2 ">ECO Tutor Scheduling</h1>
+                <p> Welcome! You are logged in as Admin Dumbledore</p>
+                </div>
+            </div>
+            </div>
+        </header>
+
+
+        <hr width="100%" size="2">
+        <div class="split left">
+            <div class="container" >
+                <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header custombg-warm text-white">
+                    Overview
+                    </div>
+                    <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a href="#" class="btn warm-btn float-left">View Weekly Summary</a>
+                        <a href="#" class="btn warm-btn float-right">View Tutor Overview</a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#" class="btn warm-btn float-left">Add Students</a>
+                        <link href='https://unpkg.com/css.gg@2.0.0/icons/css/export.css' rel='stylesheet'>
+                        <i class="gg-export"style="float:right; margin-top:15px;"></i>
+                        <a href="#" class="btn warm-btn float-none">Add Tutors</a>
+                        <a href="#" class="btn warm-btn float-none">Add Admin</a>
+                    </li>
+                    </ul>
+                </div>
+                </div>
+            </div>
+            <hr width="100%" size="2">
+            
+
+        Schedule:
+        <br>
+        <table>
+            <tr>
+            <thead>
+                <tr>
+                    <td>
+                        <strong> Friday, March 22 </strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong> Tutor </strong>
+                    </td>
+                    <td>
+                        <strong> Times Available</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Dumbledore
+                    </td>
+                    <td>
+                        <button class="btn warm-btn btn-block">3:00 pm</button> <button class="btn warm-btn btn-block">4:00 pm</button>
+                         <button class="btn warm-btn btn-block">9:00 pm</button> <button class="btn warm-btn btn-block">9:30 pm</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Snape
+                    </td>
+                    <td>
+                        <button class="btn warm-btn btn-block">11:00 am</button> <button class="btn warm-btn btn-block">3:30 pm</button>
+                        <button class="btn warm-btn btn-block">6:00 pm</button> 
+                    </td>
+                </tr>
+            </thead>
+            </tr>
+        </table>
+    <br>
+        <table>
+            <thead>
+                    <td>
+                        <strong> Saturday, March 23 </strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong> Tutor </strong>
+                    </td>
+                    <td>
+                        <strong> Times Available</strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Dumbledore
+                    </td>
+                    <td>
+                        <button class="btn warm-btn btn-block">10:00 am</button> <button class="btn warm-btn btn-block">3:30 pm</button> 
+                        <button class="btn warm-btn btn-block">8:00 pm</button>
+                    </td>
+            </thead>
+        </table>
+    </div>
+    {% include 'footer.html' with context %}
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
