@@ -71,21 +71,21 @@ def main():
             #-----------------------------------------------------------
 
             appointment1 = database.Appointment(time=datetime.datetime(
-                2024, 3, 14, 9, 30), booked=False, tutor_netid='tu111')
+                2024, 3, 23, 9, 30), booked=False, tutor_netid='tu111')
             session.add(appointment1)
             
             appointment2 = database.Appointment(time=datetime.datetime(
-                2024, 3, 16, 9, 30), booked=False, tutor_netid='tu222')
+                2024, 3, 25, 9, 30), booked=False, tutor_netid='tu222')
             session.add(appointment2)
 
             appointment3 = database.Appointment(time=datetime.datetime(
-                2024, 3, 18, 9, 30), booked=True, tutor_netid='tu111',
+                2024, 3, 27, 9, 30), booked=True, tutor_netid='tu111',
                 student_netid='st222', comments='my comments for ' +
                 'appointment three', coursenum='1')
             session.add(appointment3)
 
             appointment4 = database.Appointment(time=datetime.datetime(
-                2024, 3, 16, 11, 30), booked=False, tutor_netid='tu333')
+                2024, 3, 25, 11, 30), booked=False, tutor_netid='tu333')
             session.add(appointment4)
 
             session.commit()
