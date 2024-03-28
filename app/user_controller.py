@@ -9,6 +9,8 @@
 import flask
 import models.backend_tutor as db_tutor
 import utils
+from datetime import datetime
+import models.db_queries as db_queries
 
 #----------------------------------------------------------------------#
 
@@ -49,5 +51,20 @@ def adminview():
     user  = ('Dumbledore', 'admin', 'dmbd')
 
     html_code = flask.render_template('adminview.html', user=user, appointments_by_date=apt_times)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/appointment_page')
+def appointment_page():
+    tutor = flask.request.args.get('tutor_netid')
+    date = flask.request.args.get('date')
+    time = flask.request.args.get('time')
+
+    datetime_str = f"{date} {time}"
+    appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
+    appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
+
+    # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
+    html_code = flask.render_template('appointment_page.html', appointment=appts[0])
     response = flask.make_response(html_code)
     return response
