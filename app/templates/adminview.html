@@ -93,11 +93,21 @@
                         <a href="{{url_for('tutor_overview')}}" class="btn warm-btn float-right">View Tutor Overview</a>
                     </li>
                     <li class="list-group-item">
-                        <a href="#" class="btn warm-btn float-left">Add Students</a>
-                        <link href='https://unpkg.com/css.gg@2.0.0/icons/css/export.css' rel='stylesheet'>
-                        <i class="gg-export"style="float:right; margin-top: 15px;"></i>
-                        <a href="#" class="btn warm-btn float-none">Add Tutors</a>
-                        <a href="#" class="btn warm-btn float-none">Add Admin</a>
+                        <h5>Add new user netids (.csv)</h5>
+
+                        <form action="">
+                            <label for="user_type">Users_type:</label>
+                            <select name="user_type" id="user_type">
+                                <option value="admin">Admin</option>
+                                <option value="tutor">Tutor</option>
+                                <option value="student">Student</option>
+                            </select>
+                            
+                            <input type="file" id="users_file" name="filename">
+
+                            <input type="submit" class="btn warm-btn float-none" value="Submit">
+
+                        </form>
                     </li>
                     </ul>
                 </div>
