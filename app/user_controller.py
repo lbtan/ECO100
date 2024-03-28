@@ -12,7 +12,7 @@ import utils
 
 #----------------------------------------------------------------------#
 
-app = flask.Flask(__name__, template_folder = 'templates',  static_url_path='/static')
+app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
 #----------------------------------------------------------------------#
 

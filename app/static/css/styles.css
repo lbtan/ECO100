@@ -47,3 +47,12 @@ body {
     padding: 10px 0;
     border: 1px solid #ccc;
 }
+
+.tutor-column {
+    width: 20%; 
+}
+
+.disable{
+    cursor: not-allowed;
+    pointer-events: none;
+ }
