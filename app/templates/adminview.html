@@ -2,7 +2,7 @@
 
 <!-- =========================================================== -->
 <!-- adminview.html                                              -->
-<!-- Author: Anaika Mehra                                           -->
+<!-- Author: Anaika Mehra                                          -->
 <!-- =========================================================== -->
 
 
@@ -55,7 +55,7 @@
         }
 
         .card {
-            margin-top:  10px;
+            margin-top: 10px;
         }
 
         .time-slot {
@@ -65,116 +65,56 @@
             border: 1px solid #ccc;
         }
 
+        .tutor-column {
+            width: 20%; 
+        }
+
         </style>
     </head>
 
-  
 
     <body>
-        <header class="custombg-warm py-3">
-            <div class="container">
-            <div class="row">
-                <div class="col text-center text-white">
-                <h1 class="my-2 ">ECO Tutor Scheduling</h1>
-                <p> Welcome! You are logged in as Admin Dumbledore</p>
-                </div>
-            </div>
-            </div>
-        </header>
+        {% include 'headerDynamic.html' with context %}
 
-
-        <hr>
+        <div class="container-fluid" >
   
         <div class="split left">
         
-                <div style="margin:0.1px;" class="container" >
-           
-                    <div class="col-md-6">
-                    <div class="card">
-                        <div class="card-header custombg-warm text-white">
-                        Overview
-                        </div>
-                        <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <a href="#" class="btn warm-btn float-left">View Weekly Summary</a>
-                            <a href="#" class="btn warm-btn float-right">View Tutor Overview</a>
-                        </li>
-                        <li class="list-group-item">
-                            <a href="#" class="btn warm-btn float-left">Add Students</a>
-                            <link href='https://unpkg.com/css.gg@2.0.0/icons/css/export.css' rel='stylesheet'>
-                            <i class="gg-export"style="float:right; margin-top: 15px;"></i>
-                            <a href="#" class="btn warm-btn float-none">Add Tutors</a>
-                            <a href="#" class="btn warm-btn float-none">Add Admin</a>
-                        </li>
-                        </ul>
+            <div style="margin:0.1px;" class="container" >
+        
+                <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header custombg-warm text-white">
+                    Overview
                     </div>
-                    </div>
+                    <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <a href="#" class="btn warm-btn float-left">View Weekly Summary</a>
+                        <a href="#" class="btn warm-btn float-right">View Tutor Overview</a>
+                    </li>
+                    <li class="list-group-item">
+                        <a href="#" class="btn warm-btn float-left">Add Students</a>
+                        <link href='https://unpkg.com/css.gg@2.0.0/icons/css/export.css' rel='stylesheet'>
+                        <i class="gg-export"style="float:right; margin-top: 15px;"></i>
+                        <a href="#" class="btn warm-btn float-none">Add Tutors</a>
+                        <a href="#" class="btn warm-btn float-none">Add Admin</a>
+                    </li>
+                    </ul>
+                </div>
                 </div>
             </div>
         </div>
-            <hr>
-            
 
-            <h2 style="margin-left: 10px;" class="h2">Schedule</h2>
+        <hr>
 
-            <table style="margin-left:  10px;" class="col-md-6" border="1" >
-                <div style="margin-right:100px">
-                <TR VALIGN=MIDDLE>
-                    
-                <thead>
-                    <tr><strong style="margin-left:  10px;"> Friday, March 22 </strong></tr>
-                    <tr>
-                        <th>Tutor</th>
-                        <th>Times </th>
-                    </tr>
-                    <tr>
-                        <td>
-                            Dumbledore
-                        </td>
-                        <td>
-                            <button class="btn warm-btn time-slot">3:00 pm</button> <button class="btn warm-btn btn-block time-slot">4:00 pm</button>
-                             <button class="btn warm-btn  time-slot">9:00 pm</button> <button class="btn dark-btn btn-block time-slot">9:30 pm</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Snape
-                        </td>
-                        <td>
-                            <button class="btn warm-btn btn-block time-slot">11:00 am</button> <button class="btn dark-btn btn-block time-slot">3:30 pm</button>
-                            <button class="btn warm-btn btn-block time-slot">6:00 pm</button> 
-                        </td>
-                    </tr>
-                </thead>
-                </tr>
-            </TR>
+        {% include 'schedule.html' with context %}
+
         </div>
-            </table>
-        <br>
-            <table style="margin-left:  10px;" class="col-md-6" border="1">
-                <thead>
-                        <tr>
-                            <strong style="margin-left:  10px;"> Saturday, March 23 </strong>
-                        </tr>
-                    </tr>
-                    <tr>
-                        <th> Tutor </th>
-                        <th>Times </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            Dumbledore
-                        </td>
-                        <td>
-                            <button class="btn warm-btn btn-block time-slot">10:00 am</button> 
-                            <button class="btn warm-btn btn-block time-slot">3:30 pm</button> 
-                            <button class="btn warm-btn btn-block time-slot">8:00 pm</button>
-    
-                        </td>
-                </thead>
-            </table>
-        </div>
+
         {% include 'footer.html' with context %}
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-        </body>
+        
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+        
+    </body>
+
 </html>

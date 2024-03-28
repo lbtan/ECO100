@@ -1,0 +1,28 @@
+<h2 class="h2">Schedule</h2>
+
+{% for date, tutors in appointments_by_date.items() %}
+<table class="col-md-8" border="1">
+    <thead>
+        <tr>
+            <th colspan="3">{{ date.strftime('%A, %B %d, %Y') }}</th>
+        </tr>
+        <tr>
+            <th class="tutor-column">Tutor</th>
+            <th>Times Available</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for tutor, appointments in tutors.items() %}
+            <tr>
+                <td>{{ tutor }}</td>
+                <td>
+                    {% for appointment in appointments  %}
+                        <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}">{{ appointment[0] }}</button>
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br> 
+{% endfor %}

@@ -44,6 +44,10 @@ def tutor():
 
 @app.route('/adminview')
 def adminview():
-    html_code = flask.render_template('adminview.html')
+    appointments = db_tutor.get_times_tutors()
+    apt_times = utils.appointments_by_time(appointments)
+    user  = ('Dumbledore', 'admin', 'dmbd')
+
+    html_code = flask.render_template('adminview.html', user=user, appointments_by_date=apt_times)
     response = flask.make_response(html_code)
     return response
