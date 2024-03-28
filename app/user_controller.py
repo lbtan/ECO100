@@ -11,6 +11,7 @@ import models.backend_tutor as db_tutor
 import utils
 from datetime import datetime
 import models.db_queries as db_queries
+import models.backend_admin as backend_admin
 
 #----------------------------------------------------------------------#
 
@@ -62,16 +63,20 @@ def adminview():
     response.set_cookie('user_netid', user[2])
     return response
 
+def get_user_from_cookies():
+    name = flask.request.cookies.get('user_name')
+    type = flask.request.cookies.get('user_type')
+    netid = flask.request.cookies.get('user_netid')
+    user = (name, type, netid)
+    return user
+
 @app.route('/appointment_page')
 def appointment_page():
     tutor = flask.request.args.get('tutor_netid')
     date = flask.request.args.get('date')
     time = flask.request.args.get('time')
 
-    name = flask.request.cookies.get('user_name')
-    type = flask.request.cookies.get('user_type')
-    netid = flask.request.cookies.get('user_netid')
-    user = (name, type, netid)
+    user = get_user_from_cookies()
 
     datetime_str = f"{date} {time}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
@@ -87,5 +92,27 @@ def appointment_page():
 
     # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
     html_code = flask.render_template('appointment_page.html', appointment=appt, user=user, tutor=tutor, student=student)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/weekly_summary')
+def weekly_summary():
+    user = get_user_from_cookies()
+
+    # for now everything is under coursenum 1, and all data is under March 2025
+    summary = backend_admin.weekly_summary("1", datetime(2025, 3, 30)) 
+
+    html_code = flask.render_template('weekly_summary.html', summary=summary, user=user)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/tutor_overview')
+def tutor_overview():
+    user = get_user_from_cookies()
+    users = db_queries.get_user_info({"user_type": "tutor", "coursenum": "1"})
+    
+    names_bios = {user.get_name(): db_queries.get_tutor_bio(user.get_netid()) for user in users}
+
+    html_code = flask.render_template('tutor_overview.html', names_bios=names_bios, user=user)
     response = flask.make_response(html_code)
     return response
