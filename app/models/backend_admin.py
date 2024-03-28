@@ -6,8 +6,8 @@
 #-----------------------------------------------------------------------
 
 import pandas as pd
-import db_queries
-import db_modify
+from . import db_queries
+from . import db_modify
 import datetime
 
 def import_users(csv_path, user_type, coursenum):
@@ -20,8 +20,7 @@ def import_users(csv_path, user_type, coursenum):
         db_modify.add_user(netid, user_type, coursenum, 
                            f"Dummy_Name For_{netid}")
 
-def weekly_summary(coursenum):
-    today = datetime.date.today()
+def weekly_summary(coursenum, today=datetime.date.today()):
     week_before = today - datetime.timedelta(days=7)
     appts = db_queries.get_appointments({"start_time": week_before, 
                                          "end_time": today,

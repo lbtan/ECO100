@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------
-# runserver.py
+# main.py
 # Authors: Libo Tan
 # 
 # Refactored from lecture code and A3 Assignment

@@ -52,6 +52,18 @@ def get_appointments(props={}):
                 query = query.filter(
                     database.Appointment.time <= end_time
                 )
+
+            if "exact_time" in props:
+                # use timedelta in case of seconds difference based on
+                # how data is stored
+                query = query.filter(
+                    database.Appointment.time <= props["exact_time"] + 
+                    datetime.timedelta(minutes=1)
+                )
+                query = query.filter(
+                    database.Appointment.time >= props["exact_time"] - 
+                    datetime.timedelta(minutes=1)
+                )
             
             if "student_netid" in props:
                 query = query.filter(
