@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 
 <!-- =========================================================== -->
-<!-- tutorview.html                                              -->
-<!-- Author: Libo Tan                                            -->
+<!-- adminview.html                                              -->
+<!-- Author: Anaika Mehra                                           -->
 <!-- =========================================================== -->
 
 
@@ -10,43 +10,61 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- Bootstrap -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
             integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-            
+        <!-- Custom CSS Module -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">       
         <title>Dashboard</title>
         <style>
             body {
-                background-color: #F5F5DC; 
-            }.dark-btn{
-                background-color: #716e6b; 
-                border-color: #817f7e;
-                color: white;
-            }.dark-btn:hover{
-                background-color:#817f7e;
-                color:#716e6b;
-                border-color:  #faf9f8;
-            }
-            .warm-btn {
-                background-color: #F4A460; 
-                border-color: #DEB887;
-                color: white;
-            }
-            .warm-btn:hover {
-                background-color: #DEB887; 
-                border-color: #F4A460; 
-            }
-            .centered {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-            }.link-container {
-                max-width: 300px; 
-                width: 300px;
-            }.custombg-warm{
-                background-color: #f37820;
-            }
+            background-color: #F5F5DC; 
+        }
+
+        .dark-btn{
+            background-color: #716e6b; 
+            border-color: #817f7e;
+            color: white;
+        }.dark-btn:hover{
+            background-color:#817f7e;
+            color:#716e6b;
+            border-color:  #faf9f8;
+        }
+
+        .warm-btn {
+            background-color: #F4A460; 
+            border-color: #DEB887;
+            color: white;
+        }
+
+        .warm-btn:hover {
+            background-color: #DEB887; 
+            border-color: #F4A460; 
+        }
+
+        .centered {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .custombg-warm{
+            background-color: #f37820;
+        }
+
+        .card {
+            margin-top:  10px;
+        }
+
+        .time-slot {
+            width: calc(100% / 5 - 10px); 
+            margin: 5px;
+            padding: 10px 0;
+            border: 1px solid #ccc;
+        }
+
         </style>
     </head>
 
@@ -65,99 +83,98 @@
         </header>
 
 
-        <hr width="100%" size="2">
+        <hr>
+  
         <div class="split left">
-            <div class="container" >
-                <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header custombg-warm text-white">
-                    Overview
+        
+                <div style="margin:0.1px;" class="container" >
+           
+                    <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header custombg-warm text-white">
+                        Overview
+                        </div>
+                        <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <a href="#" class="btn warm-btn float-left">View Weekly Summary</a>
+                            <a href="#" class="btn warm-btn float-right">View Tutor Overview</a>
+                        </li>
+                        <li class="list-group-item">
+                            <a href="#" class="btn warm-btn float-left">Add Students</a>
+                            <link href='https://unpkg.com/css.gg@2.0.0/icons/css/export.css' rel='stylesheet'>
+                            <i class="gg-export"style="float:right; margin-top: 15px;"></i>
+                            <a href="#" class="btn warm-btn float-none">Add Tutors</a>
+                            <a href="#" class="btn warm-btn float-none">Add Admin</a>
+                        </li>
+                        </ul>
                     </div>
-                    <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <a href="#" class="btn warm-btn float-left">View Weekly Summary</a>
-                        <a href="#" class="btn warm-btn float-right">View Tutor Overview</a>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#" class="btn warm-btn float-left">Add Students</a>
-                        <link href='https://unpkg.com/css.gg@2.0.0/icons/css/export.css' rel='stylesheet'>
-                        <i class="gg-export"style="float:right; margin-top:15px;"></i>
-                        <a href="#" class="btn warm-btn float-none">Add Tutors</a>
-                        <a href="#" class="btn warm-btn float-none">Add Admin</a>
-                    </li>
-                    </ul>
-                </div>
+                    </div>
                 </div>
             </div>
-            <hr width="100%" size="2">
+        </div>
+            <hr>
             
 
-        Schedule:
+            <h2 style="margin-left: 10px;" class="h2">Schedule</h2>
+
+            <table style="margin-left:  10px;" class="col-md-6" border="1" >
+                <div style="margin-right:100px">
+                <TR VALIGN=MIDDLE>
+                    
+                <thead>
+                    <tr><strong style="margin-left:  10px;"> Friday, March 22 </strong></tr>
+                    <tr>
+                        <th>Tutor</th>
+                        <th>Times </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            Dumbledore
+                        </td>
+                        <td>
+                            <button class="btn warm-btn time-slot">3:00 pm</button> <button class="btn warm-btn btn-block time-slot">4:00 pm</button>
+                             <button class="btn warm-btn  time-slot">9:00 pm</button> <button class="btn dark-btn btn-block time-slot">9:30 pm</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Snape
+                        </td>
+                        <td>
+                            <button class="btn warm-btn btn-block time-slot">11:00 am</button> <button class="btn dark-btn btn-block time-slot">3:30 pm</button>
+                            <button class="btn warm-btn btn-block time-slot">6:00 pm</button> 
+                        </td>
+                    </tr>
+                </thead>
+                </tr>
+            </TR>
+        </div>
+            </table>
         <br>
-        <table>
-            <tr>
-            <thead>
-                <tr>
-                    <td>
-                        <strong> Friday, March 22 </strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong> Tutor </strong>
-                    </td>
-                    <td>
-                        <strong> Times Available</strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Dumbledore
-                    </td>
-                    <td>
-                        <button class="btn warm-btn btn-block">3:00 pm</button> <button class="btn warm-btn btn-block">4:00 pm</button>
-                         <button class="btn warm-btn btn-block">9:00 pm</button> <button class="btn warm-btn btn-block">9:30 pm</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Snape
-                    </td>
-                    <td>
-                        <button class="btn warm-btn btn-block">11:00 am</button> <button class="btn warm-btn btn-block">3:30 pm</button>
-                        <button class="btn warm-btn btn-block">6:00 pm</button> 
-                    </td>
-                </tr>
-            </thead>
-            </tr>
-        </table>
-    <br>
-        <table>
-            <thead>
-                    <td>
-                        <strong> Saturday, March 23 </strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <strong> Tutor </strong>
-                    </td>
-                    <td>
-                        <strong> Times Available</strong>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Dumbledore
-                    </td>
-                    <td>
-                        <button class="btn warm-btn btn-block">10:00 am</button> <button class="btn warm-btn btn-block">3:30 pm</button> 
-                        <button class="btn warm-btn btn-block">8:00 pm</button>
-                    </td>
-            </thead>
-        </table>
-    </div>
-    {% include 'footer.html' with context %}
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
-    </body>
+            <table style="margin-left:  10px;" class="col-md-6" border="1">
+                <thead>
+                        <tr>
+                            <strong style="margin-left:  10px;"> Saturday, March 23 </strong>
+                        </tr>
+                    </tr>
+                    <tr>
+                        <th> Tutor </th>
+                        <th>Times </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Dumbledore
+                        </td>
+                        <td>
+                            <button class="btn warm-btn btn-block time-slot">10:00 am</button> 
+                            <button class="btn warm-btn btn-block time-slot">3:30 pm</button> 
+                            <button class="btn warm-btn btn-block time-slot">8:00 pm</button>
+    
+                        </td>
+                </thead>
+            </table>
+        </div>
+        {% include 'footer.html' with context %}
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+        </body>
 </html>
