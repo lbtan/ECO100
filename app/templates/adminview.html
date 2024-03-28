@@ -93,17 +93,17 @@
                         <a href="{{url_for('tutor_overview')}}" class="btn warm-btn float-right">View Tutor Overview</a>
                     </li>
                     <li class="list-group-item">
-                        <h5>Add new user netids (.csv)</h5>
+                        <h5>Upload new user netids (as csv file)</h5>
 
-                        <form action="">
-                            <label for="user_type">Users_type:</label>
+                        <form method="POST" action="{{url_for('upload')}}" enctype="multipart/form-data"></form>
+                            <label for="user_type">User Type:</label>
                             <select name="user_type" id="user_type">
                                 <option value="admin">Admin</option>
                                 <option value="tutor">Tutor</option>
                                 <option value="student">Student</option>
                             </select>
                             
-                            <input type="file" id="users_file" name="filename">
+                            <input type="file" id="users_file" name="file">
 
                             <input type="submit" class="btn warm-btn float-none" value="Submit">
 

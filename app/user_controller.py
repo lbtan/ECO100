@@ -116,3 +116,12 @@ def tutor_overview():
     html_code = flask.render_template('tutor_overview.html', names_bios=names_bios, user=user)
     response = flask.make_response(html_code)
     return response
+
+@app.route('/upload', methods=["POST"])
+def upload():
+    # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
+    uploaded_file = flask.request.files['file']
+
+    print(uploaded_file.filename)
+
+    return flask.redirect(flask.url_for('adminview'))
