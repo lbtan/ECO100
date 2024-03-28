@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------
 # appointment.py
-# Authors: Hita Gupta, ECO 100 Tutoring App Team 
+# Authors: Hita Gupta 
 #-----------------------------------------------------------------------
 
 import datetime

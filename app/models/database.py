@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------
 # database.py
-# Author: Hita Gupta, ECO 100 Tutoring App Team
+# Author: Hita Gupta
 #-----------------------------------------------------------------------
 
 import sqlalchemy.ext.declarative
