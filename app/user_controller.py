@@ -7,10 +7,12 @@
 #-----------------------------------------------------------------------
 
 import flask
+import models.backend_tutor as db_tutor
+import utils
 
 #----------------------------------------------------------------------#
 
-app = flask.Flask(__name__, template_folder = 'app/templates',  static_url_path='/static')
+app = flask.Flask(__name__, template_folder = 'templates',  static_url_path='/static')
 
 #----------------------------------------------------------------------#
 
@@ -29,7 +31,14 @@ def studentview():
 
 @app.route('/tutorview')
 def tutor():
-    html_code = flask.render_template('tutorview.html')
+    appointments = db_tutor.get_times_tutors()
+    # user id info
+    #TODO fetch info from CAS
+    user = ("Hermione Granger", 'tutor', 'hgranger')
+    # Parse db results
+    apt_tutor = utils.appointments_by_tutor(appointments, user[2])
+    apt_times = utils.appointments_by_time(appointments)
+    html_code = flask.render_template('tutorview.html', appointments_by_date=apt_times, user=user, apt_tutor=apt_tutor)
     response = flask.make_response(html_code)
     return response
 

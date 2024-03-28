@@ -19,6 +19,32 @@ _DATABASE_URL = _DATABASE_URL.replace('postgres://', 'postgresql://')
 
 #-----------------------------------------------------------------------
 
+
+def add_user(netid, name, user_type, coursenum, session):
+    """
+    
+    Functions that help with adding to database
+    """
+    user = database.User(netid=netid, name=name, user_type=user_type, coursenum=coursenum)
+    session.add(user)
+    return
+
+#-----------------------------------------------------------------------
+    
+
+def add_appointment(session, time, tutor_netid, booked=False, student_netid=None, comments=None, coursenum=None):
+    """
+    
+    Functions that help with adding to database
+    """
+    
+    appointment = database.Appointment(time=time, booked=booked, tutor_netid=tutor_netid,
+                                       student_netid=student_netid, comments=comments, coursenum=coursenum)
+    session.add(appointment)
+    return
+
+#-----------------------------------------------------------------------
+
 def main():
 
     if len(sys.argv) != 1:
@@ -33,60 +59,198 @@ def main():
 
         with sqlalchemy.orm.Session(engine) as session:
 
-            #-----------------------------------------------------------
+        #-----------------------------------------------------------
             
-            student1 = database.User(netid='st111',name='Student One',
-                                     user_type='student',coursenum='1')
-            session.add(student1)
-            student2 = database.User(netid='st222',name='Student Two',
-                                     user_type='student',coursenum='1')
-            session.add(student2)
+           # Define the base information for new students
+            # Students
+            student_base_info = [
+                ('hpotter', 'Harry Potter'),
+                ('rweasley', 'Ron Weasley'),
+                ('ldraco', 'Draco Malfoy'),
+                ('nlongbottom', 'Neville Longbottom'),
+                ('gweasley', 'Ginny Weasley'),
+                ('fweasley', 'Fred Weasley'),
+                ('gweasley2', 'George Weasley'),
+                ('cchang', 'Cho Chang'),
+                ('ppatil', 'Padma Patil'),
+                ('ppatil2', 'Parvati Patil')
+            ]
+            for netid, name in student_base_info:
+                add_user(netid, name, 'student', '1',session)
 
-            tutor1 = database.User(netid='tu111',name='Tutor One',
-                                     user_type='tutor',coursenum='1')
-            session.add(tutor1)
-            tutor2 = database.User(netid='tu222',name='Tutor Two',
-                                     user_type='tutor',coursenum='1')
-            session.add(tutor2)
+            # Tutors
+            tutors_info = [
+                ('hgranger', 'Hermione Granger'),
+                ('llvgd', 'Luna Lovegood'),
+                ('pweasley', 'Percy Weasley')
+            ]
+            for netid, name in tutors_info:
+                add_user(netid, name, 'tutor', '1', session)
 
-            admin1 = database.User(netid='ad111',name='Admin CourseOne',
-                                     user_type='admin',coursenum='1')
-            session.add(admin1)
-            admin2 = database.User(netid='ad222',name='Admin CourseTwo',
-                                     user_type='admin',coursenum='2')
-            session.add(admin2)
-
+            # Admins
+            admins_info = [
+                ('dmbd', 'Dumbledore'),
+                ('snp', 'Snape')
+            ]
+            for netid, name in admins_info:
+                add_user(netid, name, 'admin', '1', session)
+            
             session.commit()
 
             #-----------------------------------------------------------
 
-            tutor1_info = database.Tutor(netid='tu111', bio='MyBio 1')
+            tutor1_info = database.Tutor(netid='hgranger', bio='MyBio 1')
             session.add(tutor1_info)
-            tutor2_info = database.Tutor(netid='tu222', bio='MyBio 2')
+            tutor2_info = database.Tutor(netid='llvgd', bio='MyBio 2')
             session.add(tutor2_info)
-            tutor3_info = database.Tutor(netid='tu333', bio='MyBio 3')
+            tutor3_info = database.Tutor(netid='pweasley', bio='MyBio 3')
             session.add(tutor3_info)
             session.commit()
 
             #-----------------------------------------------------------
 
-            appointment1 = database.Appointment(time=datetime.datetime(
-                2024, 3, 23, 9, 30), booked=False, tutor_netid='tu111')
-            session.add(appointment1)
-            
-            appointment2 = database.Appointment(time=datetime.datetime(
-                2024, 3, 25, 9, 30), booked=False, tutor_netid='tu222')
-            session.add(appointment2)
+            # DB for prototype. Generated with help from GPT.
 
-            appointment3 = database.Appointment(time=datetime.datetime(
-                2024, 3, 27, 9, 30), booked=True, tutor_netid='tu111',
-                student_netid='st222', comments='my comments for ' +
-                'appointment three', coursenum='1')
-            session.add(appointment3)
-
-            appointment4 = database.Appointment(time=datetime.datetime(
-                2024, 3, 25, 11, 30), booked=False, tutor_netid='tu333')
-            session.add(appointment4)
+            appointments_info = [
+            {
+                "time": datetime.datetime(2025, 3, 23, 9, 30),
+                "tutor_netid": "hgranger",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 25, 14, 00),
+                "tutor_netid": "llvgd",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 23, 11, 30),
+                "tutor_netid": "hgranger",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 25, 11, 30),
+                "tutor_netid": "hgranger",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 23, 14, 30),
+                "tutor_netid": "pweasley",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 25, 17, 30),
+                "tutor_netid": "llvgd",
+                "booked": True,
+                "student_netid": "nlongbottom",
+                "comments": "my comments for appointment three",
+                "coursenum": "1"
+            },
+            {
+                "time": datetime.datetime(2025, 3, 27, 9, 30),
+                "tutor_netid": "hgranger",
+                "booked": True,
+                "student_netid": "hpotter",
+                "comments": "my comments for appointment three",
+                "coursenum": "1"
+            },
+            {
+                "time": datetime.datetime(2025, 3, 26, 15, 30),
+                "tutor_netid": "hgranger",
+                "booked": True,
+                "student_netid": "ldraco",
+                "comments": "my comments for appointment three",
+                "coursenum": "1"
+            },
+            {
+                "time": datetime.datetime(2025, 3, 25, 21, 30),
+                "tutor_netid": "pweasley",
+                "booked": True,
+                "student_netid": "rweasley",
+                "comments": "my comments for appointment",
+                "coursenum": "1"
+            },
+            {
+                "time": datetime.datetime(2025, 3, 24, 9, 00),
+                "tutor_netid": "hgranger",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 24, 10, 30),
+                "tutor_netid": "pweasley",
+                "booked": True,
+                "student_netid": "gweasley",
+                "coursenum": "1"
+            },
+            {
+                "time": datetime.datetime(2025, 3, 26, 14, 00),
+                "tutor_netid": "llvgd",
+                "booked": True,
+                "student_netid": "cchang",
+                "coursenum": "1"
+            },
+            {
+                "time": datetime.datetime(2025, 3, 26, 16, 00),
+                "tutor_netid": "pweasley",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 27, 10, 30),
+                "tutor_netid": "hgranger",
+                "booked": True,
+                "student_netid": "ppatil",
+                "coursenum": "1"
+            },{
+                "time": datetime.datetime(2025, 3, 24, 8, 00),
+                "tutor_netid": "llvgd",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 24, 16, 00),
+                "tutor_netid": "pweasley",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 26, 10, 00),
+                "tutor_netid": "hgranger",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 27, 13, 00),
+                "tutor_netid": "pweasley",
+                "booked": False
+            },{
+                "time": datetime.datetime(2025, 3, 28, 9, 00),
+                "tutor_netid": "hgranger",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 28, 17, 00),
+                "tutor_netid": "llvgd",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 29, 15, 00),
+                "tutor_netid": "pweasley",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 29, 12, 00),
+                "tutor_netid": "llvgd",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 28, 11, 00),
+                "tutor_netid": "hgranger",
+                "booked": False
+            },
+            {
+                "time": datetime.datetime(2025, 3, 26, 14, 00),
+                "tutor_netid": "pweasley",
+                "booked": False
+            }
+            ]
+            for appt in appointments_info:
+                add_appointment(session, **appt)
 
             session.commit()
 

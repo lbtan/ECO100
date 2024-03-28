@@ -11,7 +11,7 @@ import datetime
 import sqlalchemy
 import sqlalchemy.orm
 import dotenv
-import database
+from . import database
 
 #-----------------------------------------------------------------------
 

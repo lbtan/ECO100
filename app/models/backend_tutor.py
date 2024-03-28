@@ -7,8 +7,8 @@
 import os
 import time
 import flask
-import db_queries
-import db_modify
+from . import db_queries
+from . import db_modify
 import datetime 
 #-----------------------------------------------------------------------
 today = datetime.date.today()
@@ -16,11 +16,11 @@ today_test = datetime.datetime(2024, 1, 1)
 
 # get_times() -> return list of available times starting today +  tutornetID; 
 def get_times_tutors():
-    available_appointments = db_queries.get_appointments({"start_time": today, "booked": False})
+    available_appointments = db_queries.get_appointments({"start_time": today})
     times = []
     for row in available_appointments:
         # times.append(row[0], row[2])
-        times.append((row._time, row._tutor_netid))
+        times.append((row._time, row._tutor_netid, row._booked, row._student_netid))
     return times
 
 #-----------------------------------------------------------------------
