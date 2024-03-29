@@ -12,6 +12,7 @@ import utils
 from datetime import datetime
 import models.db_queries as db_queries
 import models.backend_admin as backend_admin
+import models.db_modify as db_modify
 
 #----------------------------------------------------------------------#
 
@@ -125,3 +126,44 @@ def upload():
     print(uploaded_file.filename)
 
     return flask.redirect(flask.url_for('adminview'))
+
+@app.route('/add_appointment')
+def add_appointment():
+    tutor = flask.request.args.get('tutor_netid')
+    date = flask.request.args.get('date')
+    user = get_user_from_cookies()
+
+    html_code = flask.render_template('add_appointment.html', user=user, tutor=tutor, date=date)
+    response = flask.make_response(html_code)
+    return response
+
+
+@app.route('/add_appt_submit', methods=['POST'])
+def add_appt_submit():
+    date = flask.request.form['date']
+    time = flask.request.form['time']
+    tutor = flask.request.form['tutor']
+    
+    datetime_str = f"{date} {time}"
+    appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+   
+    db_modify.add_appointment(appt_time, tutor)
+
+    return flask.redirect('/tutorview')
+
+@app.route('/cancel_appointment.html')
+def cancel_appointment():
+    time = flask.request.args.get('time')
+    tutor = flask.request.args.get('tutor_netid')
+    user = get_user_from_cookies()
+    
+    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+
+    # not working yet
+    query = db_queries.get_appointments({"exact_time": time, "tutor_netid": tutor})
+    print(query[0].to_tuple())
+    db_modify.cancel_appointment(time, tutor)
+    query = db_queries.get_appointments({"exact_time": time, "tutor_netid": tutor})
+    print(query[0].to_tuple())
+
+    return flask.redirect(flask.url_for(f"{user[1]}view"))
