@@ -7,8 +7,8 @@
 import os
 import time
 import flask
-import db_queries
-import db_modify
+from . import db_queries
+from . import db_modify
 import datetime
 #-----------------------------------------------------------------------
 today = datetime.date.today()
@@ -28,7 +28,7 @@ def get_times_students():
     times = []
     for row in available_appointments:
         # times.append(row[0], row[2])
-        times.append((row._time, row._student_netid))
+        times.append((row._time, row._student_netid, row._tutor_netid))
     return times
 #----------------------------------------------------------------------- 
 # add_times() -> edit all available times; 

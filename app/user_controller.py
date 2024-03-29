@@ -8,8 +8,10 @@
 
 import flask
 import models.backend_tutor as db_tutor
+import models.backend_student as db_student
 import utils
 from datetime import datetime
+import models.db_modify as db_modify
 import models.db_queries as db_queries
 import models.backend_admin as backend_admin
 import models.db_modify as db_modify
@@ -29,8 +31,23 @@ def index():
 
 @app.route('/studentview')
 def studentview():
-    html_code = flask.render_template('studentview.html')
+    booked_appointments = db_student.get_cur_appoinments_student()
+    # user id info
+    #TODO fetch info from CAS
+    user = ("Harry Potter", 'student', 'hpotter')
+    # Parse db results
+    cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
+
+    available_appointments = db_student.get_times_students()
+    chronological_appointments = utils.available_appointments_by_time(available_appointments)
+
+    html_code = flask.render_template('studentview.html', user=user, cur_appointments=cur_appointments,
+                                      chronological_appointments=chronological_appointments, user_netid=user[2])
     response = flask.make_response(html_code)
+
+    response.set_cookie('user_name', user[0])
+    response.set_cookie('user_type', user[1])
+    response.set_cookie('user_netid', user[2])
     return response
 
 @app.route('/tutorview')
@@ -70,6 +87,44 @@ def get_user_from_cookies():
     netid = flask.request.cookies.get('user_netid')
     user = (name, type, netid)
     return user
+
+
+@app.route('/schedule_appointment')
+def schedule_appointment():
+    tutor = flask.request.args.get('tutor_netid')
+    date = flask.request.args.get('date')
+    time = flask.request.args.get('time')
+    student = flask.request.args.get('student_netid')
+
+    user = get_user_from_cookies()
+
+    datetime_str = f"{date} {time}"
+    appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
+    appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
+    appt = appts[0] # should only match one appointment
+
+    tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
+    student = db_queries.get_user_info({"netid": student, "user_type": "student"})[0]
+
+    html_code = flask.render_template('schedule_appointment.html', appointment=appt, user=user, tutor=tutor, student=student)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/appointment_confirm', methods=['POST'])
+def appointment_confirm():
+    time = flask.request.form.get('time')
+    tutor_netid = flask.request.form.get('tutor_netid')
+    student_netid = flask.request.form.get('student_netid')
+    comments = flask.request.form.get('comments')
+
+    user = get_user_from_cookies()
+    coursenum = "1"
+
+    db_modify.book_appointment(time, tutor_netid, student_netid, comments, coursenum)
+
+    html_code = flask.render_template('student_confirmation.html', user=user, tutor_netid=tutor_netid)
+    response = flask.make_response(html_code)
+    return response
 
 @app.route('/appointment_page')
 def appointment_page():
