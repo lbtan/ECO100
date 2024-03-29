@@ -150,3 +150,20 @@ def add_appt_submit():
     db_modify.add_appointment(appt_time, tutor)
 
     return flask.redirect('/tutorview')
+
+@app.route('/cancel_appointment.html')
+def cancel_appointment():
+    time = flask.request.args.get('time')
+    tutor = flask.request.args.get('tutor_netid')
+    user = get_user_from_cookies()
+    
+    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+
+    # not working yet
+    query = db_queries.get_appointments({"exact_time": time, "tutor_netid": tutor})
+    print(query[0].to_tuple())
+    db_modify.cancel_appointment(time, tutor)
+    query = db_queries.get_appointments({"exact_time": time, "tutor_netid": tutor})
+    print(query[0].to_tuple())
+
+    return flask.redirect(flask.url_for(f"{user[1]}view"))

@@ -29,7 +29,7 @@
         {% include 'headerDynamic.html' with context %}
         
         <div class="container-fluid" >
-        <h2>Appointment Details ({{"Unavailable" if appointment.booked else "Available"}}):</h2>
+        <h2>Appointment Details ({{"Unavailable" if appointment.get_booked() else "Available"}}):</h2>
 
         <form action="" method="post">
 
@@ -50,18 +50,23 @@
 
             <label for="comments">Comments for Appointment:</label>
             <br>
-            {% if user_type != "student" or student %}
+            {% if user[1] != "student" or student %}
                 <input type="textarea" name="comments" value="{{appointment.get_comments()}}" disabled>
             {% else %}
                 <input type="textarea" name="comments">  
             {% endif %}
             <br>
 
-            {% if user_type == "student" and not appointment.booked %}
+            {% if user[1] == "student" and not appointment.get_booked() %}
             <input type="submit" value="Submit">
             {% endif %}
 
             <br>
+
+            {% if appointment.get_booked() and (user[2] == appointment.get_student_netid() or user[2] == appointment.get_tutor_netid()) %}
+            <hr>
+            <a href="{{url_for('cancel_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Cancel appointment</a>
+            {% endif %}
 
             <hr><a href="{{url_for(user[1]+'view')}}">Go back to dashboard</a>
         </form>

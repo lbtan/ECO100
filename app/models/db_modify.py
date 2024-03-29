@@ -230,7 +230,7 @@ def _test_cancel_appointment():
     #cancel_appointment(datetime.datetime(2024, 3, 14, 9, 30), 'tu111')
 
     # this time is booked
-    cancel_appointment(datetime.datetime(2024, 3, 16, 9, 30), 'tu222')
+    cancel_appointment(datetime.datetime(2025, 3, 26, 15, 30), 'hgranger')
 
 def _test_add_appointment():
     # this already exists in the table
@@ -259,11 +259,11 @@ def _test_add_user():
 
 def _test():
     #_test_book_appointment()
-    #_test_cancel_appointment()
+    _test_cancel_appointment()
     #_test_add_appointment()
     #_test_delete_appointment()
     #_test_update_tutor_bio()
-    _test_add_user()
+    #_test_add_user()
 
 if __name__ == '__main__':
     _test()
