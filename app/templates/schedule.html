@@ -1,4 +1,8 @@
-<h2><span style="color: black;">Schedule (</span><span style="color: #DEB887;">unbooked</span><span style="color: black;">, </span><span style="color: #716e6b;">booked</span><span style="color: black;">)</span></h2>
+<h2><span style="color: black;">Schedule (</span><span style="color: #F4A460;">unbooked</span><span style="color: black;">, </span><span style="color: #716e6b;">booked</span><span style="color: black;">)</span></h2>
+
+{% if user[1] == "tutor" %}
+<h3>Click on an existing appointment to view details/cancel. Click '+' to add new appointment time.</h3>
+{% endif %}
 
 {% for date, tutors in appointments_by_date.items() %}
 <table class="col-md-8" border="1">
@@ -23,6 +27,9 @@
                             <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" onclick="window.location.href='{{ url_for( 'appointment_page', tutor_netid=tutor, date=date, time=appointment[0] ) }}'">{{ appointment[0] }}</button>
                         {% endif %}
                     {% endfor %}
+                    {% if user[1] == "tutor" and user[2] == tutor %}
+                        <button class="btn warm-btn" onclick="window.location.href='{{ url_for( 'add_appointment', tutor_netid=tutor, date=date ) }}'">+</button>
+                    {% endif %}    
                 </td>
             </tr>
         {% endfor %}
