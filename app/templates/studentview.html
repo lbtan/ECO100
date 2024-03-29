@@ -71,8 +71,8 @@
         </style>
     </head>
 
-    <body>
-        {% include 'studentheader.html' %}
+    <body> 
+        {% include 'headerDynamic.html' with context %}
         <hr>
         <div style="margin:0.1px;" class="container" >
             You have the following appoinments for this week: 
@@ -84,14 +84,12 @@
                   Current Appointments
                 </div>
                 <ul class="list-group list-group-flush">
-                  <li class="list-group-item">
-                    3/25 9:30pm, rweasly
+                    {% for date, time, tutor in cur_appointments %}
+                    <li class="list-group-item">
+                        {{date}} {{time}} with {{tutor}}
                     <a href="#" class="btn warm-btn float-end">Edit/Cancel</a>
-                  </li>
-                  <li class="list-group-item">
-                    3/30 2:00pm, hgranger
-                    <a href="#" class="btn warm-btn float-end">Edit/Cancel</a>
-                  </li>
+                    </li>
+                    {% endfor %}
                 </ul>
               </div>
             </div>
@@ -102,6 +100,7 @@
         <button class="btn warm-btn btn-block">View Details</button> <button class="btn warm-btn btn-block">Edit/Cancel</button>  -->
         
         <h2 style="margin-left: 10px;" class="h2">Available Appointments</h2>
+        {% for date, tutors in chronological_appointments.items() %}
         <br>
         <table style="margin-left:  10px;" class="col-md-6" border="1" >
             <div style="margin-right:100px">
@@ -113,53 +112,24 @@
                     <th>Tutor</th>
                     <th>Times </th>
                 </tr>
+                {% for tutor, appointments in tutors.items() %}
                 <tr>
                     <td>
-                        Dumbledore
+                        {{tutor}}
                     </td>
                     <td>
-                        <button class="btn warm-btn time-slot">3:00 pm</button> <button class="btn warm-btn btn-block time-slot">4:00 pm</button>
-                         <button class="btn warm-btn  time-slot">9:00 pm</button> <button class="btn dark-btn btn-block time-slot">9:30 pm</button>
+                        {% for appointment in appointments %}
+                            <button class="btn warm-btn time-slot"> {{appointment}}</button>
+                        {% endfor %}
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        Snape
-                    </td>
-                    <td>
-                        <button class="btn warm-btn btn-block time-slot">11:00 am</button> <button class="btn dark-btn btn-block time-slot">3:30 pm</button>
-                        <button class="btn warm-btn btn-block time-slot">6:00 pm</button> 
-                    </td>
-                </tr>
+                {% endfor %}
             </thead>
             </tr>
         </TR>
     </div>
         </table>
-    <br>
-        <table style="margin-left:  10px;" class="col-md-6" border="1">
-            <thead>
-                    <tr>
-                        <strong style="margin-left:  10px;"> Saturday, March 23 </strong>
-                    </tr>
-                </tr>
-                <tr>
-                    <th> Tutor </th>
-                    <th>Times </td>
-                </tr>
-                <tr>
-                    <td>
-                        Dumbledore
-                    </td>
-                    <td>
-                        <button class="btn warm-btn btn-block time-slot">10:00 am</button> 
-                        <button class="btn warm-btn btn-block time-slot">3:30 pm</button> 
-                        <button class="btn warm-btn btn-block time-slot">8:00 pm</button>
-
-                    </td>
-            </thead>
-        </table>
-    </div>
+    {% endfor %}
     {% include 'footer.html' with context %}
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     </body>

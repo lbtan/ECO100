@@ -8,6 +8,7 @@
 
 import flask
 import models.backend_tutor as db_tutor
+import models.backend_student as db_student
 import utils
 from datetime import datetime
 import models.db_queries as db_queries
@@ -28,8 +29,23 @@ def index():
 
 @app.route('/studentview')
 def studentview():
-    html_code = flask.render_template('studentview.html')
+    booked_appointments = db_student.get_cur_appoinments_student()
+    # user id info
+    #TODO fetch info from CAS
+    user = ("Harry Potter", 'student', 'hpotter')
+    # Parse db results
+    cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
+
+    available_appointments = db_student.get_times_students()
+    chronological_appointments = utils.available_appointments_by_time(available_appointments)
+
+    html_code = flask.render_template('studentview.html', user=user, cur_appointments=cur_appointments,
+                                      chronological_appointments=chronological_appointments)
     response = flask.make_response(html_code)
+
+    response.set_cookie('user_name', user[0])
+    response.set_cookie('user_type', user[1])
+    response.set_cookie('user_netid', user[2])
     return response
 
 @app.route('/tutorview')
