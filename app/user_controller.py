@@ -105,12 +105,11 @@ def schedule_appointment():
     tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
     student = db_queries.get_user_info({"netid": student, "user_type": "student"})[0]
 
-    # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
     html_code = flask.render_template('schedule_appointment.html', appointment=appt, user=user, tutor=tutor, student=student)
     response = flask.make_response(html_code)
     return response
 
-@app.route('/appointment_confirm')
+@app.route('/appointment_confirm', methods=['POST'])
 def appointment_confirm():
     time = flask.request.form.get('time')
     tutor_netid = flask.request.form.get('tutor_netid')
@@ -118,12 +117,10 @@ def appointment_confirm():
     comments = flask.request.form.get('comments')
 
     user = get_user_from_cookies()
-    student = user[0]
     coursenum = "1"
 
     db_modify.book_appointment(time, tutor_netid, student_netid, comments, coursenum)
 
-    # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
     html_code = flask.render_template('student_confirmation.html', user=user, tutor_netid=tutor_netid)
     response = flask.make_response(html_code)
     return response
