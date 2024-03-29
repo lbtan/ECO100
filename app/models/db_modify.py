@@ -76,12 +76,12 @@ def cancel_appointment(time, tutor_netid):
                                     "not booked").format(time, 
                                     tutor_netid))
 
-            row.booked = False
-            row.student_netid = None
-            row.comments = None
-            row.coursenum = None
+                row.booked = False
+                row.student_netid = None
+                row.comments = None
+                row.coursenum = None
 
-            session.commit()
+                session.commit()
 
         finally:
             _engine.dispose()
@@ -227,7 +227,7 @@ def _test_cancel_appointment():
     #cancel_appointment(datetime.datetime(2024, 3, 21, 9, 30), 'tu111')
 
     # this time is not booked
-    #cancel_appointment(datetime.datetime(2024, 3, 14, 9, 30), 'tu111')
+    #cancel_appointment(datetime.datetime(2025, 3, 24, 16, 0), 'pweasley')
 
     # this time is booked
     cancel_appointment(datetime.datetime(2025, 3, 26, 15, 30), 'hgranger')
