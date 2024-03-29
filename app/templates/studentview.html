@@ -118,8 +118,8 @@
                         {{tutor}}
                     </td>
                     <td>
-                        {% for appointment in appointments %}
-                            <button class="btn warm-btn time-slot"> {{appointment}}</button>
+                        {% for appointment in appointments %} 
+                            <button class="btn warm-btn time-slot" onclick="window.location.href='{{ url_for( 'schedule_appointment', tutor_netid=tutor, date=date, time=appointment, student_netid=user_netid) }}'"> {{appointment}}</button>
                         {% endfor %}
                     </td>
                 </tr>
