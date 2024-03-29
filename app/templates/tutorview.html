@@ -34,7 +34,7 @@
                     {% for date, time, netid in apt_tutor %}
                     <li class="list-group-item">
                         {{ date }} {{ time }} with {{ netid }}
-                        <a href="#" class="btn warm-btn float-end">Edit/Cancel</a>
+                        <a href="{{url_for('appointment_page', tutor_netid=user[2], date=date, time=time)}}" class="btn warm-btn float-end">View/Cancel</a>
                     </li>
                     {% endfor %}
                 </ul>
