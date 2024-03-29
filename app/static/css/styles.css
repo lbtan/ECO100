@@ -12,6 +12,10 @@ body {
     background-color:#817f7e;
     color:#716e6b;
     border-color:  #faf9f8;
+}.dark-btn:disabled{
+    background-color: #716e6b; 
+    border-color: #817f7e;
+    color: white;
 }
 
 .warm-btn {
@@ -23,6 +27,12 @@ body {
 .warm-btn:hover {
     background-color: #DEB887; 
     border-color: #F4A460; 
+}
+
+.warm-btn:disabled{
+    background-color: #F4A460; 
+    border-color: #DEB887;
+    color: white;
 }
 
 .centered {
