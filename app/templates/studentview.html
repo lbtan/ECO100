@@ -87,7 +87,7 @@
                     {% for date, time, tutor in cur_appointments %}
                     <li class="list-group-item">
                         {{date}} {{time}} with {{tutor}}
-                    <a href="#" class="btn warm-btn float-end">Edit/Cancel</a>
+                        <a href="{{url_for('appointment_page', tutor_netid=tutor, date=date, time=time)}}" class="btn warm-btn float-end">View/Cancel</a>
                     </li>
                     {% endfor %}
                 </ul>
@@ -119,7 +119,7 @@
                     </td>
                     <td>
                         {% for appointment in appointments %} 
-                            <button class="btn warm-btn time-slot" onclick="window.location.href='{{ url_for( 'schedule_appointment', tutor_netid=tutor, date=date, time=appointment, student_netid=user_netid) }}'"> {{appointment}}</button>
+                            <button class="btn warm-btn time-slot" onclick="window.location.href='{{ url_for( 'appointment_page', tutor_netid=tutor, date=date, time=appointment, student_netid=user_netid) }}'"> {{appointment}}</button>
                         {% endfor %}
                     </td>
                 </tr>
