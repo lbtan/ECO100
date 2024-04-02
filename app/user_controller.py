@@ -88,44 +88,6 @@ def get_user_from_cookies():
     user = (name, type, netid)
     return user
 
-
-@app.route('/schedule_appointment')
-def schedule_appointment():
-    tutor = flask.request.args.get('tutor_netid')
-    date = flask.request.args.get('date')
-    time = flask.request.args.get('time')
-    student = flask.request.args.get('student_netid')
-
-    user = get_user_from_cookies()
-
-    datetime_str = f"{date} {time}"
-    appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
-    appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
-    appt = appts[0] # should only match one appointment
-
-    tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
-    student = db_queries.get_user_info({"netid": student, "user_type": "student"})[0]
-
-    html_code = flask.render_template('schedule_appointment.html', appointment=appt, user=user, tutor=tutor, student=student)
-    response = flask.make_response(html_code)
-    return response
-
-@app.route('/appointment_confirm', methods=['POST'])
-def appointment_confirm():
-    time = flask.request.form.get('time')
-    tutor_netid = flask.request.form.get('tutor_netid')
-    student_netid = flask.request.form.get('student_netid')
-    comments = flask.request.form.get('comments')
-
-    user = get_user_from_cookies()
-    coursenum = "1"
-
-    db_modify.book_appointment(time, tutor_netid, student_netid, comments, coursenum)
-
-    html_code = flask.render_template('student_confirmation.html', user=user, tutor_netid=tutor_netid)
-    response = flask.make_response(html_code)
-    return response
-
 @app.route('/appointment_page')
 def appointment_page():
     tutor = flask.request.args.get('tutor_netid')
@@ -147,7 +109,26 @@ def appointment_page():
         student = None
 
     # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
-    html_code = flask.render_template('appointment_page.html', appointment=appt, user=user, tutor=tutor, student=student)
+    html_code = flask.render_template('appointment_page.html', appointment=appt, user=user, tutor=tutor, student=student, date=date)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/appointment_confirm', methods=['POST'])
+def appointment_confirm():
+    date = flask.request.form.get('date')
+    time = flask.request.form.get('time')
+    tutor_netid = flask.request.form.get('tutor_netid')
+    student_netid = flask.request.form.get('student_netid')
+    comments = flask.request.form.get('comments')
+    tutor_name = flask.request.form.get('tutor_name')
+    
+    datetime_str = f"{date} {time}"
+    appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
+
+    db_modify.book_appointment(appt_time, tutor_netid, student_netid, comments, "1")
+    
+    user = get_user_from_cookies()
+    html_code = flask.render_template('student_confirmation.html', user=user, tutor=tutor_name)
     response = flask.make_response(html_code)
     return response
 
@@ -178,6 +159,7 @@ def upload():
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
     uploaded_file = flask.request.files['file']
 
+    # not working yet
     print(uploaded_file.filename)
 
     return flask.redirect(flask.url_for('adminview'))
@@ -192,7 +174,6 @@ def add_appointment():
     response = flask.make_response(html_code)
     return response
 
-
 @app.route('/add_appt_submit', methods=['POST'])
 def add_appt_submit():
     date = flask.request.form['date']
@@ -206,19 +187,13 @@ def add_appt_submit():
 
     return flask.redirect('/tutorview')
 
-@app.route('/cancel_appointment.html')
+@app.route('/cancel_appointment')
 def cancel_appointment():
     time = flask.request.args.get('time')
     tutor = flask.request.args.get('tutor_netid')
     user = get_user_from_cookies()
     
     time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
-
-    # not working yet
-    query = db_queries.get_appointments({"exact_time": time, "tutor_netid": tutor})
-    print(query[0].to_tuple())
     db_modify.cancel_appointment(time, tutor)
-    query = db_queries.get_appointments({"exact_time": time, "tutor_netid": tutor})
-    print(query[0].to_tuple())
 
     return flask.redirect(flask.url_for(f"{user[1]}view"))

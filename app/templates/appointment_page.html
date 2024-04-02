@@ -29,35 +29,55 @@
         {% include 'headerDynamic.html' with context %}
         
         <div class="container-fluid" >
-        <h2>Appointment Details ({{"Booked" if appointment.get_booked() else "Not Booked"}}):</h2>
+        <h2>Appointment Details ({{"Booked" if appointment.get_booked() else "Available"}}):</h2>
 
-        <form action="" method="post">
+        <form action="/appointment_confirm" method="post">
 
+            <label for="date">Appointment Date:</label>
+            <br>
+            {% if user[1] != "student" or appointment.get_booked() %}
+                <input type="date" name="date" value="{{date}}" disabled>
+            {% else %}
+                <input type="date" name="date" value="{{date}}">
+            {% endif %}
+            <br>
+            
             <label for="time">Appointment Time:</label>
             <br>
-            <input type="text" name="time" value="{{appointment.get_time()}}" disabled>
+            {% if user[1] != "student" or appointment.get_booked() %}
+                <input type="time" name="time" value="{{appointment.get_time().time()}}" disabled>
+            {% else %}
+                <input type="time" name="time" value="{{appointment.get_time().time()}}">
+            {% endif %}
             <br>
             
             <label for="tutor_name">Tutor Name:</label>
             <br>
-            <input type="text" name="tutor_name" value="{{tutor.get_name()}}" disabled>
+            <input type="text" value="{{tutor.get_name()}}" disabled>
             <br>
             
             <label for="student_name">Student Name:</label>
             <br>
-            <input type="text" name="student_name" value="{{student.get_name() if student else ''}}" disabled>
+            {% if user[1] != "student" or appointment.get_booked() %}
+                <input type="text" name="student_name" value="{{student.get_name() if student else ''}}" disabled>
+            {% else %}
+                <input type="text" name="student_name" value="{{user[0]}}" disabled>
+            {% endif %}
             <br>
 
             <label for="comments">Comments for Appointment:</label>
             <br>
-            {% if user[1] != "student" or student %}
-                <input type="textarea" name="comments" value="{{appointment.get_comments()}}" disabled>
+            {% if user[1] != "student" or appointment.get_booked() %}
+                <input type="textarea" name="comments" value="{{appointment.get_comments() if appointment.get_comments() else ''}}" disabled>
             {% else %}
                 <input type="textarea" name="comments">  
             {% endif %}
             <br>
 
             {% if user[1] == "student" and not appointment.get_booked() %}
+            <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
+            <input type="hidden" name="tutor_name" value="{{tutor.get_name()}}">
+            <input type="hidden" name="student_netid" value="{{user[2]}}">
             <input type="submit" value="Submit">
             {% endif %}
 

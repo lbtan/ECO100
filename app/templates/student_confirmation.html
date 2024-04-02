@@ -27,8 +27,8 @@
 
     <body>
         {% include 'headerDynamic.html' with context %}
-        Thank you for scheduling an appointment with {{tutor_netid}}!<br>
-         <a href="{{url_for(user[1]+'view')}}">Go back to dashboard</a>
+        Thank you for scheduling an appointment with {{tutor}}!<br>
+        <hr><a href="{{url_for('studentview')}}">Go back to dashboard</a>
 
         <!DOCTYPE html>
 
