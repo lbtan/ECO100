@@ -15,19 +15,50 @@ import models.db_modify as db_modify
 import models.db_queries as db_queries
 import models.backend_admin as backend_admin
 import models.db_modify as db_modify
+import auth
+import dotenv, os
 
 #----------------------------------------------------------------------#
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
+
+# CAS authentication stuff
+dotenv.load_dotenv()
+os.environ['APP_SECRET_KEY'] = 'asndoijeiowejroiqp'
+app.secret_key = os.environ['APP_SECRET_KEY']
 
 #----------------------------------------------------------------------#
 
 @app.route('/', methods = ['GET'])
 @app.route('/index', methods = ['GET'])
 def index():
+    # username = auth.authenticate()
+    # print(username)
     html_code = flask.render_template('index.html')
     response = flask.make_response(html_code)
     return response
+
+@app.route('/user_type', methods = ['GET'])
+def user_type():
+    html_code = flask.render_template('user_type.html')
+    response = flask.make_response(html_code)
+    return response
+
+#-----------------------------------------------------------------------
+
+# Routes for authentication.
+
+@app.route('/logoutapp', methods=['GET'])
+def logoutapp():
+    return auth.logoutapp()
+
+@app.route('/logoutcas', methods=['GET'])
+def logoutcas():
+    return auth.logoutcas()
+
+#-----------------------------------------------------------------------
+
+# Student view
 
 @app.route('/studentview')
 def studentview():
@@ -41,7 +72,7 @@ def studentview():
     available_appointments = db_student.get_times_students()
     chronological_appointments = utils.available_appointments_by_time(available_appointments)
 
-    html_code = flask.render_template('studentview.html', user=user, cur_appointments=cur_appointments,
+    html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
                                       chronological_appointments=chronological_appointments, user_netid=user[2])
     response = flask.make_response(html_code)
 
@@ -49,6 +80,11 @@ def studentview():
     response.set_cookie('user_type', user[1])
     response.set_cookie('user_netid', user[2])
     return response
+
+
+#-----------------------------------------------------------------------
+
+# Tutor view 
 
 @app.route('/tutorview')
 def tutorview():
@@ -59,7 +95,7 @@ def tutorview():
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments)
-    html_code = flask.render_template('tutorview.html', appointments_by_date=apt_times, user=user, apt_tutor=apt_tutor)
+    html_code = flask.render_template('tutor/tutorview.html', appointments_by_date=apt_times, user=user, apt_tutor=apt_tutor)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -67,13 +103,18 @@ def tutorview():
     response.set_cookie('user_netid', user[2])
     return response
 
+
+#-----------------------------------------------------------------------
+
+# Admin view
+
 @app.route('/adminview')
 def adminview():
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
     user  = ('Dumbledore', 'admin', 'dmbd')
 
-    html_code = flask.render_template('adminview.html', user=user, appointments_by_date=apt_times)
+    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -87,6 +128,11 @@ def get_user_from_cookies():
     netid = flask.request.cookies.get('user_netid')
     user = (name, type, netid)
     return user
+
+
+#-----------------------------------------------------------------------
+
+# Miscellaneous TODO refactor for AJAX
 
 @app.route('/appointment_page')
 def appointment_page():
@@ -128,7 +174,7 @@ def appointment_confirm():
     db_modify.book_appointment(appt_time, tutor_netid, student_netid, comments, "1")
     
     user = get_user_from_cookies()
-    html_code = flask.render_template('student_confirmation.html', user=user, tutor=tutor_name)
+    html_code = flask.render_template('student/student_confirmation.html', user=user, tutor=tutor_name)
     response = flask.make_response(html_code)
     return response
 
@@ -139,7 +185,7 @@ def weekly_summary():
     # for now everything is under coursenum 1, and all data is under March 2025
     summary = backend_admin.weekly_summary("1", datetime(2025, 3, 30)) 
 
-    html_code = flask.render_template('weekly_summary.html', summary=summary, user=user)
+    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user)
     response = flask.make_response(html_code)
     return response
 
@@ -150,7 +196,7 @@ def tutor_overview():
     
     names_bios = {user.get_name(): db_queries.get_tutor_bio(user.get_netid()) for user in users}
 
-    html_code = flask.render_template('tutor_overview.html', names_bios=names_bios, user=user)
+    html_code = flask.render_template('admin/tutor_overview.html', names_bios=names_bios, user=user)
     response = flask.make_response(html_code)
     return response
 
@@ -170,7 +216,7 @@ def add_appointment():
     date = flask.request.args.get('date')
     user = get_user_from_cookies()
 
-    html_code = flask.render_template('add_appointment.html', user=user, tutor=tutor, date=date)
+    html_code = flask.render_template('tutor/add_appointment.html', user=user, tutor=tutor, date=date)
     response = flask.make_response(html_code)
     return response
 
