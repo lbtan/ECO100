@@ -13,7 +13,7 @@ import dotenv
 import database
 import datetime
 
-dotenv.load_dotenv()
+#dotenv.load_dotenv()
 _DATABASE_URL = os.environ['DATABASE_URL']
 _DATABASE_URL = _DATABASE_URL.replace('postgres://', 'postgresql://')
 
