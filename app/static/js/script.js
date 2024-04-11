@@ -1,8 +1,7 @@
 /* Based on some code from ChatGPT */
 $(document).ready(function(){
 
-    // Event binding for button click
-    $('.time-slot').click(function() {
+    function show_appt() {
         console.log("Button clicked.");
         var params = {
             tutor_netid: $(this).data('tutor_netid'),
@@ -21,5 +20,9 @@ $(document).ready(function(){
             $('#modal-container').html($modal);
             $('#appointmentModal').modal('show');
         });
-    });
+    }
+
+    // Event binding for button click
+    $('.time-slot').click(show_appt);
+    $('.view-cancel').click(show_appt)
 });

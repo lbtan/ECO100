@@ -16,13 +16,19 @@
         <!-- Custom CSS Module -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">       
         <title>Dashboard</title>
+        <!-- Bootstrap JS and jQuery -->
+        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <!-- Include external JavaScript file -->
+        <script src="{{ url_for('static', filename='js/script.js') }}"></script>
     </head>
 
     <body> 
         {% include 'headerDynamic.html' with context %}
         <hr>
         <div style="margin:0.1px;" class="container" >
-            You have the following appoinments for this week: 
+            You have the following appointments for this week: 
 
             <!-- Current Appointments Block -->
             <div class="col-md-6">
@@ -34,7 +40,7 @@
                     {% for date, time, tutor in cur_appointments %}
                     <li class="list-group-item">
                         {{date}} {{time}} with {{tutor}}
-                        <a href="{{url_for('appointment_popup', tutor_netid=tutor, date=date, time=time)}}" class="btn warm-btn float-end">View/Cancel</a>
+                        <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{time}}">View/Cancel</button> 
                     </li>
                     {% endfor %}
                 </ul>
