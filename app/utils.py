@@ -63,7 +63,7 @@ def available_appointments_by_time(appointments):
     """ 
     sorted_appointments = sorted(appointments, key=lambda x: x[0])
     appointments_by_date = defaultdict(lambda: defaultdict(list))
-    for appt_time, student, tutor in appointments:
+    for appt_time, student, tutor in sorted_appointments:
         date_key = appt_time.date()
         time_str = appt_time.strftime('%I:%M %p')
         appointments_by_date[date_key][tutor].append(time_str)
