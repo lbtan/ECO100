@@ -35,20 +35,12 @@
 
             <label for="date">Appointment Date:</label>
             <br>
-            {% if user[1] != "student" or appointment.get_booked() %}
-                <input type="date" name="date" value="{{date}}" disabled>
-            {% else %}
-                <input type="date" name="date" value="{{date}}">
-            {% endif %}
+            <input type="date" name="date" value="{{date}}" disabled>
             <br>
             
             <label for="time">Appointment Time:</label>
             <br>
-            {% if user[1] != "student" or appointment.get_booked() %}
-                <input type="time" name="time" value="{{appointment.get_time().time()}}" disabled>
-            {% else %}
-                <input type="time" name="time" value="{{appointment.get_time().time()}}">
-            {% endif %}
+            <input type="time" name="time" value="{{appointment.get_time().time()}}" disabled>
             <br>
             
             <label for="tutor_name">Tutor Name:</label>
