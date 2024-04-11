@@ -34,50 +34,20 @@
                     {% for date, time, tutor in cur_appointments %}
                     <li class="list-group-item">
                         {{date}} {{time}} with {{tutor}}
-                        <a href="{{url_for('appointment_page', tutor_netid=tutor, date=date, time=time)}}" class="btn warm-btn float-end">View/Cancel</a>
+                        <a href="{{url_for('appointment_popup', tutor_netid=tutor, date=date, time=time)}}" class="btn warm-btn float-end">View/Cancel</a>
                     </li>
                     {% endfor %}
                 </ul>
               </div>
             </div>
-        <hr>
-        <!-- <div style="margin:10px;">
-        You have an appoinment booked for: 
-        <br>
-        <button class="btn warm-btn btn-block">View Details</button> <button class="btn warm-btn btn-block">Edit/Cancel</button>  -->
+            <hr>
+
+            {% include 'schedule.html' with context %}
+
+        </div>
         
-        <h2 style="margin-left: 10px;" class="h2">Available Appointments</h2>
-        {% for date, tutors in chronological_appointments.items() %}
-        <br>
-        <table class="col-md-10" border="1" >
-            <thead>
-                <tr>
-                    <th colspan="3">{{ date.strftime('%A, %B %d, %Y') }}</th>
-                </tr>
-                <tr>
-                    <th class="tutor-column">Tutor</th>
-                    <th>Times Available</th>
-                </tr>
-            </thead>
-                {% for tutor, appointments in tutors.items() %}
-                <tr>
-                    <td>
-                        {{tutor}}
-                    </td>
-                    <td>
-                        {% for appointment in appointments %} 
-                            <button class="btn warm-btn time-slot" onclick="window.location.href='{{ url_for( 'appointment_page', tutor_netid=tutor, date=date, time=appointment, student_netid=user_netid) }}'"> {{appointment}}</button>
-                        {% endfor %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </thead>
-            </tr>
-        </TR>
-    </div>
-        </table>
-    {% endfor %}
-    {% include 'footer.html' with context %}
+        {% include 'footer.html' with context %}
+
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

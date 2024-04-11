@@ -73,7 +73,7 @@ def studentview():
     chronological_appointments = utils.available_appointments_by_time(available_appointments)
 
     html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
-                                      chronological_appointments=chronological_appointments, user_netid=user[2])
+                                      appointments_by_date=chronological_appointments)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -132,10 +132,8 @@ def get_user_from_cookies():
 
 #-----------------------------------------------------------------------
 
-# Miscellaneous TODO refactor for AJAX
-
-@app.route('/appointment_page')
-def appointment_page():
+@app.route('/appointment_popup')
+def appointment_popup():
     tutor = flask.request.args.get('tutor_netid')
     date = flask.request.args.get('date')
     time = flask.request.args.get('time')
@@ -155,7 +153,7 @@ def appointment_page():
         student = None
 
     # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
-    html_code = flask.render_template('appointment_page.html', appointment=appt, user=user, tutor=tutor, student=student, date=date)
+    html_code = flask.render_template('appointment_popup.html', appointment=appt, user=user, tutor=tutor, student=student, date=date)
     response = flask.make_response(html_code)
     return response
 
