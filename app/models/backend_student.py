@@ -17,6 +17,8 @@ today_test = datetime.datetime(2024, 1, 1)
 # can add coursenum as parameter later
 def get_cur_appoinments_student():
     curr_appointments = db_queries.get_appointments({"start_time": today_test, "booked": True})
+    if curr_appointments[0] == False:
+        return curr_appointments
     appointments = []
     for row in curr_appointments:
         appointments.append((row._time, row._student_netid, row._tutor_netid, row._comments))
@@ -25,6 +27,8 @@ def get_cur_appoinments_student():
 # get_times() -> return list of available times + scheduled studentIDs;
 def get_times_students():
     available_appointments = db_queries.get_appointments({"start_time": today_test, "booked": False})
+    if available_appointments[0] == False:
+        return available_appointments
     times = []
     for row in available_appointments:
         # times.append(row[0], row[2])

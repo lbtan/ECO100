@@ -97,6 +97,7 @@ def get_appointments(props={}):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        return[False, str(ex)]
         sys.exit(1)
 
     return appts
@@ -141,6 +142,7 @@ def get_user_info(props={}):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        return [False, str(ex)]
         sys.exit(1)
 
     return users
@@ -165,6 +167,7 @@ def get_tutor_bio(tutor_netid):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
+        return [False, str(ex)]
         sys.exit(1)
 
     return row.bio
