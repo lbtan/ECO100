@@ -54,7 +54,7 @@ def book_appointment(time, tutor_netid, student_netid, comments,
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        # sys.exit(1)
 
 def cancel_appointment(time, tutor_netid):
 
@@ -88,7 +88,7 @@ def cancel_appointment(time, tutor_netid):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        # sys.exit(1)
 
 def add_appointment(time, tutor_netid):
 
@@ -119,7 +119,7 @@ def add_appointment(time, tutor_netid):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        # sys.exit(1)
 
 def delete_appointment(time, tutor_netid):
 
@@ -145,7 +145,7 @@ def delete_appointment(time, tutor_netid):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        # sys.exit(1)
 
 def update_tutor_bio(tutor_netid, bio):
 
@@ -170,7 +170,7 @@ def update_tutor_bio(tutor_netid, bio):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        # sys.exit(1)
 
 def add_user(netid, user_type, coursenum, name):
 
@@ -203,7 +203,7 @@ def add_user(netid, user_type, coursenum, name):
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        sys.exit(1)
+        # sys.exit(1)
 
 #-----------------------------------------------------------------------
 
