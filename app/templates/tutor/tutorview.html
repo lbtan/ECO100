@@ -46,8 +46,13 @@
                 </ul>
               </div>
             </div>
+
+            <button class="btn warm-btn edit-tutor-bio" data-tutor_netid="{{user[2]}}">View/Edit My Bio</button>
             
             <hr>
+
+            <!-- Include popup container -->
+            <div id="tutor-bio-edit-modal-container" data-tutor_netid="{{user[2]}}"></div>
         
             {% include 'schedule.html' with context %}
 

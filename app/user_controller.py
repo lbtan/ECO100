@@ -83,7 +83,7 @@ def studentview():
     authorize(username)
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
-    user = (username, 'student', username)
+    user = ("Harry Potter", 'student', "hpotter")
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
 
@@ -111,7 +111,7 @@ def tutorview():
     appointments = db_tutor.get_times_tutors()
     # user id info
     #TODO fetch info from CAS
-    user = (username, 'tutor', username)
+    user = ("Hermione Granger", 'tutor', "hgranger")
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments)
@@ -123,6 +123,20 @@ def tutorview():
     response.set_cookie('user_netid', user[2])
     return response
 
+@app.route('/tutor_bio_edit')
+def tutor_bio_edit():
+    tutor_netid = flask.request.args.get('tutor_netid')
+    bio = db_queries.get_tutor_bio(tutor_netid)
+    html_code = flask.render_template('tutor/tutor_bio_edit.html', tutor_netid=tutor_netid, bio=bio)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/tutor_bio_edit_submit', methods=['POST'])
+def tutor_bio_edit_submit():
+    tutor_netid = flask.request.form.get('tutor_netid')
+    bio = flask.request.form.get('bio')
+    db_modify.update_tutor_bio(tutor_netid, bio)
+    return flask.redirect(flask.url_for('tutorview'))
 
 #-----------------------------------------------------------------------
 
