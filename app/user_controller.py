@@ -39,7 +39,7 @@ app.secret_key = os.environ['APP_SECRET_KEY']
 
 def authorize(username):
     if username not in testing_ids:
-        html = flask.render_template('error/unauth.html')
+        html = flask.render_template('error_handling/unauth.html')
         response = flask.make_response(html)
         flask.abort(response)
 
@@ -83,10 +83,13 @@ def studentview():
     authorize(username)
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
+<<<<<<< Updated upstream
     user = ("Harry Potter", 'student', "hpotter")
+=======
+    user = ('Harry Potter', 'student', 'hpotter')
+>>>>>>> Stashed changes
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
-
     available_appointments = db_student.get_times_students()
     chronological_appointments = utils.available_appointments_by_time(available_appointments)
 
@@ -111,7 +114,11 @@ def tutorview():
     appointments = db_tutor.get_times_tutors()
     # user id info
     #TODO fetch info from CAS
+<<<<<<< Updated upstream
     user = ("Hermione Granger", 'tutor', "hgranger")
+=======
+    user = ('Hermione Granger', 'tutor', 'hgranger')
+>>>>>>> Stashed changes
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments)
@@ -182,21 +189,21 @@ def appointment_popup():
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
     appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
     if appts[0] == False:
-        html_code = flask.render_template('error_page.html')
+        html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
     appt = appts[0] # should only match one appointment
 
     tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
     if tutor == False:
-        html_code = flask.render_template('error_page.html')
+        html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
 
     if appt.get_student_netid():
         student = db_queries.get_user_info({"netid": appt.get_student_netid(), "user_type": "student"})[0]
         if student == False:
-            html_code = flask.render_template('error_page.html')
+            html_code = flask.render_template('error_handling/db_error.html')
             response = flask.make_response(html_code)
             return response
     else:
@@ -237,7 +244,7 @@ def weekly_summary():
     # for now everything is under coursenum 1, and all data is under March 2025
     summary = backend_admin.weekly_summary("1", datetime(2025, 3, 30)) 
     if summary == False:
-        html_code = flask.render_template('error_page.html')
+        html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
 
@@ -252,7 +259,7 @@ def tutor_overview():
     user = get_user_from_cookies()
     users = db_queries.get_user_info({"user_type": "tutor", "coursenum": "1"})
     if users[0] == False:
-        html_code = flask.render_template('error_page.html')
+        html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
     
@@ -262,7 +269,7 @@ def tutor_overview():
         netid = curr_user.get_netid()
         bio = db_queries.get_tutor_bio(netid)
         if bio[0] == False:
-            html_code = flask.render_template('error_page.html')
+            html_code = flask.render_template('error_handling/db_error.html')
             response = flask.make_response(html_code)
             return response
         names_bios[name] = bio
@@ -323,10 +330,3 @@ def cancel_appointment():
 
     return flask.redirect(flask.url_for(f"{user[1]}view"))
 
-
-
-
-@app.errorhandler(403)
-def page_not_found(e):
-    # Return the custom error page for 403 Forbidden
-    return flask.render_template('error/unauth.html'), 403
