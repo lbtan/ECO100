@@ -83,11 +83,7 @@ def studentview():
     authorize(username)
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
-<<<<<<< Updated upstream
     user = ("Harry Potter", 'student', "hpotter")
-=======
-    user = ('Harry Potter', 'student', 'hpotter')
->>>>>>> Stashed changes
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
     available_appointments = db_student.get_times_students()
@@ -114,11 +110,7 @@ def tutorview():
     appointments = db_tutor.get_times_tutors()
     # user id info
     #TODO fetch info from CAS
-<<<<<<< Updated upstream
     user = ("Hermione Granger", 'tutor', "hgranger")
-=======
-    user = ('Hermione Granger', 'tutor', 'hgranger')
->>>>>>> Stashed changes
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments)
