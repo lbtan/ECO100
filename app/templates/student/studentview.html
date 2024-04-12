@@ -50,12 +50,18 @@
 
         </div>
         <hr>
-            
         <div style="margin:0.1px;" class="container" >
-        
-        
-          
-            {% include 'schedule.html' with context %}
+            <li class="list-group-item">
+                <button class="btn warm-btn float-left tutor-overview-btn">View Tutor Bios</button>
+            </li>  
+        </div>
+        <hr> 
+        <!-- Include popup containers -->
+        <div id="overview-modal-container"></div>
+  
+        <div style="margin:0.1px;" class="container" >
+
+            {% include 'schedule.html' with context %} 
 
         </div>  
         
