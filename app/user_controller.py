@@ -212,11 +212,10 @@ def tutor_overview():
         response = flask.make_response(html_code)
         return response
     
-
     names_bios = {}
-    for user in users:
-        name = user.get_name()
-        netid = user.get_netid()
+    for curr_user in users:
+        name = curr_user.get_name()
+        netid = curr_user.get_netid()
         bio = db_queries.get_tutor_bio(netid)
         if bio[0] == False:
             html_code = flask.render_template('error_page.html')
