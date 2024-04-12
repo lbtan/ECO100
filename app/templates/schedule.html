@@ -22,9 +22,11 @@
                 <td>
                     {% for appointment in appointments  %}
                         {% if user[1] == "tutor" and user[2] != tutor %}
-                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" onclick="window.location.href='{{ url_for( 'appointment_page', tutor_netid=tutor, date=date, time=appointment[0] ) }}'" disabled>{{ appointment[0] }}</button>
+                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}" disabled>{{ appointment[0] }}</button>
+                        {% elif user[1] == "student" %}
+                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}">{{ appointment }}</button>
                         {% else %}
-                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" onclick="window.location.href='{{ url_for( 'appointment_page', tutor_netid=tutor, date=date, time=appointment[0] ) }}'">{{ appointment[0] }}</button>
+                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}">{{ appointment[0] }}</button>
                         {% endif %}
                     {% endfor %}
                     {% if user[1] == "tutor" and user[2] == tutor %}
@@ -37,3 +39,6 @@
 </table>
 <br> 
 {% endfor %}
+
+<!-- Include modal container -->
+<div id="modal-container"></div>
