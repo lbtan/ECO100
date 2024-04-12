@@ -143,12 +143,24 @@ def appointment_popup():
     datetime_str = f"{date} {time}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
     appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
+    if appts[0] == False:
+        html_code = flask.render_template('error_page.html')
+        response = flask.make_response(html_code)
+        return response
     appt = appts[0] # should only match one appointment
 
     tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
+    if tutor == False:
+        html_code = flask.render_template('error_page.html')
+        response = flask.make_response(html_code)
+        return response
 
     if appt.get_student_netid():
         student = db_queries.get_user_info({"netid": appt.get_student_netid(), "user_type": "student"})[0]
+        if student == False:
+            html_code = flask.render_template('error_page.html')
+            response = flask.make_response(html_code)
+            return response
     else:
         student = None
 
@@ -182,6 +194,10 @@ def weekly_summary():
 
     # for now everything is under coursenum 1, and all data is under March 2025
     summary = backend_admin.weekly_summary("1", datetime(2025, 3, 30)) 
+    if summary == False:
+        html_code = flask.render_template('error_page.html')
+        response = flask.make_response(html_code)
+        return response
 
     html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user)
     response = flask.make_response(html_code)
@@ -191,8 +207,22 @@ def weekly_summary():
 def tutor_overview():
     user = get_user_from_cookies()
     users = db_queries.get_user_info({"user_type": "tutor", "coursenum": "1"})
+    if users[0] == False:
+        html_code = flask.render_template('error_page.html')
+        response = flask.make_response(html_code)
+        return response
     
-    names_bios = {user.get_name(): db_queries.get_tutor_bio(user.get_netid()) for user in users}
+
+    names_bios = {}
+    for user in users:
+        name = user.get_name()
+        netid = user.get_netid()
+        bio = db_queries.get_tutor_bio(netid)
+        if bio[0] == False:
+            html_code = flask.render_template('error_page.html')
+            response = flask.make_response(html_code)
+            return response
+        names_bios[name] = bio
 
     html_code = flask.render_template('admin/tutor_overview.html', names_bios=names_bios, user=user)
     response = flask.make_response(html_code)

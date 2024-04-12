@@ -51,7 +51,6 @@ def main():
         print('Usage: python ' + sys.argv[0], file=sys.stderr)
         sys.exit(1)
 
-    try:
         engine = sqlalchemy.create_engine(_DATABASE_URL)
 
         database.Base.metadata.drop_all(engine)
@@ -255,10 +254,6 @@ def main():
             session.commit()
 
         engine.dispose()
-
-    except Exception as ex:
-        print(ex, file=sys.stderr)
-        sys.exit(1)
 
 #-----------------------------------------------------------------------
 
