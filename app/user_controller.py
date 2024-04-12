@@ -148,11 +148,16 @@ def tutor_bio_edit_submit():
 def adminview():
     username = auth.authenticate()
     authorize(username)
+    try:
+        upload_message = flask.request.args.get('upload_message')
+    except:
+        pass
+
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
     user = (username, 'admin', username)
 
-    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times)
+    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times, upload_message=upload_message)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -278,12 +283,14 @@ def upload():
     username = auth.authenticate()
     authorize(username)
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
-    uploaded_file = flask.request.files['file']
-
-    # not working yet
-    print(uploaded_file.filename)
-
-    return flask.redirect(flask.url_for('adminview'))
+    user_type = flask.request.form['user_type']
+    uploaded_file = flask.request.files['users_file']
+    filename = uploaded_file.filename
+    if filename == '' or os.path.splitext(filename)[-1] != 'csv':
+        message = 'Please upload a valid .csv file.'
+    else:
+        message = backend_admin.import_users(uploaded_file, user_type, "1")
+    return flask.redirect(flask.url_for('adminview', upload_message=message))
 
 @app.route('/add_appointment')
 def add_appointment():
