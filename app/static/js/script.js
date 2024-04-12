@@ -42,6 +42,18 @@ $(document).ready(function(){
         });
     }
 
+    function show_upload_confirm() {
+        // Load the popup HTML using AJAX
+        $.get('/upload_confirm', function(html) {
+            // Create a jQuery object from the HTML string
+            //var $modal = $(html);
+            // Add the modified HTML to the modal container and show the modal
+            //$('#upload-confirm-modal-container').html($modal);
+            $('#upload-confirm-modal-container').html("File uploaded and processed successfully");
+            $('#uploadConfirmModal').modal('show');
+        });
+    }  
+
     function show_tutor_bio_edit() {
 
         var params = {

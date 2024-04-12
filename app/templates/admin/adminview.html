@@ -47,7 +47,7 @@
                     <li class="list-group-item">
                         <h5>Upload new user netids (as csv file)</h5>
 
-                        <form method="POST" action="{{url_for('upload')}}" enctype="multipart/form-data"></form>
+                        <form method="POST" action="/upload" enctype="multipart/form-data">
                             <label for="user_type">User Type:</label>
                             <select name="user_type" id="user_type">
                                 <option value="admin">Admin</option>
@@ -55,7 +55,7 @@
                                 <option value="student">Student</option>
                             </select>
                             
-                            <input type="file" id="users_file" name="file">
+                            <input type="file" id="users_file" name="users_file">
 
                             <input type="submit" class="btn warm-btn float-none" value="Submit">
 
@@ -72,6 +72,7 @@
         <!-- Include popup containers -->
         <div id="overview-modal-container"></div>
         <div id="summary-modal-container"></div>
+        <div id="upload-confirm-modal-container"></div>
 
         {% include 'schedule.html' with context %}
 

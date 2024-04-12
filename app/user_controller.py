@@ -278,10 +278,14 @@ def upload():
     username = auth.authenticate()
     authorize(username)
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
-    uploaded_file = flask.request.files['file']
+    user_type = flask.request.form['user_type']
+    uploaded_file = flask.request.files['users_file']
+    filename = uploaded_file.filename
+    if filename == '' or os.path.splitext(filename)[1] != 'csv':
+        return flask.redirect('error_handling/db_error.html')
 
-    # not working yet
-    print(uploaded_file.filename)
+    backend_admin.import_users(filename, user_type, "1")
+    return """<script>show_upload_confirm();</script>"""
 
     return flask.redirect(flask.url_for('adminview'))
 
