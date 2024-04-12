@@ -12,6 +12,8 @@ import datetime
 
 def import_users(csv_path, user_type, coursenum):
     df = pd.read_csv(csv_path)
+    
+    
     netids = df.iloc[:, 0].tolist()
     for netid in netids:
         if len(netid) > 15:
