@@ -286,10 +286,10 @@ def upload():
     user_type = flask.request.form['user_type']
     uploaded_file = flask.request.files['users_file']
     filename = uploaded_file.filename
-    if filename == '' or os.path.splitext(filename)[1] != 'csv':
+    if filename == '' or os.path.splitext(filename)[-1] != 'csv':
         message = 'Please upload a valid .csv file.'
-
-    message = backend_admin.import_users(uploaded_file, user_type, "1")
+    else:
+        message = backend_admin.import_users(uploaded_file, user_type, "1")
     return flask.redirect(flask.url_for('adminview', upload_message=message))
 
 @app.route('/add_appointment')
