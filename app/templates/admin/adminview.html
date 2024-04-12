@@ -41,8 +41,8 @@
                     </div>
                     <ul class="list-group list-group-flush">
                     <li class="list-group-item">
-                        <a href="{{url_for('weekly_summary')}}" class="btn warm-btn float-left">View Weekly Summary</a>
-                        <a href="{{url_for('tutor_overview')}}" class="btn warm-btn float-right">View Tutor Overview</a>
+                        <button class="btn warm-btn float-left weekly-summary-btn">View Weekly Summary</button>
+                        <button class="btn warm-btn float-left tutor-overview-btn">View Tutor Overview</button>
                     </li>
                     <li class="list-group-item">
                         <h5>Upload new user netids (as csv file)</h5>
@@ -68,6 +68,10 @@
         </div>
 
         <hr>
+
+        <!-- Include popup containers -->
+        <div id="overview-modal-container"></div>
+        <div id="summary-modal-container"></div>
 
         {% include 'schedule.html' with context %}
 
