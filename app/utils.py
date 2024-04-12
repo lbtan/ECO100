@@ -7,6 +7,7 @@
 #-----------------------------------------------------------------------
 
 from collections import defaultdict
+from collections import Counter
 import datetime
 
 #-----------------------------------------------------------------------
@@ -56,14 +57,18 @@ def appointments_by_student(appointments, studentId):
     sorted_appointments = sorted(student_appointments, key=lambda x: x[0])
     return sorted_appointments
 
-def available_appointments_by_time(appointments):
+def available_appointments_by_time(appointments, booked_appts):
     """
     Parses db input appointments for html code, return all unbooked appointments  
     in chronological order for each tutor. (adapted from Angela's code)
     """ 
+    # tutors can only have 8 hours a week
+    tutor_appt_counts = Counter(tutor for _, _, tutor, _ in booked_appts)
     sorted_appointments = sorted(appointments, key=lambda x: x[0])
     appointments_by_date = defaultdict(lambda: defaultdict(list))
     for appt_time, student, tutor in sorted_appointments:
+        if tutor_appt_counts[tutor] > 8:
+            continue
         date_key = appt_time.date()
         time_str = appt_time.strftime('%I:%M %p')
         appointments_by_date[date_key][tutor].append(time_str)

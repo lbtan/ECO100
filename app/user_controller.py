@@ -87,10 +87,12 @@ def studentview():
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
 
+    booked_appointments = db_student.get_cur_appoinments_student()
     available_appointments = db_student.get_times_students()
-    chronological_appointments = utils.available_appointments_by_time(available_appointments)
+    chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
 
     html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
+                                      can_book = len(cur_appointments) == 0,
                                       appointments_by_date=chronological_appointments)
     response = flask.make_response(html_code)
 

@@ -4,6 +4,10 @@
 <h3>Click on an existing appointment to view details/cancel. Click '+' to add new appointment time.</h3>
 {% endif %}
 
+{% if user[1] == "student" and not can_book %}
+<h3>The calendar is currently disabled as you can only book one appointment per week.</h3>
+{% endif %}
+
 {% for date, tutors in appointments_by_date.items() %}
 <table class="col-md-8" border="1">
     <thead>
@@ -23,8 +27,10 @@
                     {% for appointment in appointments  %}
                         {% if user[1] == "tutor" and user[2] != tutor %}
                             <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}" disabled>{{ appointment[0] }}</button>
-                        {% elif user[1] == "student" %}
+                        {% elif user[1] == "student" and can_book %}
                             <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}">{{ appointment }}</button>
+                        {% elif user[1] == "student" and not can_book %}
+                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}" disabled>{{ appointment }}</button>
                         {% else %}
                             <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}">{{ appointment[0] }}</button>
                         {% endif %}
