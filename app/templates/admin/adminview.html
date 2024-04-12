@@ -72,7 +72,26 @@
         <!-- Include popup containers -->
         <div id="overview-modal-container"></div>
         <div id="summary-modal-container"></div>
-        <div id="upload-confirm-modal-container"></div>
+
+        {% if upload_message %}
+            <div id="upload-confirm-modal-container">
+                <div class="modal fade" id="uploadConfirmModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="modelLabel">Tutor Overview</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">            
+                                {{upload_message}}       
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
 
         {% include 'schedule.html' with context %}
 
@@ -82,6 +101,13 @@
         
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
         
+        {% if upload_message %}
+        <script>
+            $(document).ready(function() {
+                $('#uploadConfirmModal').modal('show');
+            });
+        </script>
+        {% endif %}
     </body>
 
 </html>

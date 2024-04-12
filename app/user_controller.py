@@ -148,11 +148,16 @@ def tutor_bio_edit_submit():
 def adminview():
     username = auth.authenticate()
     authorize(username)
+    try:
+        upload_message = flask.request.args.get('upload_message')
+    except:
+        pass
+
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
     user = (username, 'admin', username)
 
-    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times)
+    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times, upload_message=upload_message)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -282,12 +287,10 @@ def upload():
     uploaded_file = flask.request.files['users_file']
     filename = uploaded_file.filename
     if filename == '' or os.path.splitext(filename)[1] != 'csv':
-        return flask.redirect('error_handling/db_error.html')
+        message = 'Please upload a valid .csv file.'
 
-    backend_admin.import_users(filename, user_type, "1")
-    return """<script>show_upload_confirm();</script>"""
-
-    return flask.redirect(flask.url_for('adminview'))
+    message = backend_admin.import_users(uploaded_file, user_type, "1")
+    return flask.redirect(flask.url_for('adminview', upload_message=message))
 
 @app.route('/add_appointment')
 def add_appointment():
