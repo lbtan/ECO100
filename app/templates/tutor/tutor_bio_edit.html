@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<!-- =========================================================== -->
+<!-- tutor_bio_edit.html                                         -->
+<!-- Author: Hita Gupta                                          -->
+<!-- =========================================================== -->
+ 
+<div class="modal fade" id="tutorBioEditModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modelLabel">Edit Bio</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form action="/tutor_bio_edit_submit" method="post">
+                    <label for="bio">Bio:</label>
+                    <br>
+                    <input type="textarea" name="bio" value="{{bio}}">
+                    <br>
+                    <input type="hidden" name="tutor_netid" value="{{tutor_netid}}">
+                    <input type="submit" value="Submit">
+                </form>       
+            </div>
+        </div>
+    </div>
+</div>

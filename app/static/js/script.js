@@ -42,9 +42,28 @@ $(document).ready(function(){
         });
     }
 
+    function show_tutor_bio_edit() {
+
+        var params = {
+            tutor_netid: $(this).data('tutor_netid'),
+            bio: $(this).data('bio'),
+        };
+        var urlParams = $.param(params);
+
+        // Load the popup HTML using AJAX
+        $.get('/tutor_bio_edit?' + urlParams, function(html) {
+            // Create a jQuery object from the HTML string
+            var $modal = $(html);
+            // Add the modified HTML to the modal container and show the modal
+            $('#tutor-bio-edit-modal-container').html($modal);
+            $('#tutorBioEditModal').modal('show');
+        });
+    }
+
     // Event binding for button click
     $('.time-slot').click(show_appt);
     $('.view-cancel').click(show_appt);
     $('.tutor-overview-btn').click(show_tutor_overview);
     $('.weekly-summary-btn').click(show_weekly_summary);
+    $('.edit-tutor-bio').click(show_tutor_bio_edit);
 });
