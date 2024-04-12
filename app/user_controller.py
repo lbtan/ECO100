@@ -17,30 +17,47 @@ import models.backend_admin as backend_admin
 import models.db_modify as db_modify
 import auth
 import dotenv, os
+import ssl
+
+#  https://stackoverflow.com/questions/44649449/brew-installation-of-python-3-6-1-ssl-certificate-verify-failed-certificate/44649450#44649450 
+ssl._create_default_https_context = ssl._create_stdlib_context
 
 #----------------------------------------------------------------------#
+
+# for testing purposes
+testing_ids = ['at6145', 'sm8765', 'hg7270', 'hd5234', 'anaikam']
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
 # CAS authentication stuff
 dotenv.load_dotenv()
-os.environ['APP_SECRET_KEY'] = 'asndoijeiowejroiqp'
+os.environ['APP_SECRET_KEY']
 app.secret_key = os.environ['APP_SECRET_KEY']
+
+
+#-----------------------------------------------------------------------
+
+def authorize(username):
+    if username not in testing_ids:
+        html = flask.render_template('error/unauth.html')
+        response = flask.make_response(html)
+        flask.abort(response)
 
 #----------------------------------------------------------------------#
 
 @app.route('/', methods = ['GET'])
 @app.route('/index', methods = ['GET'])
 def index():
-    # username = auth.authenticate()
-    # print(username)
     html_code = flask.render_template('index.html')
     response = flask.make_response(html_code)
     return response
 
 @app.route('/user_type', methods = ['GET'])
 def user_type():
-    html_code = flask.render_template('user_type.html')
+    username = auth.authenticate()
+    print(username)
+    authorize(username)
+    html_code = flask.render_template('user_type.html')  
     response = flask.make_response(html_code)
     return response
 
@@ -62,10 +79,11 @@ def logoutcas():
 
 @app.route('/studentview')
 def studentview():
+    username = auth.authenticate()
+    authorize(username)
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
-    #TODO fetch info from CAS
-    user = ("Harry Potter", 'student', 'hpotter')
+    user = (username, 'student', username)
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
 
@@ -88,10 +106,12 @@ def studentview():
 
 @app.route('/tutorview')
 def tutorview():
+    username = auth.authenticate()
+    authorize(username)
     appointments = db_tutor.get_times_tutors()
     # user id info
     #TODO fetch info from CAS
-    user = ("Hermione Granger", 'tutor', 'hgranger')
+    user = (username, 'tutor', username)
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments)
@@ -110,9 +130,11 @@ def tutorview():
 
 @app.route('/adminview')
 def adminview():
+    username = auth.authenticate()
+    authorize(username)
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
-    user  = ('Dumbledore', 'admin', 'dmbd')
+    user = (username, 'admin', username)
 
     html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times)
     response = flask.make_response(html_code)
@@ -134,6 +156,8 @@ def get_user_from_cookies():
 
 @app.route('/appointment_popup')
 def appointment_popup():
+    username = auth.authenticate()
+    authorize(username)
     tutor = flask.request.args.get('tutor_netid')
     date = flask.request.args.get('date')
     time = flask.request.args.get('time')
@@ -171,6 +195,8 @@ def appointment_popup():
 
 @app.route('/appointment_confirm', methods=['POST'])
 def appointment_confirm():
+    username = auth.authenticate()
+    authorize(username)
     date = flask.request.form.get('date')
     time = flask.request.form.get('time')
     tutor_netid = flask.request.form.get('tutor_netid')
@@ -190,6 +216,8 @@ def appointment_confirm():
 
 @app.route('/weekly_summary')
 def weekly_summary():
+    username = auth.authenticate()
+    authorize(username)
     user = get_user_from_cookies()
 
     # for now everything is under coursenum 1, and all data is under March 2025
@@ -205,6 +233,8 @@ def weekly_summary():
 
 @app.route('/tutor_overview')
 def tutor_overview():
+    username = auth.authenticate()
+    authorize(username)
     user = get_user_from_cookies()
     users = db_queries.get_user_info({"user_type": "tutor", "coursenum": "1"})
     if users[0] == False:
@@ -229,6 +259,8 @@ def tutor_overview():
 
 @app.route('/upload', methods=["POST"])
 def upload():
+    username = auth.authenticate()
+    authorize(username)
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
     uploaded_file = flask.request.files['file']
 
@@ -239,6 +271,8 @@ def upload():
 
 @app.route('/add_appointment')
 def add_appointment():
+    username = auth.authenticate()
+    authorize(username)
     tutor = flask.request.args.get('tutor_netid')
     date = flask.request.args.get('date')
     user = get_user_from_cookies()
@@ -249,6 +283,8 @@ def add_appointment():
 
 @app.route('/add_appt_submit', methods=['POST'])
 def add_appt_submit():
+    username = auth.authenticate()
+    authorize(username)
     date = flask.request.form['date']
     time = flask.request.form['time']
     tutor = flask.request.form['tutor']
@@ -262,6 +298,8 @@ def add_appt_submit():
 
 @app.route('/cancel_appointment')
 def cancel_appointment():
+    username = auth.authenticate()
+    authorize(username)
     time = flask.request.args.get('time')
     tutor = flask.request.args.get('tutor_netid')
     user = get_user_from_cookies()
@@ -270,3 +308,11 @@ def cancel_appointment():
     db_modify.cancel_appointment(time, tutor)
 
     return flask.redirect(flask.url_for(f"{user[1]}view"))
+
+
+
+
+@app.errorhandler(403)
+def page_not_found(e):
+    # Return the custom error page for 403 Forbidden
+    return flask.render_template('error/unauth.html'), 403

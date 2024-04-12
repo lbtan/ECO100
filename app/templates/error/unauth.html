@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<!-- =========================================================== -->
+<!-- unauth.html                                              -->
+<!-- Author: Libo Tan                                            -->
+<!-- =========================================================== -->
+
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" 
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">    
+        <title>ECO100 Tutoring App</title>
+    </head>
+
+    <body>
+        <div class="container centered">
+            <h2 class="mb-4">Sorry, you are unauthorized to access this page.</h2>
+            <a href="/index"  class="btn warm-btn btn-lg btn-block" >Log back in</a>
+        </div>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
