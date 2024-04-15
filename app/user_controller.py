@@ -25,7 +25,7 @@ ssl._create_default_https_context = ssl._create_stdlib_context
 #----------------------------------------------------------------------#
 
 # for testing purposes
-testing_ids = ['at6145', 'sm8765', 'hg7270', 'hd5234', 'anaikam']
+testing_ids = db_queries.get_testing_ids()
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
