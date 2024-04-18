@@ -9,6 +9,7 @@
 from collections import defaultdict
 from collections import Counter
 import datetime
+import models.db_queries as db_queries
 
 #-----------------------------------------------------------------------
 
@@ -74,3 +75,39 @@ def available_appointments_by_time(appointments, booked_appts):
         appointments_by_date[date_key][tutor].append(time_str)
     
     return appointments_by_date
+
+
+def get_tutor_ids():
+    """
+    Get all tutor ids in database
+    """
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "tutor"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
+
+def get_student_ids():
+    """
+    
+    Get all tutor id in database
+    """
+
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "student"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
+
+
+def get_admin_ids():
+    """
+    
+    Get all tutor id in database
+    """
+
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "admin"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
