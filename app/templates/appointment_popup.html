@@ -49,9 +49,9 @@
                     <label for="comments">Comments for Appointment:</label>
                     <br>
                     {% if user[1] != "student" or appointment.get_booked() %}
-                        <input type="textarea" name="comments" value="{{appointment.get_comments() if appointment.get_comments() else ''}}" disabled>
+                        <textarea class="textarea" name="comments" cols="30" rows="3" disabled>{{appointment.get_comments() if appointment.get_comments() else ''}}</textarea>
                     {% else %}
-                        <input type="textarea" name="comments">  
+                        <textarea class="textarea" name="comments" cols="30" rows="3"></textarea>
                     {% endif %}
                     <br>
         
