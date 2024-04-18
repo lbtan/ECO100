@@ -421,3 +421,35 @@ def cancel_appointment():
     db_modify.cancel_appointment(time, tutor)
 
     return flask.redirect(flask.url_for(f"{user[1]}view"))
+
+@app.route('/edit_appointment', methods=['POST'])
+def edit_appointment():
+    username = auth.authenticate()
+    authorize(username)
+    date = flask.request.form['date']
+    prev_time = flask.request.form['prev-time'][:-3] # remove seconds
+    tutor = flask.request.form['tutor_netid']
+    new_time = flask.request.form['new-time'][:-3] # remove seconds
+    
+    datetime_str = f"{date} {new_time}"
+    new_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+
+    datetime_str = f"{date} {prev_time}"
+    prev_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+   
+    db_modify.modify_appointment_time(prev_time, new_time, tutor)
+
+    return flask.redirect('/tutorview')
+
+@app.route('/delete_appointment')
+def delete_appointment():
+    username = auth.authenticate()
+    authorize(username)
+    time = flask.request.args.get('time')
+    tutor = flask.request.args.get('tutor_netid')
+    user = get_user_from_cookies()
+    
+    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+    db_modify.delete_appointment(time, tutor)
+
+    return flask.redirect(flask.url_for(f"{user[1]}view"))
