@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------
 # user_controller.py
-# Authors: Libo Tan
+# Authors: Libo Tan, Sofia Marina
 # 
 #
 # Handles the logic of different views.
@@ -87,6 +87,7 @@ def studentview():
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
     
+    booked_appointments = db_student.get_cur_appoinments_student()
     available_appointments = db_student.get_times_students()
     chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
 
@@ -183,45 +184,27 @@ def appointment_popup():
     time = flask.request.args.get('time')
 
     user = get_user_from_cookies()
+    print(user)
 
-    # Find the appointment
     datetime_str = f"{date} {time}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
     appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
     if appts[0] == False:
-        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+        html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
     appt = appts[0] # should only match one appointment
 
-    # If the user is a tutor and this is not their appointment, they cannot access its details
-    if user[1] == "tutor" and user[2] != appt.get_tutor_netid():
-        html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
-        response = flask.make_response(html_code)
-        return response
-    
-    # If the user is a student and they already have an appointment booked, they cannot access this one
-    if user[1] == "student":
-        booked_appointments = db_student.get_cur_appoinments_student()
-        cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
-        if len(cur_appointments) > 0 and appt.get_student_netid() != user[2]:
-            html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
-            response = flask.make_response(html_code)
-            return response
-
-    # Get the details of the tutor for this appointment
     tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
     if tutor == False:
-        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+        html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
 
-    # If the appointment is booked, get the details of the student for this appointment
     if appt.get_student_netid():
-        print(appt.get_student_netid())
         student = db_queries.get_user_info({"netid": appt.get_student_netid(), "user_type": "student"})[0]
         if student == False:
-            html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+            html_code = flask.render_template('error_handling/db_error.html')
             response = flask.make_response(html_code)
             return response
     else:
@@ -350,3 +333,21 @@ def cancel_appointment():
 
     return flask.redirect(flask.url_for(f"{user[1]}view"))
 
+@app.route('/edit_appointment', methods=['POST'])
+def edit_appointment():
+    username = auth.authenticate()
+    authorize(username)
+    date = flask.request.form['date']
+    prev_time = flask.request.form['prev-time'][:-3] # remove seconds
+    tutor = flask.request.form['tutor_netid']
+    new_time = flask.request.form['new-time'][:-3] # remove seconds
+    
+    datetime_str = f"{date} {new_time}"
+    new_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+
+    datetime_str = f"{date} {prev_time}"
+    prev_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
+   
+    db_modify.modify_appointment_time(prev_time, new_time, tutor)
+
+    return flask.redirect('/tutorview')
