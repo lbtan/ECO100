@@ -1,4 +1,3 @@
-/* Based on some code from ChatGPT */
 $(document).ready(function(){
 
     function show_appt() {
@@ -8,7 +7,8 @@ $(document).ready(function(){
             time: $(this).data('time')
         };
         var urlParams = $.param(params);
-
+        
+        // Modal (popup) code from ChatGPT
         // Load the popup HTML using AJAX
         $.get('/appointment_popup?' + urlParams, function(html) {
             // Create a jQuery object from the HTML string

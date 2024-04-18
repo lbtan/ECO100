@@ -60,7 +60,7 @@
                 <ul class="list-group list-group-flush">
                     {% for date, time, tutor in cur_appointments %}
                     <li class="list-group-item">
-                        {{date}} {{time}} with {{tutor}}
+                        {{date.strftime('%A, %B %d')}} at {{time}} with {{tutor}}
                         <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{time}}">View/Cancel</button> 
                     </li>
                     {% endfor %}

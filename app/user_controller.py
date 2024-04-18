@@ -351,4 +351,3 @@ def edit_appointment():
     db_modify.modify_appointment_time(prev_time, new_time, tutor)
 
     return flask.redirect('/tutorview')
-
