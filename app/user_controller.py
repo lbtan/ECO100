@@ -27,6 +27,9 @@ ssl._create_default_https_context = ssl._create_stdlib_context
 
 # for testing purposes
 testing_ids = db_queries.get_testing_ids()
+student_ids = utils.get_student_ids()
+tutor_ids = utils.get_tutor_ids()
+admin_ids = []
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
@@ -56,9 +59,15 @@ def index():
 @app.route('/user_type', methods = ['GET'])
 def user_type():
     username = auth.authenticate()
-    print(username)
-    authorize(username)
-    html_code = flask.render_template('user_type.html')  
+    if username in testing_ids:
+        html_code = flask.render_template('user_type.html')  
+    elif username in student_ids:
+        return flask.redirect(flask.url_for('studentview'))
+    elif username in tutor_ids:
+        return flask.redirect(flask.url_for('tutorview'))
+    elif username in admin_ids:
+        return flask.redirect(flask.url_for('tutorview'))
+    elif 
     response = flask.make_response(html_code)
     return response
 
