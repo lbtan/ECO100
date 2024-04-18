@@ -25,7 +25,7 @@ ssl._create_default_https_context = ssl._create_stdlib_context
 #----------------------------------------------------------------------#
 
 # for testing purposes
-testing_ids = ['at6145', 'sm8765', 'hg7270', 'hd5234', 'anaikam']
+testing_ids = db_queries.get_testing_ids()
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
@@ -87,7 +87,6 @@ def studentview():
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
     
-    booked_appointments = db_student.get_cur_appoinments_student()
     available_appointments = db_student.get_times_students()
     chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
     unique_names = set()
@@ -113,6 +112,10 @@ def studentview():
                                       appointments_by_date=chronological_appointments, names_bios = names_bios)
     response = flask.make_response(html_code)
 
+    response.set_cookie('user_name', user[0])
+    response.set_cookie('user_type', user[1])
+    response.set_cookie('user_netid', user[2])
+    return response
 
 
 #-----------------------------------------------------------------------
@@ -161,11 +164,16 @@ def tutor_bio_edit_submit():
 def adminview():
     username = auth.authenticate()
     authorize(username)
+    try:
+        upload_message = flask.request.args.get('upload_message')
+    except:
+        pass
+
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
     user = (username, 'admin', username)
 
-    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times)
+    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times, upload_message=upload_message)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -193,25 +201,44 @@ def appointment_popup():
 
     user = get_user_from_cookies()
 
+    # Find the appointment
     datetime_str = f"{date} {time}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
     appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
     if appts[0] == False:
-        html_code = flask.render_template('error_handling/db_error.html')
+        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
         response = flask.make_response(html_code)
         return response
     appt = appts[0] # should only match one appointment
 
+    # If the user is a tutor and this is not their appointment, they cannot access its details
+    if user[1] == "tutor" and user[2] != appt.get_tutor_netid():
+        html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
+        response = flask.make_response(html_code)
+        return response
+    
+    # If the user is a student and they already have an appointment booked, they cannot access this one
+    if user[1] == "student":
+        booked_appointments = db_student.get_cur_appoinments_student()
+        cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
+        if len(cur_appointments) > 0 and appt.get_student_netid() != user[2]:
+            html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
+            response = flask.make_response(html_code)
+            return response
+
+    # Get the details of the tutor for this appointment
     tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
     if tutor == False:
-        html_code = flask.render_template('error_handling/db_error.html')
+        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
         response = flask.make_response(html_code)
         return response
 
+    # If the appointment is booked, get the details of the student for this appointment
     if appt.get_student_netid():
+        print(appt.get_student_netid())
         student = db_queries.get_user_info({"netid": appt.get_student_netid(), "user_type": "student"})[0]
         if student == False:
-            html_code = flask.render_template('error_handling/db_error.html')
+            html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
             response = flask.make_response(html_code)
             return response
     else:
@@ -291,12 +318,14 @@ def upload():
     username = auth.authenticate()
     authorize(username)
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
-    uploaded_file = flask.request.files['file']
-
-    # not working yet
-    print(uploaded_file.filename)
-
-    return flask.redirect(flask.url_for('adminview'))
+    user_type = flask.request.form['user_type']
+    uploaded_file = flask.request.files['users_file']
+    filename = uploaded_file.filename
+    if filename == '' or os.path.splitext(filename)[-1] != 'csv':
+        message = 'Please upload a valid .csv file.'
+    else:
+        message = backend_admin.import_users(uploaded_file, user_type, "1")
+    return flask.redirect(flask.url_for('adminview', upload_message=message))
 
 @app.route('/add_appointment')
 def add_appointment():
