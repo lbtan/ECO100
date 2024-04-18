@@ -74,3 +74,17 @@ def available_appointments_by_time(appointments, booked_appts):
         appointments_by_date[date_key][tutor].append(time_str)
     
     return appointments_by_date
+
+def group_by_week(appointments):
+    """
+    Given a list of appointments for each date, returns them
+    chronologically grouped by week. (Hita)
+    """
+    weekly_appointments = defaultdict(lambda: defaultdict(list))
+    for date, appts in appointments.items():
+        week = date.isocalendar()[:2] # https://stackoverflow.com/questions/29260224/how-to-group-and-count-events-by-week
+        if week not in weekly_appointments:
+            weekly_appointments[week] = []
+        weekly_appointments[week].append({date: appts})
+
+    return weekly_appointments

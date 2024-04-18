@@ -89,6 +89,7 @@ def studentview():
     
     available_appointments = db_student.get_times_students()
     chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
+    weekly_appointments = utils.group_by_week(chronological_appointments)
 
     html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
                                       can_book = len(cur_appointments) == 0,
@@ -116,6 +117,8 @@ def tutorview():
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments)
+    weekly_appointments = utils.group_by_week(apt_times)
+
     html_code = flask.render_template('tutor/tutorview.html', appointments_by_date=apt_times, user=user, apt_tutor=apt_tutor)
     response = flask.make_response(html_code)
 
@@ -147,6 +150,8 @@ def tutor_bio_edit_submit():
 def adminview():
     username = auth.authenticate()
     authorize(username)
+    user = (username, 'admin', username)
+
     try:
         upload_message = flask.request.args.get('upload_message')
     except:
@@ -154,7 +159,7 @@ def adminview():
 
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
-    user = (username, 'admin', username)
+    weekly_appointments = utils.group_by_week(apt_times)
 
     html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times, upload_message=upload_message)
     response = flask.make_response(html_code)
