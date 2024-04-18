@@ -23,7 +23,7 @@ def appointments_by_tutor(appointments, userId):
     tutor_appointments = []
     for appt_time, tutor_netid, booked, student_netid in appointments:
         if booked and tutor_netid == userId:
-            formatted_date = appt_time.strftime('%Y-%m-%d')  
+            formatted_date = appt_time.date()
             formatted_time = appt_time.strftime('%I:%M %p')  
             tutor_appointments.append((formatted_date, formatted_time, student_netid))
     sorted_appointments = sorted(tutor_appointments, key=lambda x: x[0])
