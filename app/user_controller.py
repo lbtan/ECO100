@@ -90,16 +90,29 @@ def studentview():
     booked_appointments = db_student.get_cur_appoinments_student()
     available_appointments = db_student.get_times_students()
     chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
+    unique_names = set()
 
+    # Iterate through the outer dictionary to access each inner dictionary
+    for date, names_dict in chronological_appointments.items():
+        # Add each key (name) from the inner dictionary to the set (automatically handles uniqueness)
+        unique_names.update(names_dict.keys())
+
+    # Print or return the unique names
+    print(unique_names)
+
+    names_bios = {}
+    for curr_user in unique_names:
+        bio = db_queries.get_tutor_bio(curr_user)
+        if bio[0] == False:
+            html_code = flask.render_template('error_handling/db_error.html')
+            response = flask.make_response(html_code)
+            return response
+        names_bios[curr_user] = bio
     html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
                                       can_book = len(cur_appointments) == 0,
-                                      appointments_by_date=chronological_appointments)
+                                      appointments_by_date=chronological_appointments, names_bios = names_bios)
     response = flask.make_response(html_code)
 
-    response.set_cookie('user_name', user[0])
-    response.set_cookie('user_type', user[1])
-    response.set_cookie('user_netid', user[2])
-    return response
 
 
 #-----------------------------------------------------------------------
