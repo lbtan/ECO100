@@ -78,11 +78,16 @@ $(document).ready(function(){
                 calendars[i].style.display = "none";
             }
         }
-
+        
+        var prevWeekNum = parseInt(week) - 1;
         var prevWeekButton = document.getElementById('prev-week');
-        prevWeekButton.setAttribute('data-week', parseInt(week) - 1);
+        prevWeekButton.setAttribute('data-week', prevWeekNum);
+        prevWeekButton.disabled = prevWeekNum < 0 || prevWeekNum > calendars.length - 1 ? true : false;
+        
+        var nextWeekNum = parseInt(week) + 1;
         var nextWeekButton = document.getElementById('next-week');
-        nextWeekButton.setAttribute('data-week', parseInt(week) + 1); 
+        nextWeekButton.setAttribute('data-week', nextWeekNum);
+        nextWeekButton.disabled = nextWeekNum < 0 || nextWeekNum > calendars.length - 1 ? true : false;
     };
     
     for (var i = 0; i < elements.length; i++) {

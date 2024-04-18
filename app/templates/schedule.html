@@ -8,7 +8,7 @@
 <h3>The calendar is currently disabled as you can only book one appointment per week.</h3>
 {% endif %}
 
-<button class="btn warm-btn update-week-calendar" data-week="-1" id="prev-week">Previous Week</button>
+<button class="btn warm-btn update-week-calendar" data-week="-1" id="prev-week" disabled>Previous Week</button>
 <button class="btn warm-btn update-week-calendar" data-week="1" id="next-week">Next Week</button>
 
 {% for appointments_by_date in weekly_appointments %}
