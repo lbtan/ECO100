@@ -351,3 +351,16 @@ def edit_appointment():
     db_modify.modify_appointment_time(prev_time, new_time, tutor)
 
     return flask.redirect('/tutorview')
+
+@app.route('/delete_appointment')
+def delete_appointment():
+    username = auth.authenticate()
+    authorize(username)
+    time = flask.request.args.get('time')
+    tutor = flask.request.args.get('tutor_netid')
+    user = get_user_from_cookies()
+    
+    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+    db_modify.delete_appointment(time, tutor)
+
+    return flask.redirect(flask.url_for(f"{user[1]}view"))

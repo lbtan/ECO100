@@ -65,6 +65,11 @@
                     <input type="submit" value="Edit Appointment">
                 </form>
 
+                <br>
+
+                <hr>
+                <a href="{{url_for('delete_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Delete Appointment</a>
+
                 <!-- Popup for everyone else is locked  -->
                 {% else %}
                     <form action="/appointment_confirm" method="post">
