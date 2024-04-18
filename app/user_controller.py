@@ -204,7 +204,7 @@ def appointment_popup():
     if user[1] == "student":
         booked_appointments = db_student.get_cur_appoinments_student()
         cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
-        if len(cur_appointments) > 0:
+        if len(cur_appointments) > 0 and appt.get_student_netid() != user[2]:
             html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
             response = flask.make_response(html_code)
             return response
