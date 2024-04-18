@@ -83,8 +83,6 @@ def group_by_week(appointments):
     weekly_appointments = defaultdict(lambda: defaultdict(list))
     for date, appts in appointments.items():
         week = date.isocalendar()[:2] # https://stackoverflow.com/questions/29260224/how-to-group-and-count-events-by-week
-        if week not in weekly_appointments:
-            weekly_appointments[week] = []
-        weekly_appointments[week].append({date: appts})
+        weekly_appointments[week][date] = appts
 
     return weekly_appointments

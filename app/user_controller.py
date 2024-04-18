@@ -119,7 +119,7 @@ def tutorview():
     apt_times = utils.appointments_by_time(appointments)
     weekly_appointments = utils.group_by_week(apt_times)
 
-    html_code = flask.render_template('tutor/tutorview.html', appointments_by_date=apt_times, user=user, apt_tutor=apt_tutor)
+    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])

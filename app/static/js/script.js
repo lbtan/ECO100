@@ -60,6 +60,29 @@ $(document).ready(function(){
         });
     }
 
+    // https://stackoverflow.com/questions/19655189/javascript-click-event-listener-on-class
+    var elements = document.getElementsByClassName("calendar-choose-week");
+
+    var showCalendar = function() {
+        var week = this.getAttribute("data-week");
+        
+        // show current calendar
+        document.getElementById(week + "-calendar").style.display = "block";
+        
+        // hide other calendars
+        // https://stackoverflow.com/questions/5248703/id-ends-with-in-pure-javascript
+        var calendars = document.querySelectorAll("[id$=calendar]")
+        for (var i = 0; i < calendars.length; i++) {
+            if (calendars[i].id != week + "-calendar") {
+                calendars[i].style.display = "none";
+            }
+        }
+    };
+    
+    for (var i = 0; i < elements.length; i++) {
+        elements[i].addEventListener('click', showCalendar, false);
+    }
+
     // Event binding for button click
     $('.time-slot').click(show_appt);
     $('.view-cancel').click(show_appt);
