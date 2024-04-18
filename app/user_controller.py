@@ -1,3 +1,4 @@
+
 #-----------------------------------------------------------------------
 # user_controller.py
 # Authors: Libo Tan
@@ -26,6 +27,16 @@ ssl._create_default_https_context = ssl._create_stdlib_context
 
 # for testing purposes
 testing_ids = db_queries.get_testing_ids()
+student_ids = utils.get_student_ids()
+tutor_ids = utils.get_tutor_ids()
+admin_ids = utils.get_admin_ids()
+# Role to ID mapping
+id_map = {
+    'testing': testing_ids,
+    'student': student_ids,
+    'tutor': tutor_ids,
+    'admin': admin_ids
+}
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
@@ -35,13 +46,38 @@ os.environ['APP_SECRET_KEY']
 app.secret_key = os.environ['APP_SECRET_KEY']
 
 
-#-----------------------------------------------------------------------
+#-----------------------------------------------------------------------#
 
-def authorize(username):
-    if username not in testing_ids:
-        html = flask.render_template('error_handling/unauth.html')
-        response = flask.make_response(html)
-        flask.abort(response)
+def failed_authorize():
+    """
+    Failed authen
+    """
+    html = flask.render_template('error_handling/unauth.html')
+    response = flask.make_response(html)
+    flask.abort(response)
+
+
+#-----------------------------------------------------------------------#
+
+def authorize(username, type):
+    """
+    Check if the user has access to each page.
+    """
+    # Special access for "testing" type
+    if username in testing_ids:
+        print(f"Authorization granted: {username} as tester.")
+        return True
+    # Check if the type is valid
+    if type not in id_map:
+        print(f"Authorization error: Unknown type '{type}'.")
+        failed_authorize()
+    # Retrieve the correct ID list based on the type
+    role_ids = id_map[type]
+    if username not in role_ids:
+        print(f"Authorization failed for user '{username}'. Not found in '{type}_ids'.")
+        failed_authorize()
+    print(f"Authorization successful for {username}.")
+
 
 #----------------------------------------------------------------------#
 
@@ -54,10 +90,20 @@ def index():
 
 @app.route('/user_type', methods = ['GET'])
 def user_type():
+    """
+    Direct user to respective view of different pages.
+    """
     username = auth.authenticate()
-    print(username)
-    authorize(username)
-    html_code = flask.render_template('user_type.html')  
+    if username in testing_ids:
+        html_code = flask.render_template('user_type.html')  
+    elif username in student_ids:
+        return flask.redirect(flask.url_for('studentview'))
+    elif username in tutor_ids:
+        return flask.redirect(flask.url_for('tutorview'))
+    elif username in admin_ids:
+        return flask.redirect(flask.url_for('adminview'))
+    else:
+        failed_authorize()
     response = flask.make_response(html_code)
     return response
 
@@ -80,7 +126,7 @@ def logoutcas():
 @app.route('/studentview')
 def studentview():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "student")
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
     user = ("Harry Potter", 'student', "hpotter")
@@ -91,9 +137,27 @@ def studentview():
     chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
     weekly_appointments = utils.group_by_week(chronological_appointments)
 
+    unique_names = set()
+
+    # Iterate through the outer dictionary to access each inner dictionary
+    for date, names_dict in chronological_appointments.items():
+        # Add each key (name) from the inner dictionary to the set (automatically handles uniqueness)
+        unique_names.update(names_dict.keys())
+
+    # Print or return the unique names
+    print(unique_names)
+
+    names_bios = {}
+    for curr_user in unique_names:
+        bio = db_queries.get_tutor_bio(curr_user)
+        if bio[0] == False:
+            html_code = flask.render_template('error_handling/db_error.html')
+            response = flask.make_response(html_code)
+            return response
+        names_bios[curr_user] = bio
     html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
                                       can_book = len(cur_appointments) == 0,
-                                      appointments_by_date=chronological_appointments)
+                                      appointments_by_date=chronological_appointments, names_bios = names_bios)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -109,7 +173,7 @@ def studentview():
 @app.route('/tutorview')
 def tutorview():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "tutor")
     appointments = db_tutor.get_times_tutors()
     # user id info
     #TODO fetch info from CAS
@@ -129,6 +193,8 @@ def tutorview():
 
 @app.route('/tutor_bio_edit')
 def tutor_bio_edit():
+    username = auth.authenticate()
+    authorize(username, "tutor")
     tutor_netid = flask.request.args.get('tutor_netid')
     bio = db_queries.get_tutor_bio(tutor_netid)
     html_code = flask.render_template('tutor/tutor_bio_edit.html', tutor_netid=tutor_netid, bio=bio)
@@ -149,7 +215,8 @@ def tutor_bio_edit_submit():
 @app.route('/adminview')
 def adminview():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, 'admin')
+    
     user = (username, 'admin', username)
 
     try:
@@ -182,7 +249,7 @@ def get_user_from_cookies():
 @app.route('/appointment_popup')
 def appointment_popup():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "tutor")
     tutor = flask.request.args.get('tutor_netid')
     date = flask.request.args.get('date')
     time = flask.request.args.get('time')
@@ -240,7 +307,7 @@ def appointment_popup():
 @app.route('/appointment_confirm', methods=['POST'])
 def appointment_confirm():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "student")
     date = flask.request.form.get('date')
     time = flask.request.form.get('time')
     tutor_netid = flask.request.form.get('tutor_netid')
@@ -261,7 +328,7 @@ def appointment_confirm():
 @app.route('/weekly_summary')
 def weekly_summary():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "admin")
     user = get_user_from_cookies()
 
     # for now everything is under coursenum 1, and all data is under March 2025
@@ -278,7 +345,7 @@ def weekly_summary():
 @app.route('/tutor_overview')
 def tutor_overview():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "admin")
     user = get_user_from_cookies()
     users = db_queries.get_user_info({"user_type": "tutor", "coursenum": "1"})
     if users[0] == False:
@@ -304,7 +371,7 @@ def tutor_overview():
 @app.route('/upload', methods=["POST"])
 def upload():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "admin")
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
     user_type = flask.request.form['user_type']
     uploaded_file = flask.request.files['users_file']
@@ -318,7 +385,7 @@ def upload():
 @app.route('/add_appointment')
 def add_appointment():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "tutor")
     tutor = flask.request.args.get('tutor_netid')
     date = flask.request.args.get('date')
     user = get_user_from_cookies()
@@ -330,7 +397,7 @@ def add_appointment():
 @app.route('/add_appt_submit', methods=['POST'])
 def add_appt_submit():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "tutor")
     date = flask.request.form['date']
     time = flask.request.form['time']
     tutor = flask.request.form['tutor']
@@ -345,7 +412,7 @@ def add_appt_submit():
 @app.route('/cancel_appointment')
 def cancel_appointment():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, "tutor")
     time = flask.request.args.get('time')
     tutor = flask.request.args.get('tutor_netid')
     user = get_user_from_cookies()
@@ -354,4 +421,3 @@ def cancel_appointment():
     db_modify.cancel_appointment(time, tutor)
 
     return flask.redirect(flask.url_for(f"{user[1]}view"))
-

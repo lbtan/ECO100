@@ -9,6 +9,7 @@
 from collections import defaultdict
 from collections import Counter
 import datetime
+import models.db_queries as db_queries
 
 #-----------------------------------------------------------------------
 
@@ -93,3 +94,38 @@ def group_by_week(appointments):
         weeks.add(week) # this week has been seen
 
     return weekly_appointments
+
+def get_tutor_ids():
+    """
+    Get all tutor ids in database
+    """
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "tutor"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
+
+def get_student_ids():
+    """
+    
+    Get all tutor id in database
+    """
+
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "student"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
+
+
+def get_admin_ids():
+    """
+    
+    Get all tutor id in database
+    """
+
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "admin"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
