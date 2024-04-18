@@ -1,6 +1,6 @@
 <!-- =========================================================== -->
 <!-- appointment_popup.html                                      -->
-<!-- Author: Hita Gupta                                          -->
+<!-- Author: Hita Gupta and Sofia Marina                         -->
 <!-- =========================================================== -->
 
 <!-- Modal code based on code from ChatGPT -->
@@ -8,23 +8,29 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="modelLabel">Appointment Details ({{"Booked" if appointment.get_booked() else "Available"}}):</h5>
+                <h4 class="modal-title" id="modelLabel">{% if not error %}Appointment Details ({{"Booked" if appointment.get_booked() else "Available"}}){% else %}Unauthorized{% endif %}:</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
 
-                <form action="/appointment_confirm" method="post">
+                {% if error %}
+                {{error}}
+                {% else %}
+                
+                <!-- Unbooked popup for tutors, lets them change time  -->
+                {% if user[1] == "tutor" and not appointment.get_booked() %}
+                <form action="/edit_appointment" method="post">
 
                     <label for="appt-date">Appointment Date:</label>
                     <br>
-                    <input type="date" name="appt-date" value="{{date}}" disabled>
+                    <input type="date" name="appt-date" value="{{date}}">
                     <br>
                     
                     <label for="appt-time">Appointment Time:</label>
                     <br>
-                    <input type="time" name="appt-time" value="{{appointment.get_time().time()}}" disabled>
+                    <input type="time" name="new-time" value="{{appointment.get_time().time()}}">
                     <br>
                     
                     <label for="tutor_name">Tutor Name:</label>
@@ -44,28 +50,80 @@
                     <label for="comments">Comments for Appointment:</label>
                     <br>
                     {% if user[1] != "student" or appointment.get_booked() %}
-                        <input type="textarea" name="comments" value="{{appointment.get_comments() if appointment.get_comments() else ''}}" disabled>
+                        <textarea class="textarea" name="comments" cols="30" rows="3" disabled>{{appointment.get_comments() if appointment.get_comments() else ''}}</textarea>
                     {% else %}
-                        <input type="textarea" name="comments">  
+                        <textarea class="textarea" name="comments" cols="30" rows="3"></textarea>
                     {% endif %}
                     <br>
-        
-                    {% if user[1] == "student" and not appointment.get_booked() %}
+    
                     <input type="hidden" name="date" value="{{date}}">
-                    <input type="hidden" name="time" value="{{appointment.get_time().time()}}">
+                    <input type="hidden" name="prev-time" value="{{appointment.get_time().time()}}">
+                    <input type="hidden" name="new-time" value="{{appointment.get_time().time()}}">
                     <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
                     <input type="hidden" name="tutor_name" value="{{tutor.get_name()}}">
                     <input type="hidden" name="student_netid" value="{{user[2]}}">
-                    <input type="submit" value="Submit">
-                    {% endif %}
-        
-                    <br>
-        
-                    {% if appointment.get_booked() and (user[2] == appointment.get_student_netid() or user[2] == appointment.get_tutor_netid()) %}
-                    <hr>
-                    <a href="{{url_for('cancel_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Cancel appointment</a>
-                    {% endif %}
-                </form>        
+                    <input type="submit" value="Edit Appointment">
+                </form>
+
+                <br>
+
+                <hr>
+                <a href="{{url_for('delete_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Delete Appointment</a>
+
+                <!-- Popup for everyone else is locked  -->
+                {% else %}
+                    <form action="/appointment_confirm" method="post">
+
+                        <label for="appt-date">Appointment Date:</label>
+                        <br>
+                        <input type="date" name="appt-date" value="{{date}}" disabled>
+                        <br>
+                        
+                        <label for="appt-time">Appointment Time:</label>
+                        <br>
+                        <input type="time" name="appt-time" value="{{appointment.get_time().time()}}" disabled>
+                        <br>
+                        
+                        <label for="tutor_name">Tutor Name:</label>
+                        <br>
+                        <input type="text" value="{{tutor.get_name()}}" disabled>
+                        <br>
+                        
+                        <label for="student_name">Student Name:</label>
+                        <br>
+                        {% if user[1] != "student" or appointment.get_booked() %}
+                            <input type="text" name="student_name" value="{{student.get_name() if student else ''}}" disabled>
+                        {% else %}
+                            <input type="text" name="student_name" value="{{user[0]}}" disabled>
+                        {% endif %}
+                        <br>
+            
+                        <label for="comments">Comments for Appointment:</label>
+                        <br>
+                        {% if user[1] != "student" or appointment.get_booked() %}
+                            <textarea class="textarea" name="comments" cols="30" rows="3" disabled>{{appointment.get_comments() if appointment.get_comments() else ''}}</textarea>
+                        {% else %}
+                            <textarea class="textarea" name="comments" cols="30" rows="3"></textarea>
+                        {% endif %}
+                        <br>
+            
+                        {% if user[1] == "student" and not appointment.get_booked() %}
+                        <input type="hidden" name="date" value="{{date}}">
+                        <input type="hidden" name="time" value="{{appointment.get_time().time()}}">
+                        <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
+                        <input type="hidden" name="tutor_name" value="{{tutor.get_name()}}">
+                        <input type="hidden" name="student_netid" value="{{user[2]}}">
+                        <input type="submit" value="Submit">
+                        {% endif %}    
+                        <br>
+            
+                        {% if appointment.get_booked() and (user[2] == appointment.get_student_netid() or user[2] == appointment.get_tutor_netid()) %}
+                        <hr>
+                        <a href="{{url_for('cancel_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Cancel appointment</a>
+                        {% endif %}
+                    </form>
+                {% endif %}  
+                {% endif %}        
             </div>
         </div>
     </div>

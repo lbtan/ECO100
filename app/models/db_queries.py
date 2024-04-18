@@ -172,6 +172,34 @@ def get_tutor_bio(tutor_netid):
 
     return row.bio
 
+def get_testing_ids():
+    testing_ids = []
+
+    try:
+        _engine = sqlalchemy.create_engine(_DATABASE_URL)
+
+        try:
+
+            with sqlalchemy.orm.Session(_engine) as session:
+
+                query = session.query(database.User).filter(
+                    database.User.user_type == "tester"
+                )
+
+                table = query.all()
+
+                for row in table:
+                    testing_ids.append(row.netid)
+        
+        finally:
+            _engine.dispose()
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        return [False, str(ex)]
+
+    return testing_ids
+
 #-----------------------------------------------------------------------
 
 # For testing:

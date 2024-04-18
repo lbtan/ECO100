@@ -12,13 +12,17 @@ import datetime
 
 def import_users(csv_path, user_type, coursenum):
     df = pd.read_csv(csv_path)
-    netids = df.iloc[:, 0].tolist()
-    for netid in netids:
-        if len(netid) > 15:
-            continue
-
-        db_modify.add_user(netid, user_type, coursenum, 
-                           f"Dummy_Name For_{netid}")
+    for _, row in df.iterrows():
+        try:
+            name = row['Name']
+            netid = row['Netid']
+            if type(name) != str or len(netid) > 15:
+                continue
+            db_modify.add_user(netid, user_type, coursenum, name)
+        except:
+            return 'Unable to process. Please make sure your file contains two columns, Name and Netid.'
+    
+    return 'Succesfully uploaded and processed file.'
 
 def weekly_summary(coursenum, today=datetime.date.today()):
     week_before = today - datetime.timedelta(days=7)
