@@ -61,29 +61,35 @@ $(document).ready(function(){
     }
 
     // https://stackoverflow.com/questions/19655189/javascript-click-event-listener-on-class
-    var elements = document.getElementsByClassName("calendar-choose-week");
+    var elements = document.getElementsByClassName("update-week-calendar");
 
     var showCalendar = function() {
         var week = this.getAttribute("data-week");
-        
-        // show current calendar
-        document.getElementById(week + "-calendar").style.display = "block";
-        
+        var calendar = document.getElementById("calendar-" + week);
+
+        calendar.style.display = "block";
+
         // hide other calendars
-        // https://stackoverflow.com/questions/5248703/id-ends-with-in-pure-javascript
-        var calendars = document.querySelectorAll("[id$=calendar]")
+        // https://stackoverflow.com/questions/10111668/find-all-elements-whose-id-begins-with-a-common-string
+        var calendars = document.querySelectorAll('[id^="calendar-"]');
+        console.log(calendars);
         for (var i = 0; i < calendars.length; i++) {
-            if (calendars[i].id != week + "-calendar") {
+            if (calendars[i].id != "calendar-" + week) {
                 calendars[i].style.display = "none";
             }
         }
+
+        var prevWeekButton = document.getElementById('prev-week');
+        prevWeekButton.setAttribute('data-week', parseInt(week) - 1);
+        var nextWeekButton = document.getElementById('next-week');
+        nextWeekButton.setAttribute('data-week', parseInt(week) + 1); 
     };
     
     for (var i = 0; i < elements.length; i++) {
         elements[i].addEventListener('click', showCalendar, false);
     }
 
-    document.getElementById("2025-12-calendar").style.display = "block";
+    document.getElementById("calendar-0").style.display = "block";
 
     // Event binding for button click
     $('.time-slot').click(show_appt);

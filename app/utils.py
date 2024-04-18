@@ -80,9 +80,16 @@ def group_by_week(appointments):
     Given a list of appointments for each date, returns them
     chronologically grouped by week. (Hita)
     """
-    weekly_appointments = defaultdict(lambda: defaultdict(list))
+    weekly_appointments = []
+    weeks = set()
     for date, appts in appointments.items():
         week = date.isocalendar()[:2] # https://stackoverflow.com/questions/29260224/how-to-group-and-count-events-by-week
-        weekly_appointments[week][date] = appts
+        
+        # if this date is in a new week, then create a new dictionary
+        if week not in weeks:
+            weekly_appointments.append({})
+        weekly_appointments[-1][date] = appts
+        
+        weeks.add(week) # this week has been seen
 
     return weekly_appointments

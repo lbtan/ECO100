@@ -8,13 +8,12 @@
 <h3>The calendar is currently disabled as you can only book one appointment per week.</h3>
 {% endif %}
 
-<button class="btn warm-btn calendar-choose-week" data-week="2025-12">Current Week</button>
-<button class="btn warm-btn calendar-choose-week" data-week="2025-13">Next Week</button>
-<button class="btn warm-btn calendar-choose-week" data-week="2025-14">Two Weeks</button>
+<button class="btn warm-btn update-week-calendar" data-week="-1" id="prev-week">Previous Week</button>
+<button class="btn warm-btn update-week-calendar" data-week="1" id="next-week">Next Week</button>
 
-{% for week, appointments_by_date in weekly_appointments.items() %}
+{% for appointments_by_date in weekly_appointments %}
 
-<div id="{{week[0]}}-{{week[1]}}-calendar" style="display:none">
+<div id="calendar-{{loop.index0}}" style="display:none">
 
 {% for date, tutors in appointments_by_date.items() %}
 <table class="col-md-8" border="1">
