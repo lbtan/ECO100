@@ -55,7 +55,6 @@ def index():
 @app.route('/user_type', methods = ['GET'])
 def user_type():
     username = auth.authenticate()
-    print(username)
     authorize(username)
     html_code = flask.render_template('user_type.html')  
     response = flask.make_response(html_code)
