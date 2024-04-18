@@ -2,7 +2,7 @@
 
 #-----------------------------------------------------------------------
 # db_modify.py
-# Author: Hita Gupta
+# Author: Hita Gupta and Sofia Marina
 #-----------------------------------------------------------------------
 
 import sys
@@ -116,6 +116,43 @@ def add_appointment(time, tutor_netid):
             session.commit()
 
         _engine.dispose()
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        # sys.exit(1)
+
+def modify_appointment_time(prev_time, new_time, tutor_netid):
+    try:
+        _engine = sqlalchemy.create_engine(_DATABASE_URL)
+
+        try:
+            with sqlalchemy.orm.Session(_engine) as session:
+
+                # check if appointment at new time already exists
+                query_new = (session.query(database.Appointment)
+                    .filter(database.Appointment.tutor_netid == tutor_netid)
+                    .filter(database.Appointment.time == new_time))
+                
+                if query_new.count() > 0:
+                    _engine.dispose()
+                    raise Exception(("Appointment at {} with {} already " +
+                                    "exists").format(new_time, tutor_netid))
+                
+                # check for existing appointment at old time
+                query_prev = (session.query(database.Appointment)
+                    .filter(database.Appointment.tutor_netid == tutor_netid)
+                    .filter(database.Appointment.time == prev_time))
+                
+                if query_prev.count() == 0:
+                    raise Exception(("Appointment at {} with {} does" +
+                                    "not exist").format(prev_time, tutor_netid))
+                
+                appointment = query_prev.one()
+                appointment.time = new_time
+
+                session.commit()
+        finally:
+            _engine.dispose()
 
     except Exception as ex:
         print(ex, file=sys.stderr)
