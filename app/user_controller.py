@@ -161,7 +161,7 @@ def adminview():
     apt_times = utils.appointments_by_time(appointments)
     weekly_appointments = utils.group_by_week(apt_times)
 
-    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times, upload_message=upload_message)
+    html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, upload_message=upload_message)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])

@@ -83,6 +83,8 @@ $(document).ready(function(){
         elements[i].addEventListener('click', showCalendar, false);
     }
 
+    document.getElementById("2025-12-calendar").style.display = "block";
+
     // Event binding for button click
     $('.time-slot').click(show_appt);
     $('.view-cancel').click(show_appt);
