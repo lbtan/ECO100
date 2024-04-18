@@ -135,6 +135,8 @@ def studentview():
     
     available_appointments = db_student.get_times_students()
     chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
+    weekly_appointments = utils.group_by_week(chronological_appointments)
+
     unique_names = set()
 
     # Iterate through the outer dictionary to access each inner dictionary
@@ -179,7 +181,9 @@ def tutorview():
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments)
-    html_code = flask.render_template('tutor/tutorview.html', appointments_by_date=apt_times, user=user, apt_tutor=apt_tutor)
+    weekly_appointments = utils.group_by_week(apt_times)
+
+    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -211,7 +215,10 @@ def tutor_bio_edit_submit():
 @app.route('/adminview')
 def adminview():
     username = auth.authenticate()
-    authorize(username, "admin")
+    authorize(username, 'admin')
+    
+    user = (username, 'admin', username)
+
     try:
         upload_message = flask.request.args.get('upload_message')
     except:
@@ -219,9 +226,9 @@ def adminview():
 
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
-    user = (username, 'admin', username)
+    weekly_appointments = utils.group_by_week(apt_times)
 
-    html_code = flask.render_template('admin/adminview.html', user=user, appointments_by_date=apt_times, upload_message=upload_message)
+    html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, upload_message=upload_message)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
