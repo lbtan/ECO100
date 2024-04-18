@@ -51,7 +51,7 @@ def appointments_by_student(appointments, studentId):
     student_appointments = []
     for time, student_netid, tutor_netid, comments in appointments:
         if student_netid == studentId:
-            formatted_date = time.strftime('%Y-%m-%d')
+            formatted_date = time.date()
             formatted_time = time.strftime('%I:%M %p')
             student_appointments.append((formatted_date, formatted_time, tutor_netid))
     sorted_appointments = sorted(student_appointments, key=lambda x: x[0])
