@@ -98,3 +98,16 @@ def get_student_ids():
     for user_id in user_ids:
         tutor_ids.append(user_id.get_netid())
     return tutor_ids
+
+
+def get_admin_ids():
+    """
+    
+    Get all tutor id in database
+    """
+
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "admin"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
