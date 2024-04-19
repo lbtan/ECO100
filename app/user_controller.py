@@ -246,7 +246,8 @@ def tutor_bio_edit_submit():
     tutor_netid = flask.request.form.get('tutor_netid')
     bio = flask.request.form.get('bio')
     db_modify.update_tutor_bio(tutor_netid, bio)
-    return flask.redirect(flask.url_for('tutorview'))
+    user = get_user_from_cookies()
+    return flask.redirect(flask.url_for('tutorview', netid=user[2]))
 
 @app.route('/confirm_copy_times')
 def confirm_copy_times():
@@ -267,7 +268,6 @@ def confirm_copy_times():
 def copy_prev_week():
     username = auth.authenticate()
     authorize(username, 'tutor')
-    user = ("Hermione Granger", 'tutor', "hgranger")
 
     min_date = flask.request.args.get('min_date')
     max_date = flask.request.args.get('max_date')
@@ -276,8 +276,8 @@ def copy_prev_week():
     max_date = datetime.strptime(max_date, '%Y-%m-%d')
 
     db_tutor.copy_prev_week_times(min_date, max_date, user[2])
-
-    return flask.redirect(flask.url_for('tutorview'))
+    user = get_user_from_cookies()
+    return flask.redirect(flask.url_for('tutorview', netid=user[2]))
 
 #-----------------------------------------------------------------------
 
@@ -449,7 +449,8 @@ def upload():
         message = 'Please upload a valid .csv file.'
     else:
         message = backend_admin.import_users(uploaded_file, user_type, "1")
-    return flask.redirect(flask.url_for('adminview', upload_message=message))
+    user = get_user_from_cookies()
+    return flask.redirect(flask.url_for('adminview', netid=user[2], upload_message=message))
 
 @app.route('/add_appointment')
 def add_appointment():
@@ -476,7 +477,8 @@ def add_appt_submit():
    
     db_modify.add_appointment(appt_time, tutor)
 
-    return flask.redirect('/tutorview')
+    user = get_user_from_cookies()
+    return flask.redirect(flask.url_for('tutorview', netid=user[2]))
 
 @app.route('/cancel_appointment')
 def cancel_appointment():
@@ -489,7 +491,7 @@ def cancel_appointment():
     time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
     db_modify.cancel_appointment(time, tutor)
 
-    return flask.redirect(flask.url_for(f"{user[1]}view"))
+    return flask.redirect(flask.url_for(f"{user[1]}view", netid=user[2]))
 
 @app.route('/edit_appointment', methods=['POST'])
 def edit_appointment():
@@ -513,7 +515,8 @@ def edit_appointment():
    
     db_modify.modify_appointment_time(prev_time, new_time, tutor)
 
-    return flask.redirect('/tutorview')
+    user = get_user_from_cookies()
+    return flask.redirect(flask.url_for('tutorview', netid=user[2]))
 
 @app.route('/delete_appointment')
 def delete_appointment():
@@ -526,4 +529,4 @@ def delete_appointment():
     time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
     db_modify.delete_appointment(time, tutor)
 
-    return flask.redirect(flask.url_for(f"{user[1]}view"))
+    return flask.redirect(flask.url_for(f"{user[1]}view", user[2]))
