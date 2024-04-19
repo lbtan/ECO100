@@ -1,9 +1,5 @@
 <h2><span style="color: black;">Schedule (</span><span style="color: #F4A460;">available</span><span style="color: black;">, </span><span style="color: #716e6b;">booked</span><span style="color: black;">)</span></h2>
 
-{% if user[1] == "tutor" %}
-<h3>Click on an existing appointment to view details/cancel. Click '+' to add new appointment time.</h3>
-{% endif %}
-
 {% if user[1] == "student" and not can_book %}
 <h3>The calendar is currently disabled as you can only book one appointment per week.</h3>
 {% endif %}
@@ -14,6 +10,12 @@
 {% for appointments_by_date in weekly_appointments %}
 
 <div id="calendar-{{loop.index0}}" style="display:none">
+
+{% if loop.index0 > 0 %}
+<hr>
+<button class="btn warm-btn copy-times" data-mindate="{{appointments_by_date|min}}" data-maxdate="{{appointments_by_date|max}}">Copy Times From Last Week</button>
+{% endif %}
+<hr>
 
 {% for date, tutors in appointments_by_date.items() %}
 <table class="col-md-8" border="1">
@@ -43,11 +45,20 @@
                         {% endif %}
                     {% endfor %}
                     {% if user[1] == "tutor" and user[2] == tutor %}
-                        <button class="btn warm-btn" onclick="window.location.href='{{ url_for( 'add_appointment', tutor_netid=tutor, date=date ) }}'">+</button>
+                        <button class="btn warm-btn add-time" data-tutor_netid="{{tutor}}" data-date="{{date}}">+</button>
                     {% endif %}    
                 </td>
             </tr>
         {% endfor %}
+
+        {% if user[1] == "tutor" and user[2] not in tutors %}
+        <tr>
+            <td>{{ user[2] }}</td>
+            <td>
+                <button class="btn warm-btn add-time" data-tutor_netid="{{user[2]}}" data-date="{{date}}">+</button>
+            </td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>
 <br> 
@@ -59,3 +70,5 @@
 
 <!-- Include modal container -->
 <div id="modal-container"></div>
+<div id="add-appt-modal-container"></div>
+<div id="copy-times-confirm-container"></div>
