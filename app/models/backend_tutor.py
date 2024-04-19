@@ -10,6 +10,7 @@ import flask
 from . import db_queries
 from . import db_modify
 import datetime 
+from collections import defaultdict
 #-----------------------------------------------------------------------
 today = datetime.date.today()
 today_test = datetime.datetime(2024, 1, 1)
@@ -54,7 +55,10 @@ def copy_prev_week_times(min_date, max_date, tutor_netid):
         db_modify.delete_appointment(appointment.get_time(), appointment.get_tutor_netid())
 
     prev_appointments = db_queries.get_appointments({"tutor": tutor_netid, "start_time": min_date - datetime.timedelta(days=8), "end_time": min_date - datetime.timedelta(days=1)})
-    print([appointment.get_time() for appointment in prev_appointments])
+    print([appt.get_tutor_netid() for appt in prev_appointments])
+    for appointment in prev_appointments:
+        new_time = appointment.get_time() + datetime.timedelta(days=7)
+        db_modify.add_appointment(new_time, appointment.get_tutor_netid())
 
 #----------------------------------------------------------------------- 
 # handled in student
