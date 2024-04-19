@@ -55,7 +55,7 @@
         <tr>
             <td>{{ user[2] }}</td>
             <td>
-                <button class="btn warm-btn add-time" onclick="window.location.href='{{ url_for( 'add_appointment', tutor_netid=user[2], date=date ) }}'">+</button>
+                <button class="btn warm-btn add-time" data-tutor_netid="{{tutor}}" data-date="{{date}}">+</button>
             </td>
         </tr>
         {% endif %}
