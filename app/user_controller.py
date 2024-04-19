@@ -275,8 +275,8 @@ def copy_prev_week():
     min_date = datetime.strptime(min_date, '%Y-%m-%d')
     max_date = datetime.strptime(max_date, '%Y-%m-%d')
 
-    db_tutor.copy_prev_week_times(min_date, max_date, user[2])
     user = get_user_from_cookies()
+    db_tutor.copy_prev_week_times(min_date, max_date, user[2])
     return flask.redirect(flask.url_for('tutorview', netid=user[2]))
 
 #-----------------------------------------------------------------------
@@ -529,4 +529,4 @@ def delete_appointment():
     time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
     db_modify.delete_appointment(time, tutor)
 
-    return flask.redirect(flask.url_for(f"{user[1]}view", user[2]))
+    return flask.redirect(flask.url_for(f"{user[1]}view", netid=user[2]))
