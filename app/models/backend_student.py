@@ -50,7 +50,7 @@ def edit_appointment(oldtime, newtime, tutornetID, action):
     if action == "cancel":
         db_modify.cancel_appointment(oldtime, tutornetID)
     else:
-        appt_details = db_queries.get_appointments({"start_time": oldtime, "booked": True, "tutor": tutornetID})
+        appt_details = db_queries.get_appointments({"start_time": oldtime, "booked": True, "tutor_netid": tutornetID})
         db_modify.delete_appointment(oldtime, tutornetID)
         db_modify.add_appointment(newtime, tutornetID)
 #----------------------------------------------------------------------- 
