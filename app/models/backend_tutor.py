@@ -46,6 +46,17 @@ def get_appointment_details(tutornetID):
     # can return more specfic things using 
     # return [curr_appointments._tutor_netid, curr_appointments.start_time]
 #----------------------------------------------------------------------- 
+# copy times from previous week
+def copy_prev_week_times(min_date, max_date, tutor_netid):
+    # Delete existing times for this week
+    future_appointments = db_queries.get_appointments({"tutor": tutor_netid, "start_time": min_date, "end_time": max_date})
+    for appointment in future_appointments:
+        db_modify.delete_appointment(appointment.get_time(), appointment.get_tutor_netid())
+
+    prev_appointments = db_queries.get_appointments({"tutor": tutor_netid, "start_time": min_date - datetime.timedelta(days=8), "end_time": min_date - datetime.timedelta(days=1)})
+    print([appointment.get_time() for appointment in prev_appointments])
+
+#----------------------------------------------------------------------- 
 # handled in student
 # # delete_appointment/modify_appointment() 
 # def edit_appointment(oldtime, newtime, tutornetID, action):

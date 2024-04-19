@@ -13,9 +13,9 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">            
-                Are you sure you want to copy times from the previous week? This will overwrite any existing times you have for this week.
+                Are you sure you want to copy times from the previous week? This will overwrite any existing times you have for this week ({{min_date.strftime('%A, %B %d')}} to {{max_date.strftime('%A, %B %d')}}).
                 <br>
-                <button class="btn warm-btn">Yes</button>
+                <button class="btn warm-btn" onclick="window.location.href='{{ url_for('copy_prev_week', min_date=min_date.strftime('%Y-%m-%d'), max_date=max_date.strftime('%Y-%m-%d')) }}'">Yes</button>
             </div>
         </div>
     </div>

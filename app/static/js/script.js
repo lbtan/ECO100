@@ -80,8 +80,14 @@ $(document).ready(function(){
     }
 
     function show_copy_confirmation() {
+        var params = {
+            min_date: $(this).data('mindate'),
+            max_date: $(this).data('maxdate'),
+        };
+        var urlParams = $.param(params);
+
         // Load the popup HTML using AJAX
-        $.get('/confirm_copy_times', function(html) {
+        $.get('/confirm_copy_times?' + urlParams, function(html) {
             // Create a jQuery object from the HTML string
             var $modal = $(html);
             // Add the modified HTML to the modal container and show the modal
