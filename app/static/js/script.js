@@ -60,10 +60,53 @@ $(document).ready(function(){
         });
     }
 
+
+    function show_student_ids(){
+       
+        var urlParams = $.param({});
+
+        $.get('/get_student_ids?' + urlParams, function(html) {
+            var $modal = $(html);
+
+            $('#student-id-modal-container').html($modal);
+            $('#studentIdModal').modal('show');
+        });
+
+    }
+
+    function show_tutor_ids(){
+       
+        var urlParams = $.param({});
+
+        $.get('/get_tutor_ids?' + urlParams, function(html) {
+            var $modal = $(html);
+
+            $('#tutor-id-modal-container').html($modal);
+            $('#tutorIdModal').modal('show');
+        });
+
+    }
+
+    function show_admin_ids(){
+       
+        var urlParams = $.param({});
+
+        $.get('/get_admin_ids?' + urlParams, function(html) {
+            var $modal = $(html);
+
+            $('#admin-id-modal-container').html($modal);
+            $('#adminIdModal').modal('show');
+        });
+
+    }
+
     // Event binding for button click
     $('.time-slot').click(show_appt);
     $('.view-cancel').click(show_appt);
     $('.tutor-overview-btn').click(show_tutor_overview);
     $('.weekly-summary-btn').click(show_weekly_summary);
     $('.edit-tutor-bio').click(show_tutor_bio_edit);
+    $('.choose_netid').click(show_student_ids);
+    $('.choose_netid_tutor').click(show_tutor_ids);
+    $('.choose_netid_admin').click(show_admin_ids);
 });

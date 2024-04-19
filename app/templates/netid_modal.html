@@ -1,0 +1,31 @@
+<!-- =========================================================== -->
+<!-- netid_modal.html                                            -->
+<!-- Author: Libo Tan                                            -->
+<!-- =========================================================== -->
+
+<!-- Bootstrap Modal Content -->
+<div class="modal fade" id="{{ modal_id }}" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ url_for('process_netid_selection') }}" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Select NetID</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <select name="selectedNetID" class="form-select">
+                        {% for netid in netids %}
+                        <option value="{{ netid }}">{{ netid }}</option>
+                        {% endfor %}
+                    </select>
+                    <!-- Hidden field to pass user type -->
+                    <input type="hidden" name="userType" value="{{ user_type }}">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Confirm</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
