@@ -337,9 +337,14 @@ def edit_appointment():
     username = auth.authenticate()
     authorize(username)
     date = flask.request.form['date']
-    prev_time = flask.request.form['prev-time'][:-3] # remove seconds
+    prev_time = flask.request.form['prev-time']
+    if prev_time.count(':') == 2:
+        prev_time = flask.request.form['prev-time'][:-3] # remove seconds
+
     tutor = flask.request.form['tutor_netid']
-    new_time = flask.request.form['new-time'][:-3] # remove seconds
+    new_time = flask.request.form['new-time']
+    if new_time.count(':') == 2:
+        new_time = flask.request.form['new-time'][:-3] # remove seconds
     
     datetime_str = f"{date} {new_time}"
     new_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
