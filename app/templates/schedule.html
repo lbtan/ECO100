@@ -15,6 +15,10 @@
 
 <div id="calendar-{{loop.index0}}" style="display:none">
 
+{% if loop.index0 > 0 %}
+<button class="btn warm-btn copy-times">Copy Times From Last Week</button>
+{% endif %}
+
 {% for date, tutors in appointments_by_date.items() %}
 <table class="col-md-8" border="1">
     <thead>
@@ -48,6 +52,15 @@
                 </td>
             </tr>
         {% endfor %}
+
+        {% if user[1] == "tutor" and user[2] not in tutors %}
+        <tr>
+            <td>{{ user[2] }}</td>
+            <td>
+                <button class="btn warm-btn" onclick="window.location.href='{{ url_for( 'add_appointment', tutor_netid=user[2], date=date ) }}'">+</button>
+            </td>
+        </tr>
+        {% endif %}
     </tbody>
 </table>
 <br> 

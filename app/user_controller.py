@@ -174,10 +174,11 @@ def tutorview():
     appointments = db_tutor.get_times_tutors()
     # user id info
     #TODO fetch info from CAS
-    user = ("Hermione Granger", 'tutor', "hgranger")
+    user = ("Percy Weasley", 'tutor', "pweasley")
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
-    apt_times = utils.appointments_by_time(appointments)
+    apt_times = utils.appointments_by_time(appointments, user[2])
+    
     weekly_appointments = utils.group_by_week(apt_times)
 
     html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor)
@@ -444,7 +445,7 @@ def edit_appointment():
 @app.route('/delete_appointment')
 def delete_appointment():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, 'tutor')
     time = flask.request.args.get('time')
     tutor = flask.request.args.get('tutor_netid')
     user = get_user_from_cookies()
