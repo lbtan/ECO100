@@ -420,7 +420,7 @@ def cancel_appointment():
 @app.route('/edit_appointment', methods=['POST'])
 def edit_appointment():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, 'tutor')
     date = flask.request.form['date']
     prev_time = flask.request.form['prev-time']
     if prev_time.count(':') == 2:
