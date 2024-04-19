@@ -331,14 +331,14 @@ def appointment_popup():
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
     appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
     if appts[0] == False:
-        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.', title='Error')
         response = flask.make_response(html_code)
         return response
     appt = appts[0] # should only match one appointment
 
     # If the user is a tutor and this is not their appointment, they cannot access its details
     if user[1] == "tutor" and user[2] != appt.get_tutor_netid():
-        html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
+        html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.', title='Unauthorized')
         response = flask.make_response(html_code)
         return response
     
@@ -347,14 +347,14 @@ def appointment_popup():
         booked_appointments = db_student.get_cur_appoinments_student()
         cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
         if len(cur_appointments) > 0 and appt.get_student_netid() != user[2]:
-            html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
+            html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.', title='Unauthorized')
             response = flask.make_response(html_code)
             return response
 
     # Get the details of the tutor for this appointment
     tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
     if tutor == False:
-        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.', title='Error')
         response = flask.make_response(html_code)
         return response
 
@@ -362,14 +362,19 @@ def appointment_popup():
     if appt.get_student_netid():
         student = db_queries.get_user_info({"netid": appt.get_student_netid(), "user_type": "student"})[0]
         if student == False:
-            html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+            html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.', title='Error')
             response = flask.make_response(html_code)
             return response
     else:
         student = None
 
+    if appt.get_booked():
+        title = 'Appointment Details'
+    else:
+        title = 'Available Appointment Details'
+
     # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
-    html_code = flask.render_template('appointment_popup.html', appointment=appt, user=user, tutor=tutor, student=student, date=date)
+    html_code = flask.render_template('appointment_popup.html', appointment=appt, user=user, tutor=tutor, student=student, date=date, title=title)
     response = flask.make_response(html_code)
     return response
 
