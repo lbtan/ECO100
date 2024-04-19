@@ -117,6 +117,8 @@ $(document).ready(function(){
             $('#adminIdModal').modal('show');
         });
 
+    }
+
     function show_copy_confirmation() {
         var params = {
             min_date: $(this).data('mindate'),
