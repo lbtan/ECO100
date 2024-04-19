@@ -16,7 +16,7 @@
 
 <div id="calendar-{{loop.index0}}" style="display:none">
 
-{% if loop.index0 > 0 %}
+{% if loop.index0 > 0 and user[1] == "tutor" %}
 <hr>
 <button class="btn warm-btn copy-times" data-mindate="{{appointments_by_date|min}}" data-maxdate="{{appointments_by_date|max}}">Copy Times From Last Week</button>
 {% endif %}
