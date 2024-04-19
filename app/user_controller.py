@@ -107,6 +107,41 @@ def user_type():
 
 #-----------------------------------------------------------------------
 
+@app.route('/get_student_ids')
+def get_student_ids():
+    return flask.render_template('netid_modal.html', netids=student_ids, modal_id="studentIdModal", user_type='student')
+
+
+@app.route('/get_tutor_ids')
+def get_tutor_ids():
+    return flask.render_template('netid_modal.html', netids=tutor_ids, modal_id="tutorIdModal", user_type='tutor')
+
+
+@app.route('/get_admin_ids')
+def get_admin_ids():
+    return flask.render_template('netid_modal.html', netids=admin_ids, modal_id="adminIdModal", user_type='admin')
+
+
+@app.route('/process_netid_selection', methods=['POST'])
+def process_netid_selection():
+    selected_netid = flask.request.form['selectedNetID']
+    user_type = flask.request.form['userType'] 
+    print("Selected NetID:", selected_netid, "User Type:", user_type)
+
+    if user_type == 'student':
+        return flask.redirect(flask.url_for('studentview', netid=selected_netid))
+    elif user_type == 'tutor':
+        return flask.redirect(flask.url_for('tutorview', netid=selected_netid))
+    elif user_type == 'admin':
+        return flask.redirect(flask.url_for('adminview', netid=selected_netid))
+    else:
+        flask.flash("Invalid user type provided.")
+        html_code = flask.render_template('error_handling/db_error.html')
+        return flask.make_response(html_code)
+
+
+#-----------------------------------------------------------------------
+
 # Routes for authentication.
 
 @app.route('/logoutapp', methods=['GET'])
@@ -120,14 +155,17 @@ def logoutcas():
 #-----------------------------------------------------------------------
 
 # Student view
-
-@app.route('/studentview')
-def studentview():
+@app.route('/studentview', defaults={'netid': None})
+@app.route('/studentview/<netid>')
+def studentview(netid):
     username = auth.authenticate()
     authorize(username, 'student')
+    if not netid:
+        # If no netid is provided in the URL, use the authenticated username as netid.
+        netid = username
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
-    user = ("Harry Potter", 'student', "hpotter")
+    user = (netid, 'student', netid)
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
     
@@ -166,15 +204,18 @@ def studentview():
 #-----------------------------------------------------------------------
 
 # Tutor view 
-
-@app.route('/tutorview')
-def tutorview():
+@app.route('/tutorview', defaults={'netid': None})
+@app.route('/tutorview/<netid>')
+def tutorview(netid):
     username = auth.authenticate()
     authorize(username, 'tutor')
+    if not netid:
+        # If no netid is provided in the URL, use the authenticated username as netid.
+        netid = username
     appointments = db_tutor.get_times_tutors()
     # user id info
     #TODO fetch info from CAS
-    user = ("Hermione Granger", 'tutor', "hgranger")
+    user = (netid, 'tutor', netid)
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments, user[2])
@@ -241,12 +282,14 @@ def copy_prev_week():
 #-----------------------------------------------------------------------
 
 # Admin view
-
-@app.route('/adminview')
-def adminview():
+@app.route('/adminview', defaults={'netid': None})
+@app.route('/adminview/<netid>')
+def adminview(netid):
     username = auth.authenticate()
     authorize(username, 'admin')
-
+    if not netid:
+        # If no netid is provided in the URL, use the authenticated username as netid.
+        netid = username
     try:
         upload_message = flask.request.args.get('upload_message')
     except:
@@ -255,7 +298,7 @@ def adminview():
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
     weekly_appointments = utils.group_by_week(apt_times)
-    user = (username, 'admin', username)
+    user = (netid, 'admin', netid)
 
     html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, upload_message=upload_message)
     response = flask.make_response(html_code)
