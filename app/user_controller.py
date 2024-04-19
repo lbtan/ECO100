@@ -442,6 +442,15 @@ def tutor_overview():
     response = flask.make_response(html_code)
     return response
 
+@app.route('/add_users')
+def add_users():
+    username = auth.authenticate()
+    authorize(username, 'admin')
+
+    html_code = flask.render_template('admin/add_users.html')
+    response = flask.make_response(html_code)
+    return response
+
 @app.route('/upload', methods=["POST"])
 def upload():
     username = auth.authenticate()
@@ -454,8 +463,11 @@ def upload():
         message = 'Please upload a valid .csv file.'
     else:
         message = backend_admin.import_users(uploaded_file, user_type, "1")
+
     user = get_user_from_cookies()
-    return flask.redirect(flask.url_for('adminview', netid=user[2], upload_message=message))
+    html_code = flask.render_template('admin/upload_confirmation.html', message=message, user=user)
+    response = flask.make_response(html_code)
+    return response
 
 @app.route('/add_appointment')
 def add_appointment():
