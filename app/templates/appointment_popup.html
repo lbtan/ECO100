@@ -21,7 +21,7 @@
 
                     <label for="appt-date">Appointment Date:</label>
                     <br>
-                    <input type="date" name="appt-date" value="{{date}}">
+                    <input type="date" name="date" value="{{date}}">
                     <br>
                     
                     <label for="appt-time">Appointment Time:</label>
@@ -33,31 +33,9 @@
                     <br>
                     <input type="text" value="{{tutor.get_name()}}" disabled>
                     <br>
-                    
-                    <label for="student_name">Student Name:</label>
-                    <br>
-                    {% if user[1] != "student" or appointment.get_booked() %}
-                        <input type="text" name="student_name" value="{{student.get_name() if student else ''}}" disabled>
-                    {% else %}
-                        <input type="text" name="student_name" value="{{user[0]}}" disabled>
-                    {% endif %}
-                    <br>
-        
-                    <label for="comments">Comments for Appointment:</label>
-                    <br>
-                    {% if user[1] != "student" or appointment.get_booked() %}
-                        <textarea class="textarea" name="comments" cols="30" rows="3" disabled>{{appointment.get_comments() if appointment.get_comments() else ''}}</textarea>
-                    {% else %}
-                        <textarea class="textarea" name="comments" cols="30" rows="3"></textarea>
-                    {% endif %}
-                    <br>
-    
-                    <input type="hidden" name="date" value="{{date}}">
+                        
                     <input type="hidden" name="prev-time" value="{{appointment.get_time().time()}}">
-                    <input type="hidden" name="new-time" value="{{appointment.get_time().time()}}">
                     <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
-                    <input type="hidden" name="tutor_name" value="{{tutor.get_name()}}">
-                    <input type="hidden" name="student_netid" value="{{user[2]}}">
                     <input type="submit" value="Edit Appointment">
                 </form>
 
