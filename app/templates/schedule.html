@@ -8,6 +8,13 @@
 <h3>The calendar is currently disabled as you can only book one appointment per week.</h3>
 {% endif %}
 
+<button class="btn warm-btn update-week-calendar" data-week="-1" id="prev-week" disabled>Previous Week</button>
+<button class="btn warm-btn update-week-calendar" data-week="1" id="next-week">Next Week</button>
+
+{% for appointments_by_date in weekly_appointments %}
+
+<div id="calendar-{{loop.index0}}" style="display:none">
+
 {% for date, tutors in appointments_by_date.items() %}
 <table class="col-md-8" border="1">
     <thead>
@@ -44,6 +51,10 @@
     </tbody>
 </table>
 <br> 
+{% endfor %}
+
+</div>
+
 {% endfor %}
 
 <!-- Include modal container -->

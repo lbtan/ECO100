@@ -9,6 +9,7 @@
 from collections import defaultdict
 from collections import Counter
 import datetime
+import models.db_queries as db_queries
 
 #-----------------------------------------------------------------------
 
@@ -74,3 +75,57 @@ def available_appointments_by_time(appointments, booked_appts):
         appointments_by_date[date_key][tutor].append(time_str)
     
     return appointments_by_date
+
+def group_by_week(appointments):
+    """
+    Given a list of appointments for each date, returns them
+    chronologically grouped by week. (Hita)
+    """
+    weekly_appointments = []
+    weeks = set()
+    for date, appts in appointments.items():
+        week = date.isocalendar()[:2] # https://stackoverflow.com/questions/29260224/how-to-group-and-count-events-by-week
+        
+        # if this date is in a new week, then create a new dictionary
+        if week not in weeks:
+            weekly_appointments.append({})
+        weekly_appointments[-1][date] = appts
+        
+        weeks.add(week) # this week has been seen
+
+    return weekly_appointments
+
+def get_tutor_ids():
+    """
+    Get all tutor ids in database
+    """
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "tutor"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
+
+def get_student_ids():
+    """
+    
+    Get all tutor id in database
+    """
+
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "student"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
+
+
+def get_admin_ids():
+    """
+    
+    Get all tutor id in database
+    """
+
+    tutor_ids = []
+    user_ids = db_queries.get_user_info(props={"user_type": "admin"})
+    for user_id in user_ids:
+        tutor_ids.append(user_id.get_netid())
+    return tutor_ids
