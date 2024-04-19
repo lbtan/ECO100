@@ -3,18 +3,14 @@
 <!-- Author: Hita Gupta and Sofia Marina                         -->
 <!-- =========================================================== -->
 
-<!-- Modal code based on code from ChatGPT -->
-<div class="modal fade" id="appointmentModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="appointmentModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="modelLabel">{% if not error %}Appointment Details ({{"Booked" if appointment.get_booked() else "Available"}}){% else %}Unauthorized{% endif %}:</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+                <h5 class="modal-title" id="modalLabel">{% if not error %}Appointment Details ({{"Booked" if appointment.get_booked() else "Available"}}){% else %}Unauthorized{% endif %}:</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-
                 {% if error %}
                 {{error}}
                 {% else %}
