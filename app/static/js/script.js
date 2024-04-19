@@ -79,6 +79,17 @@ $(document).ready(function(){
         });
     }
 
+    function show_copy_confirmation() {
+        // Load the popup HTML using AJAX
+        $.get('/confirm_copy_times', function(html) {
+            // Create a jQuery object from the HTML string
+            var $modal = $(html);
+            // Add the modified HTML to the modal container and show the modal
+            $('#copy-times-confirm-container').html($modal);
+            $('#confirmCopyModal').modal('show');
+        });
+    }
+
     // Event binding for button click
     $('.time-slot').click(show_appt);
     $('.view-cancel').click(show_appt);
@@ -86,4 +97,5 @@ $(document).ready(function(){
     $('.weekly-summary-btn').click(show_weekly_summary);
     $('.edit-tutor-bio').click(show_tutor_bio_edit);
     $('.add-time').click(add_appt_time);
+    $('.copy-times').click(show_copy_confirmation);
 });

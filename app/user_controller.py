@@ -207,6 +207,15 @@ def tutor_bio_edit_submit():
     db_modify.update_tutor_bio(tutor_netid, bio)
     return flask.redirect(flask.url_for('tutorview'))
 
+@app.route('/confirm_copy_times')
+def confirm_copy_times():
+    username = auth.authenticate()
+    authorize(username, 'tutor')
+
+    html_code = flask.render_template('tutor/confirm_copy_times.html')
+    response = flask.make_response(html_code)
+    return response
+
 #-----------------------------------------------------------------------
 
 # Admin view
