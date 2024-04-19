@@ -55,7 +55,14 @@ def appointments_by_time(appointments, tutor=None):
         appointments_by_date[date_key][tutor_netid].append((time_str, booked))
         last_date = date_key
     
-    print(appointments_by_date)
+    if tutor:
+        last_appt_date = max(appointments_by_date)
+        max_appt_date = datetime.date(year=last_appt_date.year, month=5, day=1)
+        curr = last_appt_date + datetime.timedelta(days=1)
+        while curr <= max_appt_date:
+            appointments_by_date[curr] = {}
+            curr += datetime.timedelta(days=1)
+
     return appointments_by_date
 
 def appointments_by_student(appointments, studentId):
@@ -106,14 +113,6 @@ def group_by_week(appointments):
         weekly_appointments[-1][date] = appts
         
         weeks.add(week) # this week has been seen
-
-    last_appt_date = max(appointments)
-    max_appt_date = datetime.date(year=max(appointments).year, month=5, day=1)
-
-    start_appt = last_appt_date + datetime.timedelta(days=1)
-    while start_appt <= max_appt_date:
-        weekly_appointments.append({})
-        start_appt += datetime.timedelta(weeks=1)
 
     return weekly_appointments
 
