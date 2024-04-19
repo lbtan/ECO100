@@ -218,7 +218,8 @@ def tutorview(netid):
     user = (netid, 'tutor', netid)
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
-    apt_times = utils.appointments_by_time(appointments)
+    apt_times = utils.appointments_by_time(appointments, user[2])
+    
     weekly_appointments = utils.group_by_week(apt_times)
 
     html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor)
@@ -245,6 +246,37 @@ def tutor_bio_edit_submit():
     tutor_netid = flask.request.form.get('tutor_netid')
     bio = flask.request.form.get('bio')
     db_modify.update_tutor_bio(tutor_netid, bio)
+    return flask.redirect(flask.url_for('tutorview'))
+
+@app.route('/confirm_copy_times')
+def confirm_copy_times():
+    username = auth.authenticate()
+    authorize(username, 'tutor')
+
+    min_date = flask.request.args.get('min_date')
+    max_date = flask.request.args.get('max_date')
+
+    min_date = datetime.strptime(min_date, '%Y-%m-%d')
+    max_date = datetime.strptime(max_date, '%Y-%m-%d')    
+
+    html_code = flask.render_template('tutor/confirm_copy_times.html', min_date=min_date, max_date=max_date)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/copy_prev_week')
+def copy_prev_week():
+    username = auth.authenticate()
+    authorize(username, 'tutor')
+    user = ("Hermione Granger", 'tutor', "hgranger")
+
+    min_date = flask.request.args.get('min_date')
+    max_date = flask.request.args.get('max_date')
+    
+    min_date = datetime.strptime(min_date, '%Y-%m-%d')
+    max_date = datetime.strptime(max_date, '%Y-%m-%d')
+
+    db_tutor.copy_prev_week_times(min_date, max_date, user[2])
+
     return flask.redirect(flask.url_for('tutorview'))
 
 #-----------------------------------------------------------------------
@@ -328,7 +360,6 @@ def appointment_popup():
 
     # If the appointment is booked, get the details of the student for this appointment
     if appt.get_student_netid():
-        print(appt.get_student_netid())
         student = db_queries.get_user_info({"netid": appt.get_student_netid(), "user_type": "student"})[0]
         if student == False:
             html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
@@ -487,7 +518,7 @@ def edit_appointment():
 @app.route('/delete_appointment')
 def delete_appointment():
     username = auth.authenticate()
-    authorize(username)
+    authorize(username, 'tutor')
     time = flask.request.args.get('time')
     tutor = flask.request.args.get('tutor_netid')
     user = get_user_from_cookies()

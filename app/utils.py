@@ -30,18 +30,39 @@ def appointments_by_tutor(appointments, userId):
     sorted_appointments = sorted(tutor_appointments, key=lambda x: x[0])
     return sorted_appointments
 
-def appointments_by_time(appointments):
+def appointments_by_time(appointments, tutor=None):
     """
     
     Sort appointments by time. (used gpt for lambda functions)
     """
     sorted_appointments = sorted(appointments, key=lambda x: x[0])
     appointments_by_date = defaultdict(lambda: defaultdict(list))
+
+    if tutor:
+        last_date = None
+
     for appt_time, tutor_netid, booked, student_netid in sorted_appointments:
         date_key = appt_time.date()
+
+        if tutor:
+            if last_date != None and date_key > last_date + datetime.timedelta(days=1):
+                curr = last_date + datetime.timedelta(days=1)
+                while curr < date_key:
+                    appointments_by_date[curr] = {}
+                    curr += datetime.timedelta(days=1)
+                
         time_str = appt_time.strftime('%I:%M %p')
         appointments_by_date[date_key][tutor_netid].append((time_str, booked))
+        last_date = date_key
     
+    if tutor:
+        last_appt_date = max(appointments_by_date)
+        max_appt_date = datetime.date(year=last_appt_date.year, month=5, day=1)
+        curr = last_appt_date + datetime.timedelta(days=1)
+        while curr <= max_appt_date:
+            appointments_by_date[curr] = {}
+            curr += datetime.timedelta(days=1)
+
     return appointments_by_date
 
 def appointments_by_student(appointments, studentId):
