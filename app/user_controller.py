@@ -29,6 +29,7 @@ testing_ids = db_queries.get_testing_ids()
 student_ids = utils.get_student_ids()
 tutor_ids = utils.get_tutor_ids()
 admin_ids = utils.get_admin_ids()
+netids_to_names = utils.get_names()
 # Role to ID mapping
 id_map = {
     'testing': testing_ids,
@@ -165,7 +166,7 @@ def studentview(netid):
         netid = username
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
-    user = (netid, 'student', netid)
+    user = (netids_to_names[netid], 'student', netid)
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
     
@@ -192,7 +193,8 @@ def studentview(netid):
     html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
                                       can_book = len(cur_appointments) == 0,
                                       appointments_by_date=chronological_appointments,
-                                      names_bios = names_bios)
+                                      names_bios = names_bios,
+                                      names=netids_to_names)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -213,16 +215,16 @@ def tutorview(netid):
         # If no netid is provided in the URL, use the authenticated username as netid.
         netid = username
     appointments = db_tutor.get_times_tutors()
+
     # user id info
-    #TODO fetch info from CAS
-    user = (netid, 'tutor', netid)
+    user = (netids_to_names[netid], 'tutor', netid)
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments, user[2])
-    
-    weekly_appointments = utils.group_by_week(apt_times)
 
-    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor)
+    weekly_appointments = utils.group_by_week(apt_times)
+    
+    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -297,10 +299,13 @@ def adminview(netid):
 
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
+    for date in apt_times:
+        apt_times[date] = sorted(apt_times[date])
     weekly_appointments = utils.group_by_week(apt_times)
-    user = (netid, 'admin', netid)
+    
+    user = (netids_to_names[netid], 'admin', netid)
 
-    html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, upload_message=upload_message)
+    html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, upload_message=upload_message, names=netids_to_names)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -331,14 +336,14 @@ def appointment_popup():
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
     appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
     if appts[0] == False:
-        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.', title='Error')
         response = flask.make_response(html_code)
         return response
     appt = appts[0] # should only match one appointment
 
     # If the user is a tutor and this is not their appointment, they cannot access its details
     if user[1] == "tutor" and user[2] != appt.get_tutor_netid():
-        html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
+        html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.', title='Unauthorized')
         response = flask.make_response(html_code)
         return response
     
@@ -347,14 +352,14 @@ def appointment_popup():
         booked_appointments = db_student.get_cur_appoinments_student()
         cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
         if len(cur_appointments) > 0 and appt.get_student_netid() != user[2]:
-            html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.')
+            html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.', title='Unauthorized')
             response = flask.make_response(html_code)
             return response
 
     # Get the details of the tutor for this appointment
     tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
     if tutor == False:
-        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+        html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.', title='Error')
         response = flask.make_response(html_code)
         return response
 
@@ -362,14 +367,21 @@ def appointment_popup():
     if appt.get_student_netid():
         student = db_queries.get_user_info({"netid": appt.get_student_netid(), "user_type": "student"})[0]
         if student == False:
-            html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.')
+            html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.', title='Error')
             response = flask.make_response(html_code)
             return response
     else:
         student = None
 
+    if appt.get_booked() or user[1] == "admin":
+        title = 'Appointment Details'
+    elif user[1] == "student":
+        title = 'Book Appointment'
+    else:
+        title = 'Edit Appointment'
+
     # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
-    html_code = flask.render_template('appointment_popup.html', appointment=appt, user=user, tutor=tutor, student=student, date=date)
+    html_code = flask.render_template('appointment_popup.html', appointment=appt, user=user, tutor=tutor, student=student, date=date, title=title)
     response = flask.make_response(html_code)
     return response
 
@@ -437,6 +449,15 @@ def tutor_overview():
     response = flask.make_response(html_code)
     return response
 
+@app.route('/add_users')
+def add_users():
+    username = auth.authenticate()
+    authorize(username, 'admin')
+
+    html_code = flask.render_template('admin/add_users.html')
+    response = flask.make_response(html_code)
+    return response
+
 @app.route('/upload', methods=["POST"])
 def upload():
     username = auth.authenticate()
@@ -449,8 +470,11 @@ def upload():
         message = 'Please upload a valid .csv file.'
     else:
         message = backend_admin.import_users(uploaded_file, user_type, "1")
+
     user = get_user_from_cookies()
-    return flask.redirect(flask.url_for('adminview', netid=user[2], upload_message=message))
+    html_code = flask.render_template('admin/upload_confirmation.html', message=message, user=user)
+    response = flask.make_response(html_code)
+    return response
 
 @app.route('/add_appointment')
 def add_appointment():
@@ -491,7 +515,10 @@ def cancel_appointment():
     time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
     db_modify.cancel_appointment(time, tutor)
 
-    return flask.redirect(flask.url_for(f"{user[1]}view", netid=user[2]))
+    user = get_user_from_cookies()
+    html_code = flask.render_template('student/cancel_confirmation.html', user=user)
+    response = flask.make_response(html_code)
+    return response
 
 @app.route('/edit_appointment', methods=['POST'])
 def edit_appointment():

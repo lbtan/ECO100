@@ -21,7 +21,7 @@ def get_cur_appoinments_student():
         return curr_appointments
     appointments = []
     for row in curr_appointments:
-        appointments.append((row._time, row._student_netid, row._tutor_netid, row._comments))
+        appointments.append((row.get_time(), row.get_student_netid(), row.get_tutor_netid(), row.get_comments()))
     return appointments
 #----------------------------------------------------------------------- 
 # get_times() -> return list of available times + scheduled studentIDs;
@@ -32,7 +32,7 @@ def get_times_students():
     times = []
     for row in available_appointments:
         # times.append(row[0], row[2])
-        times.append((row._time, row._student_netid, row._tutor_netid))
+        times.append((row.get_time(), row.get_student_netid(), row.get_tutor_netid()))
     return times
 #----------------------------------------------------------------------- 
 # add_times() -> edit all available times; 
@@ -42,7 +42,7 @@ def get_appointment_details(student_netid):
     print(curr_appointments)
     return curr_appointments
     # can return more specfic things using 
-    # return [curr_appointments._tutor_netid, curr_appointments.start_time]
+    # return [curr_appointments.get_tutor_netid(), curr_appointments.start_time]
 #----------------------------------------------------------------------- 
 
 # delete_appointment/modify_appointment() 
@@ -61,9 +61,9 @@ def main():
     # print(appointments)
     appointments = get_appointment_details("st111")
     for row in appointments:
-        print(row._time)
-        print(row._tutor_netid)
-        print(row._student_netid)
+        print(row.get_time())
+        print(row.get_tutor_netid())
+        print(row.get_student_netid())
     dt = datetime.datetime(2024, 3, 16, 9, 30)
     dt_new = datetime.datetime(2024, 3, 17, 10, 30)
     # dt = 2024-03-14 09:30:00 

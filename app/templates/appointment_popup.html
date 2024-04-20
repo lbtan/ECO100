@@ -7,7 +7,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">{% if not error %}Appointment Details ({{"Booked" if appointment.get_booked() else "Available"}}){% else %}Unauthorized{% endif %}:</h5>
+                <h5 class="modal-title" id="modalLabel">{{title}}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -28,12 +28,7 @@
                     <br>
                     <input type="time" name="new-time" value="{{appointment.get_time().time()}}">
                     <br>
-                    
-                    <label for="tutor_name">Tutor Name:</label>
-                    <br>
-                    <input type="text" value="{{tutor.get_name()}}" disabled>
-                    <br>
-                        
+                                            
                     <input type="hidden" name="prev-time" value="{{appointment.get_time().time()}}">
                     <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
                     <input type="submit" value="Edit Appointment">
@@ -42,7 +37,7 @@
                 <br>
 
                 <hr>
-                <a href="{{url_for('delete_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Delete Appointment</a>
+                <button class="btn warm-btn" onclick="window.location.href='{{url_for('delete_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}'">Delete Appointment</button>
 
                 <!-- Popup for everyone else is locked  -->
                 {% else %}
@@ -87,15 +82,17 @@
                         <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
                         <input type="hidden" name="tutor_name" value="{{tutor.get_name()}}">
                         <input type="hidden" name="student_netid" value="{{user[2]}}">
-                        <input type="submit" value="Submit">
+                        <input type="submit" value="Book Appointment">
                         {% endif %}    
                         <br>
             
-                        {% if appointment.get_booked() and (user[2] == appointment.get_student_netid() or user[2] == appointment.get_tutor_netid()) %}
-                        <hr>
-                        <a href="{{url_for('cancel_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Cancel appointment</a>
-                        {% endif %}
                     </form>
+                    
+                    {% if appointment.get_booked() and (user[2] == appointment.get_student_netid() or user[2] == appointment.get_tutor_netid()) %}
+                    <hr>
+                    <button class="btn warm-btn" onclick="window.location.href='{{url_for('cancel_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}'">Cancel Appointment</button>
+                    {% endif %}
+
                 {% endif %}  
                 {% endif %}        
             </div>

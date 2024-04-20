@@ -58,10 +58,10 @@
                   Current Appointments
                 </div>
                 <ul class="list-group list-group-flush">
-                    {% for date, time, tutor in cur_appointments %}
+                    {% for time, tutor in cur_appointments %}
                     <li class="list-group-item">
-                        {{date.strftime('%A, %B %d')}} at {{time}} with {{tutor}}
-                        <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{time}}">View/Cancel</button> 
+                        {{time.strftime('%A, %B %d')}} at {{time.strftime('%I:%M %p')}} with {{names[tutor]}}
+                        <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{tutor}}" data-date="{{time.strftime('%Y-%m-%d')}}" data-time="{{time.strftime('%I:%M %p')}}">View/Cancel</button> 
                     </li>
                     {% endfor %}
                 </ul>
@@ -82,7 +82,7 @@
         
         <div style="margin:0.1px;" class="container" >
             
-            <h2><span style="color: black;">Schedule (</span><span style="color: #F4A460;">available</span><span style="color: black;">, </span><span style="color: #716e6b;">booked</span><span style="color: black;">)</span></h2>
+            <h2><span style="color: black;">Schedule</h2>
 
             {% if user[1] == "tutor" %}
             <h3>Click on an existing appointment to view details/cancel. Click '+' to add new appointment time.</h3>
@@ -107,19 +107,19 @@
                     {% for tutor, appointments in tutors.items() %}
                         <tr>
                             <td><div class="hover-container">
-                                {{tutor}}
+                                {{names[tutor]}}
                                 <div class="hover-text">{{ names_bios[tutor] }}</div>
                             </div></td>
                             <td>
                                 {% for appointment in appointments  %}
                                     {% if user[1] == "tutor" and user[2] != tutor %}
-                                        <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}" disabled>{{ appointment[0] }}</button>
+                                        <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}" disabled>{{ appointment[0].strftime('%I:%M %p') }}</button>
                                     {% elif user[1] == "student" and can_book %}
-                                        <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}">{{ appointment }}</button>
+                                        <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}">{{ appointment.strftime('%I:%M %p') }}</button>
                                     {% elif user[1] == "student" and not can_book %}
-                                        <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}" disabled>{{ appointment }}</button>
+                                        <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}" disabled>{{ appointment.strftime('%I:%M %p') }}</button>
                                     {% else %}
-                                        <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}">{{ appointment[0] }}</button>
+                                        <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}">{{ appointment[0].strftime('%I:%M %p') }}</button>
                                     {% endif %}
                                 {% endfor %}
                                 {% if user[1] == "tutor" and user[2] == tutor %}

@@ -1,9 +1,20 @@
-<h2><span style="color: black;">Schedule (</span><span style="color: #F4A460;">available</span><span style="color: black;">, </span><span style="color: #716e6b;">booked</span><span style="color: black;">)</span></h2>
+<h2><span style="color: black;">Schedule</span></h2>
 
-{% if user[1] == "student" and not can_book %}
-<h3>The calendar is currently disabled as you can only book one appointment per week.</h3>
+{% if user[1] == "student" %}
+{% if not can_book %}
+<h4>The calendar is currently disabled as you can only book one appointment per week.</h4>
+{% else %}
+<h4>Click on a time slot to book an appointment. You can view a tutor's bio by hovering over their name.</h4>
+{% endif %}
 {% endif %}
 
+{% if user[1] == "tutor" %}
+<h4>Click on a time slot to view, cancel, or delete. Click '+' to add a new time slot.</h4>
+{% endif %}
+
+{% if user[1] == "admin" %}
+<h4>Click on a time slot to view details.</h4>
+{% endif %}
 
 <div>
     <button class="btn warm-btn update-week-calendar" data-week="-1" id="prev-week" disabled>Previous Week</button>
@@ -29,24 +40,33 @@
             <th colspan="3">{{ date.strftime('%A, %B %d, %Y') }}</th>
         </tr>
         <tr>
-            <th class="tutor-column">Tutor</th>
-            <th>Times Available</th>
+            <th class="tutor-column">Tutors</th>
+            <th>Times</th>
         </tr>
     </thead>
     <tbody>
+        {% if user[1] == "tutor" and user[2] not in tutors %}
+        <tr>
+            <td>{{ names[user[2]] }}</td>
+            <td>
+                <button class="btn warm-btn add-time" data-tutor_netid="{{user[2]}}" data-date="{{date}}">+</button>
+            </td>
+        </tr>
+        {% endif %}
+            
         {% for tutor, appointments in tutors.items() %}
             <tr>
-                <td>{{ tutor }}</td>
+                <td>{{ names[tutor] }}</td>
                 <td>
-                    {% for appointment in appointments  %}
+                    {% for appointment in tutors[tutor]  %}
                         {% if user[1] == "tutor" and user[2] != tutor %}
-                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}" disabled>{{ appointment[0] }}</button>
+                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}" disabled>{{ appointment[0].strftime('%I:%M %p') }}</button>
                         {% elif user[1] == "student" and can_book %}
-                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}">{{ appointment }}</button>
+                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}">{{ appointment.strftime('%I:%M %p') }}</button>
                         {% elif user[1] == "student" and not can_book %}
-                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}" disabled>{{ appointment }}</button>
+                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}" disabled>{{ appointment.strftime('%I:%M %p') }}</button>
                         {% else %}
-                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}">{{ appointment[0] }}</button>
+                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}">{{ appointment[0].strftime('%I:%M %p') }}</button>
                         {% endif %}
                     {% endfor %}
                     {% if user[1] == "tutor" and user[2] == tutor %}
@@ -55,15 +75,6 @@
                 </td>
             </tr>
         {% endfor %}
-
-        {% if user[1] == "tutor" and user[2] not in tutors %}
-        <tr>
-            <td>{{ user[2] }}</td>
-            <td>
-                <button class="btn warm-btn add-time" data-tutor_netid="{{user[2]}}" data-date="{{date}}">+</button>
-            </td>
-        </tr>
-        {% endif %}
     </tbody>
 </table>
 <br> 

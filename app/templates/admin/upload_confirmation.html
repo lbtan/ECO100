@@ -17,7 +17,7 @@
             integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
         <!-- Custom CSS Module -->
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">       
-        <title>Appointment</title>
+        <title>Upload Confirmation</title>
         <style>
             body {
             background-color: #F5F5DC; 
@@ -27,8 +27,8 @@
 
     <body>
         {% include 'headerDynamic.html' with context %}
-        Thank you for scheduling an appointment with {{tutor}}!<br>
-        <hr><button class="btn warm-btn" onclick="window.location.href='{{url_for('studentview', netid=user[2])}}'">Go Back</button>
+        {{message}}<br>
+        <hr><button class="btn warm-btn" onclick="window.location.href='{{url_for('adminview', netid=user[2])}}'">Go Back</button>
 
         <!DOCTYPE html>
 
