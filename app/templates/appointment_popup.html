@@ -28,12 +28,7 @@
                     <br>
                     <input type="time" name="new-time" value="{{appointment.get_time().time()}}">
                     <br>
-                    
-                    <label for="tutor_name">Tutor Name:</label>
-                    <br>
-                    <input type="text" value="{{tutor.get_name()}}" disabled>
-                    <br>
-                        
+                                            
                     <input type="hidden" name="prev-time" value="{{appointment.get_time().time()}}">
                     <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
                     <input type="submit" value="Edit Appointment">

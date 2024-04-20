@@ -193,7 +193,8 @@ def studentview(netid):
     html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
                                       can_book = len(cur_appointments) == 0,
                                       appointments_by_date=chronological_appointments,
-                                      names_bios = names_bios)
+                                      names_bios = names_bios,
+                                      names=netids_to_names)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -372,10 +373,12 @@ def appointment_popup():
     else:
         student = None
 
-    if appt.get_booked():
+    if appt.get_booked() or user[1] == "admin":
         title = 'Appointment Details'
+    elif user[1] == "student":
+        title = 'Book Appointment'
     else:
-        title = 'Available Appointment Details'
+        title = 'Edit Appointment'
 
     # https://stackoverflow.com/questions/42601478/flask-calling-python-function-on-button-onclick-event
     html_code = flask.render_template('appointment_popup.html', appointment=appt, user=user, tutor=tutor, student=student, date=date, title=title)
