@@ -45,19 +45,28 @@
         </tr>
     </thead>
     <tbody>
+        {% if user[1] == "tutor" and user[2] not in tutors %}
+        <tr>
+            <td>{{ names[user[2]] }}</td>
+            <td>
+                <button class="btn warm-btn add-time" data-tutor_netid="{{user[2]}}" data-date="{{date}}">+</button>
+            </td>
+        </tr>
+        {% endif %}
+            
         {% for tutor, appointments in tutors.items() %}
             <tr>
-                <td>{{ tutor }}</td>
+                <td>{{ names[tutor] }}</td>
                 <td>
-                    {% for appointment in appointments  %}
+                    {% for appointment in tutors[tutor]  %}
                         {% if user[1] == "tutor" and user[2] != tutor %}
-                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}" disabled>{{ appointment[0] }}</button>
+                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}" disabled>{{ appointment[0].strftime('%I:%M %p') }}</button>
                         {% elif user[1] == "student" and can_book %}
-                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}">{{ appointment }}</button>
+                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}">{{ appointment.strftime('%I:%M %p') }}</button>
                         {% elif user[1] == "student" and not can_book %}
-                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment}}" disabled>{{ appointment }}</button>
+                            <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}" disabled>{{ appointment.strftime('%I:%M %p') }}</button>
                         {% else %}
-                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0]}}">{{ appointment[0] }}</button>
+                            <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}">{{ appointment[0].strftime('%I:%M %p') }}</button>
                         {% endif %}
                     {% endfor %}
                     {% if user[1] == "tutor" and user[2] == tutor %}
@@ -66,15 +75,6 @@
                 </td>
             </tr>
         {% endfor %}
-
-        {% if user[1] == "tutor" and user[2] not in tutors %}
-        <tr>
-            <td>{{ user[2] }}</td>
-            <td>
-                <button class="btn warm-btn add-time" data-tutor_netid="{{user[2]}}" data-date="{{date}}">+</button>
-            </td>
-        </tr>
-        {% endif %}
     </tbody>
 </table>
 <br> 

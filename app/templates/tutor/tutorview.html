@@ -38,9 +38,9 @@
                   Current Appointments
                 </div>
                 <ul class="list-group list-group-flush">
-                    {% for date, time, netid in apt_tutor %}
+                    {% for time, netid in apt_tutor %}
                     <li class="list-group-item">
-                      {{date.strftime('%A, %B %d')}} at {{time}} with {{netid}}
+                      {{time.strftime('%A, %B %d')}} at {{time.strftime('%I:%M %p')}} with {{names[netid]}}
                       <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{user[2]}}" data-date="{{date}}" data-time="{{time}}">View/Cancel</button> 
                     </li>
                     {% endfor %}

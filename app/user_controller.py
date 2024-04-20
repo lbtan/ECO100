@@ -29,6 +29,7 @@ testing_ids = db_queries.get_testing_ids()
 student_ids = utils.get_student_ids()
 tutor_ids = utils.get_tutor_ids()
 admin_ids = utils.get_admin_ids()
+netids_to_names = utils.get_names()
 # Role to ID mapping
 id_map = {
     'testing': testing_ids,
@@ -165,7 +166,7 @@ def studentview(netid):
         netid = username
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
-    user = (netid, 'student', netid)
+    user = (netids_to_names[netid], 'student', netid)
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
     
@@ -213,16 +214,16 @@ def tutorview(netid):
         # If no netid is provided in the URL, use the authenticated username as netid.
         netid = username
     appointments = db_tutor.get_times_tutors()
+
     # user id info
-    #TODO fetch info from CAS
-    user = (netid, 'tutor', netid)
+    user = (netids_to_names[netid], 'tutor', netid)
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments, user[2])
-    
-    weekly_appointments = utils.group_by_week(apt_times)
 
-    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor)
+    weekly_appointments = utils.group_by_week(apt_times)
+    
+    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -297,10 +298,13 @@ def adminview(netid):
 
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
+    for date in apt_times:
+        apt_times[date] = sorted(apt_times[date])
     weekly_appointments = utils.group_by_week(apt_times)
-    user = (netid, 'admin', netid)
+    
+    user = (netids_to_names[netid], 'admin', netid)
 
-    html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, upload_message=upload_message)
+    html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, upload_message=upload_message, names=netids_to_names)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])

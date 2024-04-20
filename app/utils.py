@@ -24,9 +24,7 @@ def appointments_by_tutor(appointments, userId):
     tutor_appointments = []
     for appt_time, tutor_netid, booked, student_netid in appointments:
         if booked and tutor_netid == userId:
-            formatted_date = appt_time.date()
-            formatted_time = appt_time.strftime('%I:%M %p')  
-            tutor_appointments.append((formatted_date, formatted_time, student_netid))
+            tutor_appointments.append((appt_time, student_netid))
     sorted_appointments = sorted(tutor_appointments, key=lambda x: x[0])
     return sorted_appointments
 
@@ -35,6 +33,7 @@ def appointments_by_time(appointments, tutor=None):
     
     Sort appointments by time. (used gpt for lambda functions)
     """
+    # lambda sort based on code from ChatGPT
     sorted_appointments = sorted(appointments, key=lambda x: x[0])
     appointments_by_date = defaultdict(lambda: defaultdict(list))
 
@@ -51,10 +50,10 @@ def appointments_by_time(appointments, tutor=None):
                     appointments_by_date[curr] = {}
                     curr += datetime.timedelta(days=1)
                 
-        time_str = appt_time.strftime('%I:%M %p')
-        appointments_by_date[date_key][tutor_netid].append((time_str, booked))
+        appointments_by_date[date_key][tutor_netid].append((appt_time, booked))
         last_date = date_key
     
+    # If tutor, add all dates until end of semester
     if tutor:
         last_appt_date = max(appointments_by_date)
         max_appt_date = datetime.date(year=last_appt_date.year, month=5, day=1)
@@ -62,6 +61,13 @@ def appointments_by_time(appointments, tutor=None):
         while curr <= max_appt_date:
             appointments_by_date[curr] = {}
             curr += datetime.timedelta(days=1)
+
+        # Sort times by tutor
+        for date in appointments_by_date:
+            appointments_by_date[date] = dict(sorted(appointments_by_date[date].items(), key=lambda x: (0, x[0]) if x[0] == tutor else (1, x[0])))
+    else:
+        for date in appointments_by_date:
+            appointments_by_date[date] = dict(sorted(appointments_by_date[date].items(), key=lambda x: x[0]))
 
     return appointments_by_date
 
@@ -73,9 +79,7 @@ def appointments_by_student(appointments, studentId):
     student_appointments = []
     for time, student_netid, tutor_netid, comments in appointments:
         if student_netid == studentId:
-            formatted_date = time.date()
-            formatted_time = time.strftime('%I:%M %p')
-            student_appointments.append((formatted_date, formatted_time, tutor_netid))
+            student_appointments.append((time, tutor_netid))
     sorted_appointments = sorted(student_appointments, key=lambda x: x[0])
     return sorted_appointments
 
@@ -88,13 +92,16 @@ def available_appointments_by_time(appointments, booked_appts):
     tutor_appt_counts = Counter(tutor for _, _, tutor, _ in booked_appts)
     sorted_appointments = sorted(appointments, key=lambda x: x[0])
     appointments_by_date = defaultdict(lambda: defaultdict(list))
+
     for appt_time, student, tutor in sorted_appointments:
         if tutor_appt_counts[tutor] > 8:
             continue
         date_key = appt_time.date()
-        time_str = appt_time.strftime('%I:%M %p')
-        appointments_by_date[date_key][tutor].append(time_str)
+        appointments_by_date[date_key][tutor].append(appt_time)
     
+    for date in appointments_by_date:
+        appointments_by_date[date] = dict(sorted(appointments_by_date[date].items(), key=lambda x: x[0]))
+
     return appointments_by_date
 
 def group_by_week(appointments):
@@ -150,3 +157,7 @@ def get_admin_ids():
     for user_id in user_ids:
         tutor_ids.append(user_id.get_netid())
     return tutor_ids
+
+def get_names():
+    users = db_queries.get_user_info({"coursenum": "1"})
+    return {user.get_netid(): user.get_name() for user in users}

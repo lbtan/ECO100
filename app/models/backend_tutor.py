@@ -22,7 +22,7 @@ def get_times_tutors():
     times = []
     for row in available_appointments:
         # times.append(row[0], row[2])
-        times.append((row._time, row._tutor_netid, row._booked, row._student_netid))
+        times.append((row.get_time(), row.get_tutor_netid(), row.get_booked(), row.get_student_netid()))
     return times
 
 #-----------------------------------------------------------------------
@@ -34,7 +34,7 @@ def get_cur_appoinments():
         return curr_appointments
     appointments = []
     for row in curr_appointments:
-        appointments.append((row._time, row._tutor_netid, row._comments))
+        appointments.append((row.get_time(), row.get_tutor_netid(), row.get_comments()))
     return appointments
 #----------------------------------------------------------------------- 
 # add_times() -> edit all available times; 
