@@ -20,9 +20,9 @@ def import_users(csv_path, user_type, coursenum):
                 continue
             db_modify.add_user(netid, user_type, coursenum, name)
         except:
-            return 'Unable to process. Please make sure your file contains two columns, Name and Netid.'
+            return 'Error', 'Unable to process. Please make sure your file contains two columns, Name and Netid.'
     
-    return 'Succesfully uploaded and processed file.'
+    return 'Upload Confirmation', 'Succesfully uploaded and processed file.'
 
 def weekly_summary(coursenum, today=datetime.date.today()):
     week_before = today - datetime.timedelta(days=7)

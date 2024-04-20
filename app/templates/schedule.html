@@ -21,17 +21,16 @@
     <button class="btn warm-btn update-week-calendar" data-week="1" id="next-week">Next Week</button>
 </div>
 
-<br>
-
 {% for appointments_by_date in weekly_appointments %}
 
 <div id="calendar-{{loop.index0}}" style="display:none">
 
 {% if loop.index0 > 0 and user[1] == "tutor" %}
 <hr>
-<button class="btn warm-btn copy-times" data-mindate="{{appointments_by_date|min}}" data-maxdate="{{appointments_by_date|max}}">Copy Times From Last Week</button>
-{% endif %}
+Click on the button below if you would like to copy your schedule from the previous week into the current week.
+<br><button class="btn warm-btn copy-times" data-mindate="{{appointments_by_date|min}}" data-maxdate="{{appointments_by_date|max}}">Copy Times From Last Week</button>
 <hr>
+{% endif %}
 
 {% for date, tutors in appointments_by_date.items() %}
 <table class="col-md-8" border="1">

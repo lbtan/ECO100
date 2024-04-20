@@ -467,12 +467,13 @@ def upload():
     uploaded_file = flask.request.files['users_file']
     filename = uploaded_file.filename
     if filename == '' or os.path.splitext(filename)[-1] != 'csv':
+        title = 'Error'
         message = 'Please upload a valid .csv file.'
     else:
-        message = backend_admin.import_users(uploaded_file, user_type, "1")
+        title, message = backend_admin.import_users(uploaded_file, user_type, "1")
 
     user = get_user_from_cookies()
-    html_code = flask.render_template('admin/upload_confirmation.html', message=message, user=user)
+    html_code = flask.render_template('admin/upload_confirmation.html', message=message, user=user, title=title)
     response = flask.make_response(html_code)
     return response
 
