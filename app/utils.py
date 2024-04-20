@@ -33,7 +33,6 @@ def appointments_by_time(appointments, tutor=None):
     
     Sort appointments by time. (used gpt for lambda functions)
     """
-    # lambda sort based on code from ChatGPT
     sorted_appointments = sorted(appointments, key=lambda x: x[0])
     appointments_by_date = defaultdict(lambda: defaultdict(list))
 
