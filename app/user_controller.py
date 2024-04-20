@@ -515,7 +515,10 @@ def cancel_appointment():
     time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
     db_modify.cancel_appointment(time, tutor)
 
-    return flask.redirect(flask.url_for(f"{user[1]}view", netid=user[2]))
+    user = get_user_from_cookies()
+    html_code = flask.render_template('student/cancel_confirmation.html', user=user)
+    response = flask.make_response(html_code)
+    return response
 
 @app.route('/edit_appointment', methods=['POST'])
 def edit_appointment():

@@ -37,7 +37,7 @@
                 <br>
 
                 <hr>
-                <a href="{{url_for('delete_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Delete Appointment</a>
+                <button class="btn warm-btn" onclick="window.location.href='{{url_for('delete_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}'">Delete Appointment</button>
 
                 <!-- Popup for everyone else is locked  -->
                 {% else %}
@@ -86,11 +86,13 @@
                         {% endif %}    
                         <br>
             
-                        {% if appointment.get_booked() and (user[2] == appointment.get_student_netid() or user[2] == appointment.get_tutor_netid()) %}
-                        <hr>
-                        <a href="{{url_for('cancel_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}">Cancel appointment</a>
-                        {% endif %}
                     </form>
+                    
+                    {% if appointment.get_booked() and (user[2] == appointment.get_student_netid() or user[2] == appointment.get_tutor_netid()) %}
+                    <hr>
+                    <button class="btn warm-btn" onclick="window.location.href='{{url_for('cancel_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}'">Cancel Appointment</button>
+                    {% endif %}
+
                 {% endif %}  
                 {% endif %}        
             </div>

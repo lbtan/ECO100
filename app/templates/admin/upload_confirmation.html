@@ -28,7 +28,7 @@
     <body>
         {% include 'headerDynamic.html' with context %}
         {{message}}<br>
-        <hr><a href="{{url_for('adminview')}}">Go back</a>
+        <hr><button class="btn warm-btn" onclick="window.location.href='{{url_for('adminview', netid=user[2])}}'">Go Back</button>
 
         <!DOCTYPE html>
 
