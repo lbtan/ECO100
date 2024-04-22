@@ -221,7 +221,6 @@ def tutorview(netid):
     # Parse db results
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments, user[2])
-
     weekly_appointments = utils.group_by_week(apt_times)
     
     html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names)
@@ -292,20 +291,14 @@ def adminview(netid):
     if not netid:
         # If no netid is provided in the URL, use the authenticated username as netid.
         netid = username
-    try:
-        upload_message = flask.request.args.get('upload_message')
-    except:
-        pass
 
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
-    for date in apt_times:
-        apt_times[date] = sorted(apt_times[date])
     weekly_appointments = utils.group_by_week(apt_times)
     
     user = (netids_to_names[netid], 'admin', netid)
 
-    html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, upload_message=upload_message, names=netids_to_names)
+    html_code = flask.render_template('admin/adminview.html', user=user, weekly_appointments=weekly_appointments, names=netids_to_names)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
