@@ -25,9 +25,11 @@ def import_users(csv_path, user_type, coursenum):
     return 'Upload Confirmation', 'Succesfully uploaded and processed file.'
 
 def weekly_summary(coursenum, today=datetime.date.today()):
-    week_before = today - datetime.timedelta(days=7)
-    appts = db_queries.get_appointments({"start_time": week_before, 
-                                         "end_time": today,
+    # https://stackoverflow.com/questions/19216334/python-give-start-and-end-of-week-data-from-a-given-date
+    week_start = today - datetime.timedelta(days=today.weekday())
+    week_end = today + datetime.timedelta(days=6)
+    appts = db_queries.get_appointments({"start_time": week_start, 
+                                         "end_time": week_end,
                                          "booked": True,
                                          "coursenum": coursenum})
     if appts[0] == False:
@@ -52,7 +54,7 @@ def weekly_summary(coursenum, today=datetime.date.today()):
     
     summary["Total Appointments (By Tutor)"] = appts_by_tutor
 
-    return summary
+    return summary, (week_start, week_end)
 
 #-----------------------------------------------------------------------
 

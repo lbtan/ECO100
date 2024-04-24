@@ -405,14 +405,14 @@ def weekly_summary():
     authorize(username, 'admin')
     user = get_user_from_cookies()
 
-    # for now everything is under coursenum 1, and all data is under March 2025
-    summary = backend_admin.weekly_summary("1", datetime(2025, 3, 30)) 
+    # for now everything is under coursenum 1
+    summary, dates = backend_admin.weekly_summary("1") 
     if summary == False:
         html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user)
+    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates)
     response = flask.make_response(html_code)
     return response
 
