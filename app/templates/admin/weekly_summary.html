@@ -11,10 +11,11 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">Weekly Summary ({{summary["Total Appointments"]}} Appointments):</h5>
+                <h5 class="modal-title" id="modalLabel">Weekly Summary for {{dates[0].strftime('%B %d')}} to {{dates[1].strftime('%B %d')}}:</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">            
+            <div class="modal-body">
+                <b>{{summary["Total Appointments"]}} Appointments</b><br>     
                 {% for tutor in summary["Total Appointments (By Tutor)"] %}
 
                 {{tutor}}: {{summary["Total Appointments (By Tutor)"][tutor]}}
