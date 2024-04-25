@@ -3,3 +3,4 @@ python-dotenv==1.0.1
 SQLAlchemy==2.0.28
 typing_extensions==4.10.0
 gunicorn
+Flask-Mail
