@@ -1,33 +1,31 @@
-import os
-from flask import Flask
-from flask_mail import Mail, Message
-import dotenv
+from flask_mail import Message
 
-# Access the value of an environment variable
-dotenv.load_dotenv()
-mail_username = os.environ['MAIL_USERNAME']
-mail_password = os.environ['MAIL_PASSWORD']
+class MailSender:
 
-app = Flask(__name__)
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = mail_username
-app.config['MAIL_PASSWORD'] = mail_password
+    def __init__(self, mail, sender):
+        self.mail = mail
+        self.sender = sender
+    
+    def send_email(self, subject = '', recipient = '', body = ''):
+        msg = Message(subject = subject, sender = self.sender, recipients = [recipient])
+        msg.body = body
+        self.mail.send(msg)
+        return 'Email sent successfully'
 
-mail = Mail(app)
+    def cancel_appointment(self, appt, canceler, other):
+        canceler_email = canceler.get_netid() + "@princeton.edu"
+        body = f"Hi {canceler.get_name()},\nYou have successfully canceled your appointment with {other.get_name()} on {appt.get_time().strftime('%A, %B %d')} at {appt.get_time().strftime('%I:%M %p')}.\n\nPrinceton ECO Tutoring App Team"
+        self.send_email(subject='Appointment Canceled', recipient=canceler_email, body=body)
 
-@app.route('/send-email')
-def send_email():
-    subject = 'ECO Test Email'
-    recipient = 'hgupta@princeton.edu'
-    body = 'This is a test email from the ECO Tutoring App.'
+        other_email = other.get_netid() + "@princeton.edu"
+        body = f"Hi {other.get_name()},\n{canceler.get_name()} has canceled their appointment with you on {appt.get_time().strftime('%A, %B %d')} at {appt.get_time().strftime('%I:%M %p')}.\n\nPrinceton ECO Tutoring App Team"
+        self.send_email(subject='Appointment Canceled', recipient=other_email, body=body)
 
-    msg = Message(subject=subject, sender=mail_username, recipients=[recipient])
-    msg.body = body
-    mail.send(msg)
+    def book_appointment(self, appt, student, tutor, comments):
+        student_email = student.get_netid() + "@princeton.edu"
+        body = f"Hi {student.get_name()},\nYou have successfuly booked an appointment with {tutor.get_name()} on {appt.strftime('%A, %B %d')} at {appt.strftime('%I:%M %p')}.\n\nAppointment Comments: {comments}\n\nPrinceton ECO Tutoring App Team"
+        self.send_email(subject='Appointment Confirmation', recipient=student_email, body=body)
 
-    return 'Email sent successfully!'
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        tutor_email = tutor.get_netid() + "@princeton.edu"
+        body = f"Hi {tutor.get_name()},\n{student.get_name()} has booked an appointment with you on {appt.strftime('%A, %B %d')} at {appt.strftime('%I:%M %p')}.\n\nAppointment Comments: {comments}\n\nPrinceton ECO Tutoring App Team"
+        self.send_email(subject='Appointment Canceled', recipient=tutor_email, body=body)

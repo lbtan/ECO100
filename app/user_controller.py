@@ -7,6 +7,7 @@
 #-----------------------------------------------------------------------
 
 import flask
+from flask_mail import Mail
 import models.backend_tutor as db_tutor
 import models.backend_student as db_student
 import utils
@@ -18,6 +19,7 @@ import models.db_modify as db_modify
 import auth
 import dotenv, os
 import ssl
+import models.send_email as send_email
 
 #  https://stackoverflow.com/questions/44649449/brew-installation-of-python-3-6-1-ssl-certificate-verify-failed-certificate/44649450#44649450 
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -38,13 +40,27 @@ id_map = {
     'admin': admin_ids
 }
 
-app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
+dotenv.load_dotenv()
+
+# Mail
+SEND_MAIL = False
+
+if SEND_MAIL:
+    mail_username = os.environ['MAIL_USERNAME']
+    mail_password = os.environ['MAIL_PASSWORD']
+
+    app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
+    app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+    app.config['MAIL_PORT'] = 465
+    app.config['MAIL_USE_SSL'] = True
+    app.config['MAIL_USERNAME'] = mail_username
+    app.config['MAIL_PASSWORD'] = mail_password
+    mail = Mail(app)
+    mail_sender = send_email.MailSender(mail, mail_username)
 
 # CAS authentication stuff
-dotenv.load_dotenv()
 os.environ['APP_SECRET_KEY']
 app.secret_key = os.environ['APP_SECRET_KEY']
-
 
 #-----------------------------------------------------------------------
 
@@ -184,7 +200,7 @@ def studentview(netid):
     names_bios = {}
     for curr_user in unique_names:
         bio = db_queries.get_tutor_bio(curr_user)
-        if bio[0] == False:
+        if len(bio) > 0 and bio[0] == False:
             html_code = flask.render_template('error_handling/db_error.html')
             response = flask.make_response(html_code)
             return response
@@ -328,7 +344,7 @@ def appointment_popup():
     datetime_str = f"{date} {time}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %I:%M %p')
     appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": appt_time})
-    if appts[0] == False:
+    if len(appts) > 0 and appts[0] == False:
         html_code = flask.render_template('appointment_popup.html', error='A database error has occured. Please contact the system administrator.', title='Error')
         response = flask.make_response(html_code)
         return response
@@ -394,6 +410,11 @@ def appointment_confirm():
 
     db_modify.book_appointment(appt_time, tutor_netid, student_netid, comments, "1")
     
+    if SEND_MAIL:
+        tutor = db_queries.get_user_info({"netid": tutor_netid, "user_type": "tutor"})[0]
+        student = db_queries.get_user_info({"netid": student_netid, "user_type": "student"})[0]
+        mail_sender.book_appointment(appt_time, student, tutor, comments)
+    
     user = get_user_from_cookies()
     html_code = flask.render_template('student/student_confirmation.html', user=user, tutor=tutor_name)
     response = flask.make_response(html_code)
@@ -422,7 +443,7 @@ def tutor_overview():
     authorize(username, 'admin')
     user = get_user_from_cookies()
     users = db_queries.get_user_info({"user_type": "tutor", "coursenum": "1"})
-    if users[0] == False:
+    if len(users) > 0 and users[0] == False:
         html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
@@ -432,7 +453,7 @@ def tutor_overview():
         name = curr_user.get_name()
         netid = curr_user.get_netid()
         bio = db_queries.get_tutor_bio(netid)
-        if bio[0] == False:
+        if len(bio) > 0 and bio[0] == False:
             html_code = flask.render_template('error_handling/db_error.html')
             response = flask.make_response(html_code)
             return response
@@ -507,7 +528,25 @@ def cancel_appointment():
     user = get_user_from_cookies()
     
     time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+
+    # Find the appointment
+    appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": time})
+    if len(appts) > 0 and appts[0] == False:
+        html_code = flask.render_template('error_handling/db_error.html')
+        response = flask.make_response(html_code)
+        return response
+    
     db_modify.cancel_appointment(time, tutor)
+
+    if SEND_MAIL:
+        appt = appts[0] # should only match one appointment
+        tutor = db_queries.get_user_info({"netid": appt.get_tutor_netid(), "user_type": "tutor"})[0]
+        student = db_queries.get_user_info({"netid": appt.get_student_netid(), "user_type": "student"})[0]
+
+        if user[2] == tutor.get_netid():
+            mail_sender.cancel_appointment(appt, tutor, student)
+        elif user[2] == student.get_netid():
+            mail_sender.cancel_appointment(appt, student, tutor)
 
     user = get_user_from_cookies()
     html_code = flask.render_template('student/cancel_confirmation.html', user=user)
