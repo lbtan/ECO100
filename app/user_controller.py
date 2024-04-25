@@ -24,6 +24,9 @@ import models.send_email as send_email
 #  https://stackoverflow.com/questions/44649449/brew-installation-of-python-3-6-1-ssl-certificate-verify-failed-certificate/44649450#44649450 
 ssl._create_default_https_context = ssl._create_stdlib_context
 
+# Load environment variables
+dotenv.load_dotenv()
+
 #----------------------------------------------------------------------#
 
 # for testing purposes
@@ -40,7 +43,7 @@ id_map = {
     'admin': admin_ids
 }
 
-dotenv.load_dotenv()
+app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
 # Mail
 SEND_MAIL = False
@@ -49,7 +52,6 @@ if SEND_MAIL:
     mail_username = os.environ['MAIL_USERNAME']
     mail_password = os.environ['MAIL_PASSWORD']
 
-    app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
     app.config['MAIL_SERVER'] = 'smtp.gmail.com'
     app.config['MAIL_PORT'] = 465
     app.config['MAIL_USE_SSL'] = True
