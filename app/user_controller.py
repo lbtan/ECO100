@@ -517,6 +517,7 @@ def add_users():
 
 @app.route('/upload', methods=["POST"])
 def upload():
+    global admin_ids, tutor_ids, student_ids, netids_to_names
     username = auth.authenticate()
     authorize(username, 'admin')
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
@@ -528,6 +529,15 @@ def upload():
         message = 'Please upload a valid .csv file.'
     else:
         title, message = backend_admin.import_users(uploaded_file, user_type, "1")
+
+    if user_type == "admin":
+        admin_ids = utils.get_admin_ids()
+    elif user_type == "tutor":
+        tutor_ids = utils.get_tutor_ids()
+    elif user_type == "student":
+        student_ids = utils.get_student_ids()
+
+    netids_to_names = utils.get_names()
 
     user = get_user_from_cookies()
     html_code = flask.render_template('admin/upload_confirmation.html', message=message, user=user, title=title)
