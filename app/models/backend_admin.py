@@ -32,6 +32,7 @@ def weekly_summary(coursenum, today=datetime.date.today()):
                                          "end_time": week_end,
                                          "booked": True,
                                          "coursenum": coursenum})
+
     if appts[0] == False:
         return False
     

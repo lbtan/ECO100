@@ -252,13 +252,13 @@ def tutorview(netid):
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments, user[2])
     weekly_appointments = utils.group_by_week(apt_times)
-    today = datetime.date.today()
+
+    prev_appointments = db_tutor.get_prev_times()
     no_show_appointments = []
-    for row in appointments:
+    for row in prev_appointments:
         # print(row[2])
-        if row[2] == False:
-            if row[0].date() < today: 
-                no_show_appointments.append(row)
+        if row == None:
+            no_show_appointments.append(row)
     print(no_show_appointments)
     # user id info
     user = (netids_to_names[netid], 'tutor', netid)
@@ -321,6 +321,21 @@ def copy_prev_week():
 
     user = get_user_from_cookies()
     db_tutor.copy_prev_week_times(min_date, max_date, user[2])
+    return flask.redirect(flask.url_for('tutorview', netid=user[2]))
+
+@app.route('/no_show_update')
+def no_show_update():
+    username = auth.authenticate()
+    authorize(username, 'tutor')
+    time = flask.request.args.get('time')
+    tutor = flask.request.args.get('tutor_netid')
+    showed_up = flask.request.args.get('value')
+    user = get_user_from_cookies()
+    
+    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+
+    db_modify.update_showed_up(tutor, time, showed_up)
+
     return flask.redirect(flask.url_for('tutorview', netid=user[2]))
 
 #-----------------------------------------------------------------------
