@@ -5,3 +5,5 @@ typing_extensions==4.10.0
 gunicorn
 flask
 pandas
+flask_mail
+icalendar
