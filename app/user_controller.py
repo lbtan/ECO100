@@ -21,6 +21,7 @@ import auth
 import dotenv, os
 import ssl
 import models.send_email as send_email
+import datetime
 
 #  https://stackoverflow.com/questions/44649449/brew-installation-of-python-3-6-1-ssl-certificate-verify-failed-certificate/44649450#44649450 
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -251,8 +252,21 @@ def tutorview(netid):
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments, user[2])
     weekly_appointments = utils.group_by_week(apt_times)
-    
-    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names)
+    today = datetime.date.today()
+    no_show_appointments = []
+    for row in appointments:
+        # print(row[2])
+        if row[2] == False:
+            if row[0].date() < today: 
+                no_show_appointments.append(row)
+    print(no_show_appointments)
+    # user id info
+    user = (netids_to_names[netid], 'tutor', netid)
+    # Parse db results
+    apt_tutor = utils.appointments_by_tutor(appointments, user[2])
+    apt_times = utils.appointments_by_time(appointments, user[2])
+    weekly_appointments = utils.group_by_week(apt_times)
+    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names, no_show_appointments = no_show_appointments)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
