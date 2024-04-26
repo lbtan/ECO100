@@ -77,24 +77,32 @@ def failed_authorize():
 
 #-----------------------------------------------------------------------#
 
-def authorize(username, type):
+def authorize(username, types):
     """
     Check if the user has access to each page.
     """
+    if isinstance(types, str):
+        types = [types]
+
     # Special access for "testing" type
     if username in testing_ids:
         print(f"Authorization granted: {username} as tester.")
         return True
-    # Check if the type is valid
-    if type not in id_map:
-        print(f"Authorization error: Unknown type '{type}'.")
-        failed_authorize()
-    # Retrieve the correct ID list based on the type
-    role_ids = id_map[type]
-    if username not in role_ids:
-        print(f"Authorization failed for user '{username}'. Not found in '{type}_ids'.")
-        failed_authorize()
-    print(f"Authorization successful for {username}.")
+    
+    for type in types:
+        # Check if the type is valid
+        if type not in id_map:
+            print(f"Authorization error: Unknown type '{type}'.")
+            failed_authorize()
+
+        # Retrieve the correct ID list based on the type
+        role_ids = id_map[type]
+        if username in role_ids:
+            print(f"Authorization successful for {username}.")
+            return True
+
+    print(f"Authorization failed for user '{username}'. Not found in ids for type(s): {', '.join(types)}.")
+    failed_authorize()
 
 #----------------------------------------------------------------------#
 
@@ -360,11 +368,12 @@ def appointment_popup():
         response = flask.make_response(html_code)
         return response
     
-    # If the user is a student and they already have an appointment booked, they cannot access this one
+    # If the user is a student and they already have an appointment booked for this week, they cannot access this one
     if user[1] == "student":
         booked_appointments = db_student.get_cur_appoinments_student()
         cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
-        if len(cur_appointments) > 0 and appt.get_student_netid() != user[2]:
+        weeks = set([appt[0].isocalendar()[:2] for appt in cur_appointments])
+        if appt.get_time().isocalendar()[:2] in weeks and appt.get_student_netid() != user[2]:
             html_code = flask.render_template('appointment_popup.html', error='Sorry, you are unauthorized to view this page.', title='Unauthorized')
             response = flask.make_response(html_code)
             return response
@@ -526,7 +535,7 @@ def add_appt_submit():
 @app.route('/cancel_appointment')
 def cancel_appointment():
     username = auth.authenticate()
-    authorize(username, 'tutor')
+    authorize(username, ['tutor', 'student'])
     time = flask.request.args.get('time')
     tutor = flask.request.args.get('tutor_netid')
     user = get_user_from_cookies()
