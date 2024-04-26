@@ -494,7 +494,7 @@ def upload():
     user_type = flask.request.form['user_type']
     uploaded_file = flask.request.files['users_file']
     filename = uploaded_file.filename
-    if filename == '' or os.path.splitext(filename)[-1] != 'csv':
+    if filename == '' or os.path.splitext(filename)[-1] != '.csv':
         title = 'Error'
         message = 'Please upload a valid .csv file.'
     else:
