@@ -187,10 +187,12 @@ def studentview(netid):
     user = (netids_to_names[netid], 'student', netid)
     # Parse db results
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
-    
+
     available_appointments = db_student.get_times_students()
     chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
     weekly_appointments = utils.group_by_week(chronological_appointments)
+
+    can_book = utils.get_can_book(cur_appointments, weekly_appointments)
 
     unique_names = set()
 
@@ -209,7 +211,7 @@ def studentview(netid):
         names_bios[curr_user] = bio
 
     html_code = flask.render_template('student/studentview.html', user=user, cur_appointments=cur_appointments,
-                                      can_book = len(cur_appointments) == 0,
+                                      can_book = can_book,
                                       appointments_by_date=chronological_appointments,
                                       names_bios = names_bios,
                                       names=netids_to_names, weekly_appointments=weekly_appointments)

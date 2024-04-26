@@ -1,11 +1,7 @@
 <h2><span style="color: black;">Schedule</span></h2>
 
 {% if user[1] == "student" %}
-{% if not can_book %}
-<h4>The calendar is currently disabled as you can only book one appointment per week.</h4>
-{% else %}
 <h4>Click on a time slot to book an appointment. You can view a tutor's bio by hovering over their name.</h4>
-{% endif %}
 {% endif %}
 
 {% if user[1] == "tutor" %}
@@ -25,9 +21,15 @@
 
 {% for appointments_by_date in weekly_appointments %}
 
-<div id="calendar-{{loop.index0}}" style="display:none">
+{% set week = loop %}
 
-{% if loop.index0 > 0 and user[1] == "tutor" %}
+<div id="calendar-{{week.index0}}" style="display:none">
+
+{% if user[1] == "student" and not can_book[week.index0] %}
+The calendar is currently disabled as you can only book one appointment per week.
+{% endif %}
+
+{% if week.index0 > 0 and user[1] == "tutor" %}
 <hr>
 Click on the button below if you would like to copy your schedule from the previous week into the current week.
 <br><button class="btn warm-btn copy-times" data-mindate="{{appointments_by_date|min}}" data-maxdate="{{appointments_by_date|max}}">Copy Times From Last Week</button>
@@ -62,9 +64,9 @@ Click on the button below if you would like to copy your schedule from the previ
                     {% for appointment in tutors[tutor]  %}
                         {% if user[1] == "tutor" and user[2] != tutor %}
                             <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}" disabled>{{ appointment[0].strftime('%I:%M %p') }}</button>
-                        {% elif user[1] == "student" and can_book %}
+                        {% elif user[1] == "student" and can_book[week.index0] %}
                             <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}">{{ appointment.strftime('%I:%M %p') }}</button>
-                        {% elif user[1] == "student" and not can_book %}
+                        {% elif user[1] == "student" and not can_book[week.index0] %}
                             <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}" disabled>{{ appointment.strftime('%I:%M %p') }}</button>
                         {% else %}
                             <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}">{{ appointment[0].strftime('%I:%M %p') }}</button>
