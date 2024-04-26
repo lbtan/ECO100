@@ -21,7 +21,6 @@ import auth
 import dotenv, os
 import ssl
 import models.send_email as send_email
-import datetime
 
 #  https://stackoverflow.com/questions/44649449/brew-installation-of-python-3-6-1-ssl-certificate-verify-failed-certificate/44649450#44649450 
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -253,11 +252,11 @@ def tutorview(netid):
     apt_times = utils.appointments_by_time(appointments, user[2])
     weekly_appointments = utils.group_by_week(apt_times)
 
-    prev_appointments = db_tutor.get_prev_times()
+    prev_appointments = db_tutor.get_prev_times(user[2])
     no_show_appointments = []
     for row in prev_appointments:
         # print(row[2])
-        if row == None:
+        if row[-1] == None:
             no_show_appointments.append(row)
     print(no_show_appointments)
     # user id info
@@ -332,7 +331,7 @@ def no_show_update():
     showed_up = flask.request.args.get('value')
     user = get_user_from_cookies()
     
-    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+    time = datetime.strptime(time, '%Y-%m-%d %I:%M %p')
 
     db_modify.update_showed_up(tutor, time, showed_up)
 
