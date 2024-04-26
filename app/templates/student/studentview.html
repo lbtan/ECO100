@@ -71,68 +71,16 @@
 
         </div>
         <hr>
-        <div style="margin:0.1px;" class="container" >
-            <li class="list-group-item">
-                <button class="btn warm-btn float-left tutor-overview-btn">View Tutor Bios</button>
-            </li>  
-        </div>
-        <hr> 
-        <!-- Include popup containers -->
-        <div id="overview-modal-container"></div>
         
-        <div style="margin:0.1px;" class="container" >
-            
-            <h2><span style="color: black;">Schedule</h2>
+          <!-- Include popup container -->
+          <div id="tutor-bio-edit-modal-container" data-tutor_netid="{{user[2]}}"></div>
+        
+          {% include 'schedule.html' with context %}
 
-            {% if user[1] == "tutor" %}
-            <h3>Click on an existing appointment to view details/cancel. Click '+' to add new appointment time.</h3>
-            {% endif %}
-            
-            {% if user[1] == "student" and not can_book %}
-            <h3>The calendar is currently disabled as you can only book one appointment per week.</h3>
-            {% endif %}
-            
-            {% for date, tutors in appointments_by_date.items() %}
-            <table class="col-md-8" border="1">
-                <thead>
-                    <tr>
-                        <th colspan="3">{{ date.strftime('%A, %B %d, %Y') }}</th>
-                    </tr>
-                    <tr>
-                        <th class="tutor-column">Tutor</th>
-                        <th>Times Available</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for tutor, appointments in tutors.items() %}
-                        <tr>
-                            <td><div class="hover-container">
-                                {{names[tutor]}}
-                                <div class="hover-text">{{ names_bios[tutor] }}</div>
-                            </div></td>
-                            <td>
-                                {% for appointment in appointments  %}
-                                    {% if user[1] == "tutor" and user[2] != tutor %}
-                                        <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}" disabled>{{ appointment[0].strftime('%I:%M %p') }}</button>
-                                    {% elif user[1] == "student" and can_book %}
-                                        <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}">{{ appointment.strftime('%I:%M %p') }}</button>
-                                    {% elif user[1] == "student" and not can_book %}
-                                        <button class="btn time-slot warm-btn" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment.strftime('%I:%M %p')}}" disabled>{{ appointment.strftime('%I:%M %p') }}</button>
-                                    {% else %}
-                                        <button class="btn time-slot {{ 'dark-btn' if appointment[1] else 'warm-btn' }}" data-tutor_netid="{{tutor}}" data-date="{{date}}" data-time="{{appointment[0].strftime('%I:%M %p')}}">{{ appointment[0].strftime('%I:%M %p') }}</button>
-                                    {% endif %}
-                                {% endfor %}
-                                {% if user[1] == "tutor" and user[2] == tutor %}
-                                    <button class="btn warm-btn" onclick="window.location.href='{{ url_for( 'add_appointment', tutor_netid=tutor, date=date ) }}'">+</button>
-                                {% endif %}    
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <br> 
-            {% endfor %}
-            
-            <!-- Include modal container -->
-            <div id="modal-container"></div>
+      </div>
+  
+      {% include 'footer.html' with context %}
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    </body>
 </html>
