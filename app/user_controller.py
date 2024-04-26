@@ -258,7 +258,7 @@ def tutorview(netid):
         # print(row[2])
         if row[-1] == None:
             no_show_appointments.append(row)
-    print(no_show_appointments)
+    
     # user id info
     user = (netids_to_names[netid], 'tutor', netid)
     # Parse db results
@@ -329,6 +329,7 @@ def no_show_update():
     time = flask.request.args.get('time')
     tutor = flask.request.args.get('tutor_netid')
     showed_up = flask.request.args.get('value')
+    showed_up = True if showed_up == "True" else False
     user = get_user_from_cookies()
     
     time = datetime.strptime(time, '%Y-%m-%d %I:%M %p')
