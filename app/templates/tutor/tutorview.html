@@ -23,32 +23,62 @@
         <!-- Include external JavaScript file -->
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>
         <script src="{{ url_for('static', filename='js/schedule.js') }}"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
       </head>
 
     <body>
         {% include 'headerDynamic.html' with context %}
         
-        <div class="container-fluid" >
-            You have the following appointments for this week: 
-
-            <!-- Current Appointments Block -->
-            <div class="col-md-6">
+        <div class="container-fluid">
+          You have the following appointments for this week:
+      
+          <!-- Current Appointments Block -->
+          <div class="col-md-6">
               <div class="card">
-                <div class="card-header custombg-warm text-black">
-                  Current Appointments
-                </div>
-                <ul class="list-group list-group-flush">
-                    {% for time, netid in apt_tutor %}
-                    <li class="list-group-item">
-                      {{time.strftime('%A, %B %d')}} at {{time.strftime('%I:%M %p')}} with {{names[netid]}}
-                      <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{user[2]}}" data-date="{{time.strftime('%Y-%m-%d')}}" data-time="{{time.strftime('%I:%M %p')}}">View/Cancel</button> 
-                    </li>
-                    {% endfor %}
-                </ul>
+                  <div class="card-header custombg-warm text-white">
+                      Current Appointments
+                  </div>
+                  <ul class="list-group list-group-flush">
+                      {% for time, netid in apt_tutor %}
+                      <li class="list-group-item">
+                          {{ time.strftime('%A, %B %d') }} at {{ time.strftime('%I:%M %p') }} with {{ names[netid] }}
+                          <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{ user[2] }}" data-date="{{ time.strftime('%Y-%m-%d') }}" data-time="{{ time.strftime('%I:%M %p') }}">View/Cancel</button>
+                      </li>
+                      {% endfor %}
+                  </ul>
               </div>
-            </div>
-            <hr>
+          </div>
+      
+          <hr>
+      
+         
+<!-- No-show Appointments Block -->
+<div class="col-md-6">
+  <div class="card">
+      <div class="card-header custombg-warm text-white">
+          Showed Up?
+      </div>
+      <ul class="list-group list-group-flush">
+          {% for appointment in no_show_appointments %}
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{ appointment[0].strftime('%A, %B %d at %I:%M %p') }} with {{ names[appointment[1]] }}
+              <div>
+                  <button class="btn btn-success" data-tutor_netid="{{ appointment[1] }}" data-date="{{ appointment[0].strftime('%Y-%m-%d') }}" data-time="{{ appointment[0].strftime('%I:%M %p') }}" title="Confirm Showed Up">
+                      <i class="bi bi-check2"></i> <!-- Check mark tick -->
+                  </button>
+                  <button class="btn btn-danger" data-tutor_netid="{{ appointment[1] }}" data-date="{{ appointment[0].strftime('%Y-%m-%d') }}" data-time="{{ appointment[0].strftime('%I:%M %p') }}" title="Mark No Show">
+                      <i class="bi bi-x"></i> <!-- Cross for no-show -->
+                  </button>
+              </div>
+          </li>
+          {% endfor %}
+      </ul>
+  </div>
+</div>
 
+      </div>
+      
+      
             <!-- Include popup container -->
             <div id="tutor-bio-edit-modal-container" data-tutor_netid="{{user[2]}}"></div>
         
