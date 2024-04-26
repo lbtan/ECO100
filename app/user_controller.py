@@ -251,8 +251,21 @@ def tutorview(netid):
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments, user[2])
     weekly_appointments = utils.group_by_week(apt_times)
+
+    prev_appointments = db_tutor.get_prev_times(user[2])
+    no_show_appointments = []
+    for row in prev_appointments:
+        # print(row[2])
+        if row[-1] == None:
+            no_show_appointments.append(row)
     
-    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names)
+    # user id info
+    user = (netids_to_names[netid], 'tutor', netid)
+    # Parse db results
+    apt_tutor = utils.appointments_by_tutor(appointments, user[2])
+    apt_times = utils.appointments_by_time(appointments, user[2])
+    weekly_appointments = utils.group_by_week(apt_times)
+    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names, no_show_appointments = no_show_appointments)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -307,6 +320,22 @@ def copy_prev_week():
 
     user = get_user_from_cookies()
     db_tutor.copy_prev_week_times(min_date, max_date, user[2])
+    return flask.redirect(flask.url_for('tutorview', netid=user[2]))
+
+@app.route('/no_show_update')
+def no_show_update():
+    username = auth.authenticate()
+    authorize(username, 'tutor')
+    time = flask.request.args.get('time')
+    tutor = flask.request.args.get('tutor_netid')
+    showed_up = flask.request.args.get('value')
+    showed_up = True if showed_up == "True" else False
+    user = get_user_from_cookies()
+    
+    time = datetime.strptime(time, '%Y-%m-%d %I:%M %p')
+
+    db_modify.update_showed_up(tutor, time, showed_up)
+
     return flask.redirect(flask.url_for('tutorview', netid=user[2]))
 
 #-----------------------------------------------------------------------

@@ -25,6 +25,17 @@ def get_times_tutors():
         times.append((row.get_time(), row.get_tutor_netid(), row.get_booked(), row.get_student_netid()))
     return times
 
+def get_prev_times(tutor):
+    available_appointments = db_queries.get_appointments({"tutor_netid": tutor, "end_time": today - datetime.timedelta(days=1)})
+    if len(available_appointments) > 0 and available_appointments[0] == False:
+        return available_appointments
+    times = []
+    for row in available_appointments:
+        # times.append(row[0], row[2])
+        times.append((row.get_time(), row.get_tutor_netid(), row.get_booked(), row.get_student_netid(), row.get_show()))
+    sorted_appointments = sorted(times, key=lambda x: x[0])
+    return sorted_appointments
+
 #-----------------------------------------------------------------------
 # get_cur_appointment() -> list of scheduled appointments + tutor + comments 
 # can add coursenum as parameter later
