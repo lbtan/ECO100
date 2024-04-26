@@ -90,7 +90,8 @@ def get_appointments(props={}):
                                                 row.tutor_netid, 
                                                 row.student_netid, 
                                                 row.comments, 
-                                                row.coursenum)
+                                                row.coursenum,
+                                                row.showed_up)
                 appts.append(appt)
 
         _engine.dispose()

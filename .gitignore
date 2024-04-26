@@ -3,3 +3,5 @@
 
 *env
 *.csv
+
+app.models.db_create.py
