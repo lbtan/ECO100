@@ -14,8 +14,8 @@ import sqlalchemy.orm
 import dotenv
 import database
 
-dotenv.load_dotenv()
-_DATABASE_URL = os.environ['DATABASE_URL']
+DATABASE_URL= "postgres://eco100_tutoring_user:hmva48rjXFOw1y6DEoUquq6EpnfT3sKX@dpg-coc3d48l5elc739mcnag-a.ohio-postgres.render.com/eco100_tutoring"
+_DATABASE_URL = DATABASE_URL
 _DATABASE_URL = _DATABASE_URL.replace('postgres://', 'postgresql://')
 
 #-----------------------------------------------------------------------
@@ -54,7 +54,7 @@ def main():
             table = query.all()
             for row in table:
                 print(row.time, row.booked, row.tutor_netid, 
-                      row.student_netid, row.comments, row.coursenum)
+                      row.student_netid, row.comments, row.coursenum, row.showed_up)
 
         engine.dispose()
 
