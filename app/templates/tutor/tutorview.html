@@ -41,7 +41,10 @@
                     {% for time, netid in apt_tutor %}
                     <li class="list-group-item">
                       {{time.strftime('%A, %B %d')}} at {{time.strftime('%I:%M %p')}} with {{names[netid]}}
-                      <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{user[2]}}" data-date="{{time.strftime('%Y-%m-%d')}}" data-time="{{time.strftime('%I:%M %p')}}">View/Cancel</button> 
+                      <div class="button-group">
+                        <button class="btn warm-btn float-end view-cancel" onclick="window.location.href='{{url_for('generate_ics',  tutor = names[netid], time = time.strftime('%Y%m%dT%H%M%SZ'))}}'">Download iCal</button>
+                        <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{user[2]}}" data-date="{{time.strftime('%Y-%m-%d')}}" data-time="{{time.strftime('%I:%M %p')}}">View/Cancel</button> 
+                      </div>
                     </li>
                     {% endfor %}
                 </ul>

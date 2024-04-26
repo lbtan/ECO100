@@ -11,7 +11,8 @@ from flask_mail import Mail
 import models.backend_tutor as db_tutor
 import models.backend_student as db_student
 import utils
-from datetime import datetime
+from icalendar import Calendar, Event
+from datetime import datetime, timedelta
 import models.db_modify as db_modify
 import models.db_queries as db_queries
 import models.backend_admin as backend_admin
@@ -603,3 +604,30 @@ def delete_appointment():
     db_modify.delete_appointment(time, tutor)
 
     return flask.redirect(flask.url_for(f"{user[1]}view", netid=user[2]))
+
+# assisted by chatGPT for this function
+@app.route('/generate_ics')
+def generate_ics():
+    time = flask.request.args.get('time')
+    tutor = flask.request.args.get('tutor')
+
+    start_time = datetime.strptime(time, '%Y%m%dT%H%M%SZ')
+
+    end_time = start_time + timedelta(minutes=30)
+
+    cal = Calendar()
+    cal.add('prodid', '-//ECO100//Appointment//EN')
+    cal.add('version', '2.0')
+
+    event = Event()
+    event.add('summary', 'ECO100 Tutoring with ' + tutor)
+    event.add('dtstart', start_time)
+    event.add('dtend', end_time)
+    cal.add_component(event)
+
+    headers = {
+        'Content-Type': 'text/calendar',
+        'Content-Disposition': 'attachment; filename="appointment.ics"'
+    }
+
+    return cal.to_ical(), 200, headers
