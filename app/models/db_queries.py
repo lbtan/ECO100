@@ -53,7 +53,8 @@ def get_appointments(props={}):
                     database.Appointment.time <= end_time
                 )
 
-                query = query.filter(database.Appiontment.time == props["exact_time"])
+            if "exact_time" in props:
+                query = query.filter(database.Appointment.time == props["exact_time"])
             
             if "student_netid" in props:
                 query = query.filter(
