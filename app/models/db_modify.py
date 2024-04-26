@@ -209,6 +209,31 @@ def update_tutor_bio(tutor_netid, bio):
         print(ex, file=sys.stderr)
         # sys.exit(1)
 
+def update_showed_up(tutor_netid, time, showed_up):
+
+    try:
+        _engine = sqlalchemy.create_engine(_DATABASE_URL)
+
+        try:
+
+            with sqlalchemy.orm.Session(_engine) as session:
+                query = session.query(database.Appointment).filter(
+                    database.Appointment.tutor_netid == tutor_netid
+                ).filter(
+                    database.Appointment.time == time
+                )
+
+                row = query.one()
+                row.showed_up = showed_up
+
+                session.commit()
+
+        finally:
+            _engine.dispose()
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+
 def add_user(netid, user_type, coursenum, name):
 
     try:
