@@ -212,7 +212,7 @@ def studentview(netid):
                                       can_book = len(cur_appointments) == 0,
                                       appointments_by_date=chronological_appointments,
                                       names_bios = names_bios,
-                                      names=netids_to_names)
+                                      names=netids_to_names, weekly_appointments=weekly_appointments)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
