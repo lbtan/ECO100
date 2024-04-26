@@ -57,7 +57,17 @@ Click on the button below if you would like to copy your schedule from the previ
             
         {% for tutor, appointments in tutors.items() %}
             <tr>
-                <td>{{ names[tutor] }}</td>
+                {% if user[1] == "student" %}
+            <td>
+                <div class="hover-container">
+                    {{ names[tutor] }}
+                    <div class="hover-text">{{ names_bios[tutor] }}</div>
+                </div>
+            </td>
+            {% else %}
+                 <td>{{ names[tutor] }}</td>
+            {% endif %}
+
                 <td>
                     {% for appointment in tutors[tutor]  %}
                         {% if user[1] == "tutor" and user[2] != tutor %}
