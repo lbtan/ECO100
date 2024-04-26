@@ -26,6 +26,7 @@ class Appointment (Base):
     __tablename__ = 'appointments'
     time = sqlalchemy.Column(sqlalchemy.DateTime, primary_key=True)
     booked = sqlalchemy.Column(sqlalchemy.Boolean)
+    showed_up = sqlalchemy.Column(sqlalchemy.Boolean)
     tutor_netid = sqlalchemy.Column(sqlalchemy.String, primary_key=True)
     student_netid = sqlalchemy.Column(sqlalchemy.String)
     comments = sqlalchemy.Column(sqlalchemy.String)

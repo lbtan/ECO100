@@ -7,16 +7,18 @@
 
 import datetime
 
+
 class Appointment:
 
     def __init__(self, time, booked, tutor_netid, student_netid,
-                 comments, coursenum):
+                 comments, coursenum, showed_up):
         self._time = time
         self._booked = booked
         self._tutor_netid = tutor_netid
         self._student_netid = student_netid
         self._comments = comments
         self._coursenum = coursenum
+        self._showed_up = showed_up
 
     def get_time(self):
         return self._time
@@ -35,10 +37,14 @@ class Appointment:
     
     def get_coursenum(self):
         return self._coursenum
+    
+    def get_show(self):
+        return self._showed_up
 
     def to_tuple(self):
         return (self._time, self._booked, self._tutor_netid, 
-                self._student_netid, self._comments, self._coursenum)
+                self._student_netid, self._comments, self._coursenum,
+                self._showed_up)
 
 #-----------------------------------------------------------------------
 
@@ -51,6 +57,7 @@ def _test():
     print(appt.get_student_netid())
     print(appt.get_comments())
     print(appt.get_coursenum())
+    print(appt.get_show())
 
 if __name__ == '__main__':
     _test()
