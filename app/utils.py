@@ -160,3 +160,14 @@ def get_admin_ids():
 def get_names():
     users = db_queries.get_user_info({"coursenum": "1"})
     return {user.get_netid(): user.get_name() for user in users}
+
+def get_can_book(cur_appointments, weekly_appointments):
+    cur_appointments_weeks = set([appt[0].isocalendar()[:2] for appt in cur_appointments])
+    
+    can_book = [True] * len(weekly_appointments)
+    for i in range(len(weekly_appointments)):
+        week = next(iter(weekly_appointments[i])).isocalendar()[:2]
+        if week in cur_appointments_weeks:
+            can_book[i] = False
+    
+    return can_book
