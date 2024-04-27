@@ -52,6 +52,7 @@
               </div>
           </div>
       
+    <p>For the following previous appointments, please confirm whether the students showed up.</p>
           <!-- No-show Appointments Block -->
     <div class="col-md-6">
       <div class="card">
@@ -61,7 +62,7 @@
           <ul class="list-group list-group-flush">
               {% for appointment in no_show_appointments %}
               <li class="list-group-item d-flex justify-content-between align-items-center">
-                  {{ appointment[0].strftime('%A, %B %d at %I:%M %p') }} with {{ names[appointment[1]] }}
+                  {{ appointment[0].strftime('%A, %B %d at %I:%M %p') }} with {{ names[appointment[3]] }}
                   <div>
                       <button class="btn btn-success" onclick="window.location.href='{{ url_for('no_show_update', tutor_netid=appointment[1], time=appointment[0].strftime('%Y-%m-%d %I:%M %p'), value=True) }}'" title="Confirm Showed Up">
                           <i class="bi bi-check2"></i>
