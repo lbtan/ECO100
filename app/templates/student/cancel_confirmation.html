@@ -28,7 +28,7 @@
     <body>
         {% include 'headerDynamic.html' with context %}
         Your appointment has been successfully canceled.
-        <hr><button class="btn warm-btn" onclick="window.location.href='{{url_for('studentview', netid=user[2])}}'">Go Back</button>
+        <hr><button class="btn warm-btn" onclick="window.location.href='{{url_for(user[1] + 'view', netid=user[2])}}'">Go Back</button>
 
         <!DOCTYPE html>
 
