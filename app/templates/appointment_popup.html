@@ -17,6 +17,10 @@
                 
                 <!-- Unbooked popup for tutors, lets them change time  -->
                 {% if user[1] == "tutor" and not appointment.get_booked() %}
+                You can edit the date and time for this time slot below, and click "Edit Appointment" to submit your changes.
+                <br><br>
+                Click on "Delete Appointment" to delete this time slot.
+                <br><br>
                 <form action="/edit_appointment" method="post">
 
                     <label for="appt-date">Appointment Date:</label>
@@ -31,7 +35,7 @@
                                             
                     <input type="hidden" name="prev-time" value="{{appointment.get_time().time()}}">
                     <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
-                    <input type="submit" value="Edit Appointment">
+                    <button class="btn warm-btn">Edit Appointment</button>
                 </form>
 
                 <br>
@@ -82,8 +86,8 @@
                         <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
                         <input type="hidden" name="tutor_name" value="{{tutor.get_name()}}">
                         <input type="hidden" name="student_netid" value="{{user[2]}}">
-                        <input type="submit" value="Book Appointment">
-                        {% endif %}    
+                        <button class="btn warm-btn">Book Appointment</button>
+                        {% endif %}
                         <br>
             
                     </form>
