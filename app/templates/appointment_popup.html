@@ -19,8 +19,6 @@
                 {% if user[1] == "tutor" and not appointment.get_booked() %}
                 You can edit the date and time for this time slot below, and click "Edit Appointment" to submit your changes.
                 <br><br>
-                Click on "Delete Appointment" to delete this time slot.
-                <br><br>
                 <form action="/edit_appointment" method="post">
 
                     <label for="appt-date">Appointment Date:</label>
@@ -41,6 +39,8 @@
                 <br>
 
                 <hr>
+                Click on "Delete Appointment" to delete this time slot.
+                <br>
                 <button class="btn warm-btn" onclick="window.location.href='{{url_for('delete_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}'">Delete Appointment</button>
 
                 <!-- Popup for everyone else is locked  -->
