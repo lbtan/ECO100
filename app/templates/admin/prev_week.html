@@ -19,9 +19,10 @@
                 {{tutor}}: {{summary["Total Appointments (By Tutor)"][tutor]}}
                 <br>
     
-                {% endfor %}<br><br>
+                {% endfor %}
 
                 {% if summary["No Show Appointments"]|length > 0 %}
+                <br><br>
                 <b>No Show Appointments:</b><br><br>
                 {% for appt in summary["No Show Appointments"] %}
                 {{appt}}
