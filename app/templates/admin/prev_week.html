@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 
 <!-- =========================================================== -->
-<!-- weekly_summary.html                                         -->
+<!-- prev_week.html                                              -->
 <!-- Author: Hita Gupta                                          -->
 <!-- =========================================================== -->
  
-<!-- Modal code based on code from ChatGPT -->
-
-<div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+<div class="modal fade" id="previousWeekModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -22,6 +20,15 @@
                 <br>
     
                 {% endfor %}
+
+                {% if summary["No Show Appointments"]|length > 0 %}
+                <br><br>
+                <b>Students who did not show up to appointments:</b><br><br>
+                {% for appt in summary["No Show Appointments"] %}
+                <b>{{names[appt.get_student_netid()]}} ({{appt.get_student_netid()}}):</b> {{ appt.get_time().strftime('%A, %B %d') }} at {{ appt.get_time().strftime('%I:%M %p') }} with {{ names[appt.get_tutor_netid()] }}
+                {% endfor %}
+                {% endif %}
+
             </div>
         </div>
     </div>

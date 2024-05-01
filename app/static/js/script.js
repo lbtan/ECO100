@@ -61,6 +61,17 @@ $(document).ready(function(){
         });
     }
 
+    function show_prev_week() {
+        // Load the popup HTML using AJAX
+        $.get('/prev_week', function(html) {
+            // Create a jQuery object from the HTML string
+            var $modal = $(html);
+            // Add the modified HTML to the modal container and show the modal
+            $('#previous-week-modal-container').html($modal);
+            $('#previousWeekModal').modal('show');
+        });
+    }
+
     function show_add_users() {
         // Load the popup HTML using AJAX
         $.get('/add_users', function(html) {
@@ -152,6 +163,7 @@ $(document).ready(function(){
     $('.view-cancel').click(show_appt);
     $('.tutor-overview-btn').click(show_tutor_overview);
     $('.weekly-summary-btn').click(show_weekly_summary);
+    $('.prev-week-btn').click(show_prev_week);
     $('.add-users-btn').click(show_add_users);
     $('.edit-tutor-bio').click(show_tutor_bio_edit);
     $('.choose_netid').click(show_student_ids);

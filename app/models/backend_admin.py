@@ -57,6 +57,41 @@ def weekly_summary(coursenum, today=datetime.date.today()):
 
     return summary, (week_start, week_end)
 
+def prev_week(coursenum, today=datetime.date.today()-datetime.timedelta(days=7)):
+    # https://stackoverflow.com/questions/19216334/python-give-start-and-end-of-week-data-from-a-given-date
+    week_start = today - datetime.timedelta(days=today.weekday())
+    week_end = today + datetime.timedelta(days=6)
+    appts = db_queries.get_appointments({"start_time": week_start, 
+                                         "end_time": week_end,
+                                         "booked": True,
+                                         "coursenum": coursenum})
+
+    if appts[0] == False:
+        return False
+    
+    summary = {}
+    summary["Total Appointments"] = len(appts)
+
+    tutors = db_queries.get_user_info({"user_type": "tutor",
+                                       "coursenum": coursenum})
+    if tutors[0] == False:
+        return False
+
+    appts_by_tutor = {tutor.get_netid(): 0 for tutor in tutors}
+    for appt in appts:
+        appts_by_tutor[appt.get_tutor_netid()] += 1
+    
+    tutor_names = {tutor.get_netid(): tutor.get_name() for tutor in 
+                   tutors}
+    appts_by_tutor = {tutor_names[netid]: appts_by_tutor[netid] for 
+                      netid in appts_by_tutor}
+    
+    summary["Total Appointments (By Tutor)"] = appts_by_tutor
+
+    summary["No Show Appointments"] = [appt for appt in appts if appt.get_show() == False]
+
+    return summary, (week_start, week_end)
+
 #-----------------------------------------------------------------------
 
 def _test():
