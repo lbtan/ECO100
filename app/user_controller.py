@@ -493,7 +493,7 @@ def prev_week():
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('admin/prev_week.html', summary=summary, user=user, dates=dates)
+    html_code = flask.render_template('admin/prev_week.html', summary=summary, user=user, dates=dates, names=netids_to_names)
     response = flask.make_response(html_code)
     return response
 
