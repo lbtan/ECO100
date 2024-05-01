@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 
 <!-- =========================================================== -->
-<!-- weekly_summary.html                                         -->
+<!-- prev_week.html                                              -->
 <!-- Author: Hita Gupta                                          -->
 <!-- =========================================================== -->
  
-<!-- Modal code based on code from ChatGPT -->
-
-<div class="modal fade" id="summaryModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+<div class="modal fade" id="previousWeekModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -21,7 +19,15 @@
                 {{tutor}}: {{summary["Total Appointments (By Tutor)"][tutor]}}
                 <br>
     
+                {% endfor %}<br><br>
+
+                {% if summary["No Show Appointments"]|length > 0 %}
+                <b>No Show Appointments:</b><br><br>
+                {% for appt in summary["No Show Appointments"] %}
+                {{appt}}
                 {% endfor %}
+                {% endif %}
+
             </div>
         </div>
     </div>
