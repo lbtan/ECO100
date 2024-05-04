@@ -22,6 +22,16 @@
                 <br>
     
                 {% endfor %}
+
+                {% if summary["No Show Appointments"]|length > 0 %}
+                <br><br>
+                <b>Students who did not show up to appointments:</b><br><br>
+                {% for appt in summary["No Show Appointments"] %}
+                <b>{{names[appt.get_student_netid()]}} ({{appt.get_student_netid()}}):</b> {{ appt.get_time().strftime('%A, %B %d') }} at {{ appt.get_time().strftime('%I:%M %p') }} with {{ names[appt.get_tutor_netid()] }}
+                <br>
+                {% endfor %}
+                {% endif %}
+
             </div>
         </div>
     </div>

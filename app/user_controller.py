@@ -476,7 +476,7 @@ def weekly_summary():
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates)
+    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates, names=netids_to_names)
     response = flask.make_response(html_code)
     return response
 
@@ -487,13 +487,13 @@ def prev_week():
     user = get_user_from_cookies()
 
     # for now everything is under coursenum 1
-    summary, dates = backend_admin.prev_week("1")
+    summary, dates = backend_admin.weekly_summary("1", today=datetime.today()-timedelta(days=7))
     if summary == False:
         html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('admin/prev_week.html', summary=summary, user=user, dates=dates, names=netids_to_names)
+    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates, names=netids_to_names)
     response = flask.make_response(html_code)
     return response
 
