@@ -67,8 +67,8 @@ $(document).ready(function(){
             // Create a jQuery object from the HTML string
             var $modal = $(html);
             // Add the modified HTML to the modal container and show the modal
-            $('#previous-week-modal-container').html($modal);
-            $('#previousWeekModal').modal('show');
+            $('#summary-modal-container').html($modal);
+            $('#summaryModal').modal('show');
         });
     }
 
