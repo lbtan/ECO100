@@ -28,4 +28,4 @@ class MailSender:
 
         tutor_email = tutor.get_netid() + "@princeton.edu"
         body = f"Hi {tutor.get_name()},\n{student.get_name()} has booked an appointment with you on {appt.strftime('%A, %B %d')} at {appt.strftime('%I:%M %p')}.\n\nAppointment Comments: {comments}\n\nPrinceton ECO Tutoring App Team"
-        self.send_email(subject='Appointment Canceled', recipient=tutor_email, body=body)
+        self.send_email(subject='Appointment Confirmation', recipient=tutor_email, body=body)
