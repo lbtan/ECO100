@@ -26,7 +26,7 @@ def get_times_tutors():
     return times
 
 def get_prev_times(tutor):
-    available_appointments = db_queries.get_appointments({"tutor_netid": tutor, "end_time": date.today() - datetime.timedelta(days=1)})
+    available_appointments = db_queries.get_appointments({"tutor_netid": tutor, "end_time": date.now() - datetime.timedelta(minutes=1)})
     if len(available_appointments) > 0 and available_appointments[0] == False:
         return available_appointments
     times = []
@@ -40,7 +40,7 @@ def get_prev_times(tutor):
 # get_cur_appointment() -> list of scheduled appointments + tutor + comments 
 # can add coursenum as parameter later
 def get_cur_appoinments():
-    curr_appointments = db_queries.get_appointments({"start_time": date.today(), "booked": True})
+    curr_appointments = db_queries.get_appointments({"start_time": date.now(), "booked": True})
     if len(curr_appointments) > 0 and curr_appointments[0] == False:
         return curr_appointments
     appointments = []

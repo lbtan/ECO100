@@ -275,7 +275,6 @@ def tutorview(netid):
     prev_appointments = db_tutor.get_prev_times(user[2])
     no_show_appointments = []
     for row in prev_appointments:
-        # print(row[2])
         if row[2] and row[-1] is None:
             no_show_appointments.append(row)
     
