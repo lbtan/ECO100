@@ -135,6 +135,17 @@ def user_type():
 
 #-----------------------------------------------------------------------
 
+# https://flask.palletsprojects.com/en/3.0.x/errorhandling/
+@app.errorhandler(404)
+def page_not_found(e):
+    return flask.render_template('error_handling/404.html'), 404
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return flask.render_template('error_handling/500.html'), 500
+
+#-----------------------------------------------------------------------
+
 @app.route('/get_student_ids')
 def get_student_ids():
     return flask.render_template('netid_modal.html', netids=student_ids, modal_id="studentIdModal", user_type='student')
