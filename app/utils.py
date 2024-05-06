@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------
 # utils.py
-# Authors: Libo Tan and Sofia Marina
+# Authors: Libo Tan, Sofia Marina, Hita Gupta
 # 
 #
 # 
