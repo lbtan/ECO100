@@ -9,6 +9,7 @@ import pandas as pd
 from . import db_queries
 from . import db_modify
 import datetime
+from . import date
 
 def import_users(csv_path, user_type, coursenum):
     df = pd.read_csv(csv_path)
@@ -24,7 +25,7 @@ def import_users(csv_path, user_type, coursenum):
     
     return 'Upload Confirmation', 'Succesfully uploaded and processed file.'
 
-def weekly_summary(coursenum, today=datetime.date.today()):
+def weekly_summary(coursenum, today=date.today()):
     # https://stackoverflow.com/questions/19216334/python-give-start-and-end-of-week-data-from-a-given-date
     week_start = today - datetime.timedelta(days=today.weekday())
     week_end = week_start + datetime.timedelta(days=6)

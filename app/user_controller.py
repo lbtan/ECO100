@@ -21,6 +21,7 @@ import auth
 import dotenv, os
 import ssl
 import models.send_email as send_email
+from models.date import today
 
 #  https://stackoverflow.com/questions/44649449/brew-installation-of-python-3-6-1-ssl-certificate-verify-failed-certificate/44649450#44649450 
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -514,7 +515,7 @@ def prev_week():
     user = get_user_from_cookies()
 
     # for now everything is under coursenum 1
-    summary, dates = backend_admin.weekly_summary("1", today=datetime.today()-timedelta(days=7))
+    summary, dates = backend_admin.weekly_summary("1", today=today()-timedelta(days=7))
     if summary == False:
         html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
