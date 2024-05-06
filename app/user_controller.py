@@ -135,6 +135,17 @@ def user_type():
 
 #-----------------------------------------------------------------------
 
+# https://flask.palletsprojects.com/en/3.0.x/errorhandling/
+@app.errorhandler(404)
+def page_not_found(e):
+    return flask.render_template('error_handling/404.html'), 404
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return flask.render_template('error_handling/500.html'), 500
+
+#-----------------------------------------------------------------------
+
 @app.route('/get_student_ids')
 def get_student_ids():
     return flask.render_template('netid_modal.html', netids=student_ids, modal_id="studentIdModal", user_type='student')
@@ -187,8 +198,12 @@ def logoutcas():
 @app.route('/studentview/<netid>')
 def studentview(netid):
     username = auth.authenticate()
+    if not netid and username in testing_ids:
+        html_code = flask.render_template('user_type.html')  
+        return flask.make_response(html_code)
+
     authorize(username, 'student')
-    if not netid:
+    if not netid:        
         # If no netid is provided in the URL, use the authenticated username as netid.
         netid = username
     booked_appointments = db_student.get_cur_appoinments_student()
@@ -239,6 +254,10 @@ def studentview(netid):
 @app.route('/tutorview/<netid>')
 def tutorview(netid):
     username = auth.authenticate()
+    if not netid and username in testing_ids:
+        html_code = flask.render_template('user_type.html')  
+        return flask.make_response(html_code)
+
     authorize(username, 'tutor')
     if not netid:
         # If no netid is provided in the URL, use the authenticated username as netid.
@@ -286,6 +305,9 @@ def tutor_bio_edit():
 
 @app.route('/tutor_bio_edit_submit', methods=['POST'])
 def tutor_bio_edit_submit():
+    username = auth.authenticatE()
+    authorize(username, 'tutor')
+
     tutor_netid = flask.request.form.get('tutor_netid')
     bio = flask.request.form.get('bio')
     db_modify.update_tutor_bio(tutor_netid, bio)
@@ -326,6 +348,7 @@ def copy_prev_week():
 def no_show_update():
     username = auth.authenticate()
     authorize(username, 'tutor')
+
     time = flask.request.args.get('time')
     tutor = flask.request.args.get('tutor_netid')
     showed_up = flask.request.args.get('value')
@@ -345,6 +368,10 @@ def no_show_update():
 @app.route('/adminview/<netid>')
 def adminview(netid):
     username = auth.authenticate()
+    if not netid and username in testing_ids:
+        html_code = flask.render_template('user_type.html')  
+        return flask.make_response(html_code)
+
     authorize(username, 'admin')
     if not netid:
         # If no netid is provided in the URL, use the authenticated username as netid.
