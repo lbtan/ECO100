@@ -44,10 +44,14 @@ def get_appointments(props={}):
                 )
 
             if "end_time" in props:
-                # add one day so that date comparison is inclusive
-                end_time = props["end_time"] + datetime.timedelta(
-                    days=1
-                )
+                # if date, get max time so that date comparison is inclusive
+                # https://stackoverflow.com/questions/16991948/detect-if-a-variable-is-a-datetime-object
+                if type(props["end_time"]) is datetime.date:
+                    # https://stackoverflow.com/questions/1937622/convert-date-to-datetime-in-python
+                    end_time = datetime.datetime.combine(props["end_time"], 
+                                                datetime.datetime.max.time())
+                else:
+                    end_time = props["end_time"]
 
                 query = query.filter(
                     database.Appointment.time <= end_time

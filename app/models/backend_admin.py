@@ -35,7 +35,7 @@ def weekly_summary(coursenum, today=date.today()):
                                          "coursenum": coursenum})
 
     if appts[0] == False:
-        return False
+        return False, False
     
     summary = {}
     summary["Total Appointments"] = len(appts)
@@ -43,7 +43,7 @@ def weekly_summary(coursenum, today=date.today()):
     tutors = db_queries.get_user_info({"user_type": "tutor",
                                        "coursenum": coursenum})
     if tutors[0] == False:
-        return False
+        return False, False
 
     appts_by_tutor = {tutor.get_netid(): 0 for tutor in tutors}
     for appt in appts:

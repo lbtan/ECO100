@@ -11,3 +11,6 @@ from pytz import timezone
 # https://stackoverflow.com/questions/11710469/how-to-get-python-to-display-the-current-eastern-time
 def today():
     return datetime.datetime.now(timezone('US/Eastern')).date()
+
+def now():
+    return datetime.datetime.now(timezone('US/Eastern'))
