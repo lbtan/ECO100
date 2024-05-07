@@ -478,8 +478,12 @@ def appointment_confirm():
     datetime_str = f"{date} {time}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
 
-    db_modify.book_appointment(appt_time, tutor_netid, student_netid, comments, "1")
-    
+    status, _ = db_modify.book_appointment(appt_time, tutor_netid, student_netid, comments, "1")
+    if not status:
+        html_code = flask.render_template('error_handling/error.html', error="Sorry, this appointment is already booked. Please choose another time.")
+        response = flask.make_response(html_code)
+        return response
+
     if SEND_MAIL:
         tutor = db_queries.get_user_info({"netid": tutor_netid, "user_type": "tutor"})[0]
         student = db_queries.get_user_info({"netid": student_netid, "user_type": "student"})[0]

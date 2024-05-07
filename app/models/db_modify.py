@@ -54,7 +54,9 @@ def book_appointment(time, tutor_netid, student_netid, comments,
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        # sys.exit(1)
+        return False, ex
+    
+    return True, True
 
 def cancel_appointment(time, tutor_netid):
 
