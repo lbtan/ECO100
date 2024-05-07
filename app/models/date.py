@@ -13,4 +13,4 @@ def today():
     return datetime.datetime.now(timezone('US/Eastern')).date()
 
 def now():
-    return datetime.datetime.now(timezone('US/Eastern'))
+    return datetime.datetime.now(timezone('US/Eastern')).replace(tzinfo=None)

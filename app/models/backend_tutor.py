@@ -14,9 +14,9 @@ from . import date
 
 #-----------------------------------------------------------------------
 
-# get_times() -> return list of available times starting today +  tutornetID; 
+# get_times() -> return list of available times starting now +  tutornetID; 
 def get_times_tutors():
-    available_appointments = db_queries.get_appointments({"start_time": date.today()})
+    available_appointments = db_queries.get_appointments({"start_time": date.now()})
     if len(available_appointments) > 0 and available_appointments[0] == False:
         return available_appointments
     times = []
