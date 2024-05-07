@@ -263,7 +263,7 @@ def add_user(netid, user_type, coursenum, name):
 
             if user_type == "tutor":
                 tutor = database.Tutor(netid=netid, bio="")
-            session.add(tutor)
+                session.add(tutor)
 
             session.commit()
 
