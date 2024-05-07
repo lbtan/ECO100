@@ -121,6 +121,7 @@ def user_type():
     Direct user to respective view of different pages.
     """
     username = auth.authenticate()
+    # username = 'hpotter'
     if username in testing_ids:
         html_code = flask.render_template('user_type.html')  
     elif username in student_ids:
@@ -198,15 +199,21 @@ def logoutcas():
 @app.route('/studentview', defaults={'netid': None})
 @app.route('/studentview/<netid>')
 def studentview(netid):
+
     username = auth.authenticate()
+    # security testing  
+    # username = 'hpotter'
     if not netid and username in testing_ids:
         html_code = flask.render_template('user_type.html')  
         return flask.make_response(html_code)
-
-    authorize(username, 'student')
+    # only allow netid access for testers
+    if netid:
+        authorize(username, 'tester')
     if not netid:        
         # If no netid is provided in the URL, use the authenticated username as netid.
         netid = username
+    authorize(netid, 'student')
+
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
     user = (netids_to_names[netid], 'student', netid)
@@ -254,15 +261,20 @@ def studentview(netid):
 @app.route('/tutorview', defaults={'netid': None})
 @app.route('/tutorview/<netid>')
 def tutorview(netid):
+    
     username = auth.authenticate()
+    #username = 'hpotter'
     if not netid and username in testing_ids:
         html_code = flask.render_template('user_type.html')  
         return flask.make_response(html_code)
-
-    authorize(username, 'tutor')
+    # only allow netid access to testers
+    if netid:
+        authorize(username, 'tester')
     if not netid:
         # If no netid is provided in the URL, use the authenticated username as netid.
         netid = username
+    authorize(netid, 'tutor')
+    
     appointments = db_tutor.get_times_tutors()
 
     # user id info
@@ -305,7 +317,7 @@ def tutor_bio_edit():
 
 @app.route('/tutor_bio_edit_submit', methods=['POST'])
 def tutor_bio_edit_submit():
-    username = auth.authenticatE()
+    username = auth.authenticate()
     authorize(username, 'tutor')
 
     tutor_netid = flask.request.form.get('tutor_netid')
@@ -368,14 +380,16 @@ def no_show_update():
 @app.route('/adminview/<netid>')
 def adminview(netid):
     username = auth.authenticate()
+    # username = 'hpotter'
     if not netid and username in testing_ids:
         html_code = flask.render_template('user_type.html')  
         return flask.make_response(html_code)
-
-    authorize(username, 'admin')
+    if netid:
+        authorize(username, 'tester')
     if not netid:
         # If no netid is provided in the URL, use the authenticated username as netid.
         netid = username
+    authorize(netid, 'admin')
 
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
@@ -531,7 +545,7 @@ def prev_week():
 @app.route('/tutor_overview')
 def tutor_overview():
     username = auth.authenticate()
-    authorize(username, 'admin')
+    authorize(username, ['student', 'admin'])
     user = get_user_from_cookies()
     users = db_queries.get_user_info({"user_type": "tutor", "coursenum": "1"})
     if len(users) > 0 and users[0] == False:

@@ -63,8 +63,8 @@
                     <li class="list-group-item">
                         {{time.strftime('%A, %B %d')}} at {{time.strftime('%I:%M %p')}} with {{names[tutor]}}
                         <div class="button-group">
-                            <button class="btn warm-btn float-end" onclick="window.location.href='{{url_for('generate_ics',  tutor = names[tutor], time = time.strftime('%Y%m%dT%H%M%SZ'))}}'">Download iCal</button>
-                            <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{tutor}}" data-date="{{time.strftime('%Y-%m-%d')}}" data-time="{{time.strftime('%I:%M %p')}}">View/Cancel</button>
+                            <button class="btn warm-btn float-end m-1" onclick="window.location.href='{{url_for('generate_ics',  tutor = names[tutor], time = time.strftime('%Y%m%dT%H%M%SZ'))}}'">Download iCal</button>
+                            <button class="btn warm-btn float-end view-cancel m-1" data-tutor_netid="{{tutor}}" data-date="{{time.strftime('%Y-%m-%d')}}" data-time="{{time.strftime('%I:%M %p')}}">View/Cancel</button>
                         </div>
                     </li>
                     {% endfor %}

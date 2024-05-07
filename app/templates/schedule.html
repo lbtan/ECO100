@@ -33,9 +33,11 @@ The calendar is currently disabled as you can only book one appointment per week
 {% endif %}
 
 {% if week.index0 > 0 and user[1] == "tutor" %}
+
 <hr>
 Click on the button below if you would like to copy your schedule from the previous week into the current week.
-<br><button class="btn warm-btn copy-times" data-mindate="{{appointments_by_date|min}}" data-maxdate="{{appointments_by_date|max}}">Copy Times From Last Week</button>
+<br>
+<button class="btn warm-btn copy-times mt-1" data-mindate="{{appointments_by_date|min}}" data-maxdate="{{appointments_by_date|max}}">Copy Times From Last Week</button>
 <hr>
 {% endif %}
 
