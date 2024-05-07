@@ -47,6 +47,8 @@ def book_appointment(time, tutor_netid, student_netid, comments,
                 row.comments = comments
                 row.coursenum = coursenum
 
+                print("{} booked appointment at {} with {}".format(student_netid, time, tutor_netid))
+
                 session.commit()
         
         finally:
@@ -83,6 +85,8 @@ def cancel_appointment(time, tutor_netid):
                 row.comments = None
                 row.coursenum = None
 
+                print("Appointment at {} with {} is cancelled".format(time, tutor_netid))
+
                 session.commit()
 
         finally:
@@ -114,6 +118,8 @@ def add_appointment(time, tutor_netid):
                                                tutor_netid=tutor_netid)
             
             session.add(appointment)
+
+            print("Appointment at {} with {} added".format(time, tutor_netid))
 
             session.commit()
 
@@ -152,6 +158,8 @@ def modify_appointment_time(prev_time, new_time, tutor_netid):
                 appointment = query_prev.one()
                 appointment.time = new_time
 
+                print("Appointment at {} with {} has new time {}".format(prev_time, tutor_netid, new_time))
+
                 session.commit()
         finally:
             _engine.dispose()
@@ -177,6 +185,9 @@ def delete_appointment(time, tutor_netid):
                 row = query.one() # ensure the appointment time exists
             
                 session.delete(row)
+
+                print("Appointment at {} with {} deleted".format(time, tutor_netid))
+                7
                 session.commit()
 
         finally:
@@ -201,6 +212,8 @@ def update_tutor_bio(tutor_netid, bio):
 
                 row = query.one()
                 row.bio = bio
+
+                print("Tutor {} bio updated".format(tutor_netid))
 
                 session.commit()
 
@@ -227,6 +240,8 @@ def update_showed_up(tutor_netid, time, showed_up):
 
                 row = query.one()
                 row.showed_up = showed_up
+
+                print("Tutor {} marked showed up status for appointment at {} to {}".format(tutor_netid, time, showed_up))
 
                 session.commit()
 
@@ -265,6 +280,7 @@ def add_user(netid, user_type, coursenum, name):
                 tutor = database.Tutor(netid=netid, bio="")
                 session.add(tutor)
 
+            print("User with netid {}, user type {}, coursenum {} and name {} added".format(netid, user_type, coursenum, name))
             session.commit()
 
         _engine.dispose()
@@ -286,6 +302,9 @@ def delete_user(netid):
                 row = query.one() # ensure the user exists
             
                 session.delete(row)
+
+                print("User with netid {} deleted".format(netid))
+
                 session.commit()
 
         finally:
