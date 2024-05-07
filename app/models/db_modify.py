@@ -273,6 +273,28 @@ def add_user(netid, user_type, coursenum, name):
         print(ex, file=sys.stderr)
         # sys.exit(1)
 
+def delete_user(netid):
+    try:
+        _engine = sqlalchemy.create_engine(_DATABASE_URL)
+
+        try:
+
+            with sqlalchemy.orm.Session(_engine) as session:
+
+                query = (session.query(database.User)
+                    .filter(database.User.netid == netid))
+                row = query.one() # ensure the user exists
+            
+                session.delete(row)
+                session.commit()
+
+        finally:
+            _engine.dispose()
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        # sys.exit(1)
+
 #-----------------------------------------------------------------------
 
 # For testing:
