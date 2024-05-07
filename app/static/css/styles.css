@@ -73,6 +73,10 @@ body {
     pointer-events: none;
  }
 
+ .div{
+    margin: 20px;
+ }
+
 input[type="text"][disabled] {
     color:#504d4a42
 }
