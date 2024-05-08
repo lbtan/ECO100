@@ -1,22 +1,21 @@
 #!/usr/bin/env python
 
 #-----------------------------------------------------------------------
-# database.py
+# backend_student.py
 # Author: Anaika Mehra
 #-----------------------------------------------------------------------
-import os
-import time
-import flask
+
 from . import db_queries
 from . import db_modify
 import datetime
+from . import date
+
 #-----------------------------------------------------------------------
-today = datetime.date.today()
-today_test = datetime.datetime(2024, 1, 1)
+
 # get_cur_appointment_student() -> list of scheduled appointments + tutor + student + comments 
 # can add coursenum as parameter later
 def get_cur_appoinments_student():
-    curr_appointments = db_queries.get_appointments({"start_time": today_test, "booked": True})
+    curr_appointments = db_queries.get_appointments({"start_time": date.now(), "booked": True})
     if len(curr_appointments) > 0 and curr_appointments[0] == False:
         return curr_appointments
     appointments = []
@@ -26,7 +25,7 @@ def get_cur_appoinments_student():
 #----------------------------------------------------------------------- 
 # get_times() -> return list of available times + scheduled studentIDs;
 def get_times_students():
-    available_appointments = db_queries.get_appointments({"start_time": today_test, "booked": False})
+    available_appointments = db_queries.get_appointments({"start_time": date.now(), "booked": False})
     if len(available_appointments) > 0 and available_appointments[0] == False:
         return available_appointments
     times = []
@@ -50,7 +49,6 @@ def edit_appointment(oldtime, newtime, tutornetID, action):
     if action == "cancel":
         db_modify.cancel_appointment(oldtime, tutornetID)
     else:
-        appt_details = db_queries.get_appointments({"start_time": oldtime, "booked": True, "tutor_netid": tutornetID})
         db_modify.delete_appointment(oldtime, tutornetID)
         db_modify.add_appointment(newtime, tutornetID)
 #----------------------------------------------------------------------- 

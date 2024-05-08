@@ -1,6 +1,6 @@
 #-----------------------------------------------------------------------
 # utils.py
-# Authors: Libo Tan and Sofia Marina
+# Authors: Libo Tan, Sofia Marina, Hita Gupta
 # 
 #
 # 
@@ -88,12 +88,15 @@ def available_appointments_by_time(appointments, booked_appts):
     in chronological order for each tutor. (adapted from Angela's code)
     """ 
     # tutors can only have 8 hours a week
-    tutor_appt_counts = Counter(tutor for _, _, tutor, _ in booked_appts)
+    tutor_appt_counts = defaultdict(lambda: defaultdict(int))
+    for appt in booked_appts:
+        tutor_appt_counts[appt[0].isocalendar()[:2]][appt[2]] += 1
+
     sorted_appointments = sorted(appointments, key=lambda x: x[0])
     appointments_by_date = defaultdict(lambda: defaultdict(list))
 
     for appt_time, student, tutor in sorted_appointments:
-        if tutor_appt_counts[tutor] > 8:
+        if tutor_appt_counts[appt_time.isocalendar()[:2]][tutor] > 8:
             continue
         date_key = appt_time.date()
         appointments_by_date[date_key][tutor].append(appt_time)

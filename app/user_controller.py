@@ -21,6 +21,7 @@ import auth
 import dotenv, os
 import ssl
 import models.send_email as send_email
+from models.date import today
 
 #  https://stackoverflow.com/questions/44649449/brew-installation-of-python-3-6-1-ssl-certificate-verify-failed-certificate/44649450#44649450 
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -46,10 +47,11 @@ id_map = {
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
-# Mail
-SEND_MAIL = False
+SEND_MAIL = True
 
+# Mail
 if SEND_MAIL:
+    print("Email notification activated.")
     mail_username = os.environ['MAIL_USERNAME']
     mail_password = os.environ['MAIL_PASSWORD']
 
@@ -60,6 +62,8 @@ if SEND_MAIL:
     app.config['MAIL_PASSWORD'] = mail_password
     mail = Mail(app)
     mail_sender = send_email.MailSender(mail, mail_username)
+
+#-----------------------------------------------------------------------
 
 # CAS authentication stuff
 os.environ['APP_SECRET_KEY']
@@ -120,18 +124,34 @@ def user_type():
     Direct user to respective view of different pages.
     """
     username = auth.authenticate()
+    # username = 'hpotter'
     if username in testing_ids:
+        print("Authorized ", username, " as tester.")
         html_code = flask.render_template('user_type.html')  
     elif username in student_ids:
+        print("Authorized ", username, " as student.")
         return flask.redirect(flask.url_for('studentview'))
     elif username in tutor_ids:
+        print("Authorized ", username, " as tutor.")
         return flask.redirect(flask.url_for('tutorview'))
     elif username in admin_ids:
+        print("Authorized ", username, " as admin")
         return flask.redirect(flask.url_for('adminview'))
     else:
         failed_authorize()
     response = flask.make_response(html_code)
     return response
+
+#-----------------------------------------------------------------------
+
+# https://flask.palletsprojects.com/en/3.0.x/errorhandling/
+@app.errorhandler(404)
+def page_not_found(e):
+    return flask.render_template('error_handling/404.html'), 404
+
+@app.errorhandler(500)
+def page_not_found(e):
+    return flask.render_template('error_handling/500.html'), 500
 
 #-----------------------------------------------------------------------
 
@@ -186,11 +206,41 @@ def logoutcas():
 @app.route('/studentview', defaults={'netid': None})
 @app.route('/studentview/<netid>')
 def studentview(netid):
+
     username = auth.authenticate()
-    authorize(username, 'student')
-    if not netid:
-        # If no netid is provided in the URL, use the authenticated username as netid.
+    # security testing  
+    # username = 'hpotter'
+
+    # handle case for test user 
+    # Check if username is a tester
+    if username in testing_ids:
+        if netid is None:
+            # Direct to a specific page for testers when no netid is provided
+            html_code = flask.render_template('user_type.html')
+            return flask.make_response(html_code)
+        elif netid == username or netid in testing_ids:
+            print(f"Authorization failed for user '{username}'. Page does not exist.")
+            html = flask.render_template('error_handling/404.html')
+            response = flask.make_response(html)
+            flask.abort(response)
+        elif netid != username:
+            # If netid is different from username and user is a tester, check netid is a student
+            authorize(netid, 'student')
+
+
+    # Normal users trying to access their own information or when netid is None
+    if netid is None or netid == username:
+        authorize(username, 'student')
+    
+    # deny access to other pages
+    if netid is not None and netid != username:
+        authorize(username, 'testing')
+    
+    if netid is None:
         netid = username
+    # only allow free netid access for testers
+    print("netid: ", netid, "username: ", username)
+
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
     user = (netids_to_names[netid], 'student', netid)
@@ -238,11 +288,39 @@ def studentview(netid):
 @app.route('/tutorview', defaults={'netid': None})
 @app.route('/tutorview/<netid>')
 def tutorview(netid):
+    
     username = auth.authenticate()
-    authorize(username, 'tutor')
-    if not netid:
-        # If no netid is provided in the URL, use the authenticated username as netid.
+    #username = 'hpotter'
+    # handle case for test user 
+    # Check if username is a tester
+    if username in testing_ids:
+        if netid is None:
+            # Direct to a specific page for testers when no netid is provided
+            html_code = flask.render_template('user_type.html')
+            return flask.make_response(html_code)
+        elif netid == username or netid in testing_ids:
+            print(f"Authorization failed for user '{username}'. Page does not exist.")
+            html = flask.render_template('error_handling/404.html')
+            response = flask.make_response(html)
+            flask.abort(response)
+        elif netid != username:
+            # If netid is different from username and user is a tester, check netid is a student
+            authorize(netid, 'tutor')
+        
+
+    # Normal users trying to access their own information or when netid is None
+    if netid is None or netid == username:
+        authorize(username, 'tutor')
+    
+    # deny access to other pages
+    if netid is not None and netid != username:
+        authorize(username, 'testing')
+    
+    if netid is None:
         netid = username
+    # only allow free netid access for testers
+    print("netid: ", netid, "username: ", username)
+    
     appointments = db_tutor.get_times_tutors()
 
     # user id info
@@ -251,8 +329,20 @@ def tutorview(netid):
     apt_tutor = utils.appointments_by_tutor(appointments, user[2])
     apt_times = utils.appointments_by_time(appointments, user[2])
     weekly_appointments = utils.group_by_week(apt_times)
+
+    prev_appointments = db_tutor.get_prev_times(user[2])
+    no_show_appointments = []
+    for row in prev_appointments:
+        if row[2] and row[-1] is None:
+            no_show_appointments.append(row)
     
-    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names)
+    # user id info
+    user = (netids_to_names[netid], 'tutor', netid)
+    # Parse db results
+    apt_tutor = utils.appointments_by_tutor(appointments, user[2])
+    apt_times = utils.appointments_by_time(appointments, user[2])
+    weekly_appointments = utils.group_by_week(apt_times)
+    html_code = flask.render_template('tutor/tutorview.html', weekly_appointments=weekly_appointments, user=user, apt_tutor=apt_tutor, names=netids_to_names, no_show_appointments = no_show_appointments)
     response = flask.make_response(html_code)
 
     response.set_cookie('user_name', user[0])
@@ -273,6 +363,9 @@ def tutor_bio_edit():
 
 @app.route('/tutor_bio_edit_submit', methods=['POST'])
 def tutor_bio_edit_submit():
+    username = auth.authenticate()
+    authorize(username, 'tutor')
+
     tutor_netid = flask.request.form.get('tutor_netid')
     bio = flask.request.form.get('bio')
     db_modify.update_tutor_bio(tutor_netid, bio)
@@ -309,6 +402,23 @@ def copy_prev_week():
     db_tutor.copy_prev_week_times(min_date, max_date, user[2])
     return flask.redirect(flask.url_for('tutorview', netid=user[2]))
 
+@app.route('/no_show_update')
+def no_show_update():
+    username = auth.authenticate()
+    authorize(username, 'tutor')
+
+    time = flask.request.args.get('time')
+    tutor = flask.request.args.get('tutor_netid')
+    showed_up = flask.request.args.get('value')
+    showed_up = True if showed_up == "True" else False
+    user = get_user_from_cookies()
+    
+    time = datetime.strptime(time, '%Y-%m-%d %I:%M %p')
+
+    db_modify.update_showed_up(tutor, time, showed_up)
+
+    return flask.redirect(flask.url_for('tutorview', netid=user[2]))
+
 #-----------------------------------------------------------------------
 
 # Admin view
@@ -316,11 +426,36 @@ def copy_prev_week():
 @app.route('/adminview/<netid>')
 def adminview(netid):
     username = auth.authenticate()
-    authorize(username, 'admin')
-    if not netid:
-        # If no netid is provided in the URL, use the authenticated username as netid.
-        netid = username
+    # username = 'hpotter'
+    # handle case for test user 
+    # Check if username is a tester
+    if username in testing_ids:
+        if netid is None:
+            # Direct to a specific page for testers when no netid is provided
+            html_code = flask.render_template('user_type.html')
+            return flask.make_response(html_code)
+        elif netid == username or netid in testing_ids:
+            print(f"Authorization failed for user '{username}'. Page does not exist.")
+            html = flask.render_template('error_handling/404.html')
+            response = flask.make_response(html)
+            flask.abort(response)
+        elif netid != username:
+            # If netid is different from username and user is a tester, check netid is a student
+            authorize(netid, 'admin')
 
+    # Normal users trying to access their own information or when netid is None
+    if netid is None or netid == username:
+        authorize(username, 'admin')
+    
+    # deny access to other pages
+    if netid is not None and netid != username:
+        authorize(username, 'testing')
+    
+    if netid is None:
+        netid = username
+    # only allow free netid access for testers
+    print("netid: ", netid, "username: ", username)
+    
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
     weekly_appointments = utils.group_by_week(apt_times)
@@ -422,8 +557,12 @@ def appointment_confirm():
     datetime_str = f"{date} {time}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
 
-    db_modify.book_appointment(appt_time, tutor_netid, student_netid, comments, "1")
-    
+    status, _ = db_modify.book_appointment(appt_time, tutor_netid, student_netid, comments, "1")
+    if not status:
+        html_code = flask.render_template('error_handling/error.html', error="Sorry, this appointment is already booked. Please choose another time.")
+        response = flask.make_response(html_code)
+        return response
+
     if SEND_MAIL:
         tutor = db_queries.get_user_info({"netid": tutor_netid, "user_type": "tutor"})[0]
         student = db_queries.get_user_info({"netid": student_netid, "user_type": "student"})[0]
@@ -447,14 +586,31 @@ def weekly_summary():
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates)
+    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates, names=netids_to_names)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/prev_week')
+def prev_week():
+    username = auth.authenticate()
+    authorize(username, 'admin')
+    user = get_user_from_cookies()
+
+    # for now everything is under coursenum 1
+    summary, dates = backend_admin.weekly_summary("1", today=today()-timedelta(days=7))
+    if summary == False:
+        html_code = flask.render_template('error_handling/db_error.html')
+        response = flask.make_response(html_code)
+        return response
+
+    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates, names=netids_to_names)
     response = flask.make_response(html_code)
     return response
 
 @app.route('/tutor_overview')
 def tutor_overview():
     username = auth.authenticate()
-    authorize(username, 'admin')
+    authorize(username, ['student', 'admin'])
     user = get_user_from_cookies()
     users = db_queries.get_user_info({"user_type": "tutor", "coursenum": "1"})
     if len(users) > 0 and users[0] == False:
@@ -488,17 +644,27 @@ def add_users():
 
 @app.route('/upload', methods=["POST"])
 def upload():
+    global admin_ids, tutor_ids, student_ids, netids_to_names
     username = auth.authenticate()
     authorize(username, 'admin')
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
     user_type = flask.request.form['user_type']
     uploaded_file = flask.request.files['users_file']
     filename = uploaded_file.filename
-    if filename == '' or os.path.splitext(filename)[-1] != 'csv':
+    if filename == '' or os.path.splitext(filename)[-1] != '.csv':
         title = 'Error'
         message = 'Please upload a valid .csv file.'
     else:
         title, message = backend_admin.import_users(uploaded_file, user_type, "1")
+
+    if user_type == "admin":
+        admin_ids = utils.get_admin_ids()
+    elif user_type == "tutor":
+        tutor_ids = utils.get_tutor_ids()
+    elif user_type == "student":
+        student_ids = utils.get_student_ids()
+
+    netids_to_names = utils.get_names()
 
     user = get_user_from_cookies()
     html_code = flask.render_template('admin/upload_confirmation.html', message=message, user=user, title=title)

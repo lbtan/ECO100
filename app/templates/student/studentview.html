@@ -50,7 +50,7 @@
         {% include 'headerDynamic.html' with context %}
         <hr>
         <div style="margin:0.1px;" class="container" >
-            You have the following appointments for this week: 
+            You have the following upcoming appointments: 
 
         <!-- Current Appointments Block -->
         <div class="col-md-6">
@@ -63,8 +63,8 @@
                     <li class="list-group-item">
                         {{time.strftime('%A, %B %d')}} at {{time.strftime('%I:%M %p')}} with {{names[tutor]}}
                         <div class="button-group">
-                            <button class="btn warm-btn float-end view-cancel" onclick="window.location.href='{{url_for('generate_ics',  tutor = names[tutor], time = time.strftime('%Y%m%dT%H%M%SZ'))}}'">Download iCal</button>
-                            <button class="btn warm-btn float-end view-cancel" data-tutor_netid="{{tutor}}" data-date="{{time.strftime('%Y-%m-%d')}}" data-time="{{time.strftime('%I:%M %p')}}">View/Cancel</button>
+                            <button class="btn warm-btn float-end m-1" onclick="window.location.href='{{url_for('generate_ics',  tutor = names[tutor], time = time.strftime('%Y%m%dT%H%M%SZ'))}}'">Download iCal</button>
+                            <button class="btn warm-btn float-end view-cancel m-1" data-tutor_netid="{{tutor}}" data-date="{{time.strftime('%Y-%m-%d')}}" data-time="{{time.strftime('%I:%M %p')}}">View/Cancel</button>
                         </div>
                     </li>
                     {% endfor %}
@@ -74,10 +74,8 @@
 
         </div>
         <hr>
-        
-          <!-- Include popup container -->
-          <div id="tutor-bio-edit-modal-container" data-tutor_netid="{{user[2]}}"></div>
-        
+                <!-- Include popup container -->
+            <div id="overview-modal-container"></div>
           {% include 'schedule.html' with context %}
 
       </div>

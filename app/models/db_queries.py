@@ -44,10 +44,14 @@ def get_appointments(props={}):
                 )
 
             if "end_time" in props:
-                # add one day so that date comparison is inclusive
-                end_time = props["end_time"] + datetime.timedelta(
-                    days=1
-                )
+                # if date, get max time so that date comparison is inclusive
+                # https://stackoverflow.com/questions/16991948/detect-if-a-variable-is-a-datetime-object
+                if type(props["end_time"]) is datetime.date:
+                    # https://stackoverflow.com/questions/1937622/convert-date-to-datetime-in-python
+                    end_time = datetime.datetime.combine(props["end_time"], 
+                                                datetime.datetime.max.time())
+                else:
+                    end_time = props["end_time"]
 
                 query = query.filter(
                     database.Appointment.time <= end_time
@@ -318,18 +322,27 @@ def _test_get_tutor_bio():
     netid = 'tu111'
     print(netid)
     bio = get_tutor_bio(netid)
-    print(bio + "\n")
+    print(bio, "\n")
     print("---------------------------------")
 
     netid = ''
     print(netid)
     bio = get_tutor_bio(netid)
-    print(bio + "\n")
+    print(bio, "\n")
     print("---------------------------------")
 
 def _test():
-    #_test_get_appointments()
-    #_test_get_user_info()
+    """
+    
+    Unit tests for db_queries.py. Each function tests a specific 
+    functionality of database querying operations and prints the 
+    outcome for debugging purposes.
+    
+    
+    """
+
+    _test_get_appointments()
+    _test_get_user_info()
     _test_get_tutor_bio()
 
 if __name__ == '__main__':

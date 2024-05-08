@@ -10,13 +10,13 @@ import flask
 from . import db_queries
 from . import db_modify
 import datetime 
-#-----------------------------------------------------------------------
-today = datetime.date.today()
-today_test = datetime.datetime(2024, 1, 1)
+from . import date
 
-# get_times() -> return list of available times starting today +  tutornetID; 
+#-----------------------------------------------------------------------
+
+# get_times() -> return list of available times starting now +  tutornetID; 
 def get_times_tutors():
-    available_appointments = db_queries.get_appointments({"start_time": today})
+    available_appointments = db_queries.get_appointments({"start_time": date.now()})
     if len(available_appointments) > 0 and available_appointments[0] == False:
         return available_appointments
     times = []
@@ -25,11 +25,22 @@ def get_times_tutors():
         times.append((row.get_time(), row.get_tutor_netid(), row.get_booked(), row.get_student_netid()))
     return times
 
+def get_prev_times(tutor):
+    available_appointments = db_queries.get_appointments({"tutor_netid": tutor, "end_time": date.now() - datetime.timedelta(minutes=1)})
+    if len(available_appointments) > 0 and available_appointments[0] == False:
+        return available_appointments
+    times = []
+    for row in available_appointments:
+        # times.append(row[0], row[2])
+        times.append((row.get_time(), row.get_tutor_netid(), row.get_booked(), row.get_student_netid(), row.get_show()))
+    sorted_appointments = sorted(times, key=lambda x: x[0])
+    return sorted_appointments
+
 #-----------------------------------------------------------------------
 # get_cur_appointment() -> list of scheduled appointments + tutor + comments 
 # can add coursenum as parameter later
 def get_cur_appoinments():
-    curr_appointments = db_queries.get_appointments({"start_time": today_test, "booked": True})
+    curr_appointments = db_queries.get_appointments({"start_time": date.now(), "booked": True})
     if len(curr_appointments) > 0 and curr_appointments[0] == False:
         return curr_appointments
     appointments = []

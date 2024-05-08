@@ -12,6 +12,7 @@ import sqlalchemy
 import sqlalchemy.orm
 import dotenv
 from . import database
+# import database 
 
 #-----------------------------------------------------------------------
 
@@ -47,6 +48,8 @@ def book_appointment(time, tutor_netid, student_netid, comments,
                 row.comments = comments
                 row.coursenum = coursenum
 
+                print("{} booked appointment at {} with {}".format(student_netid, time, tutor_netid))
+
                 session.commit()
         
         finally:
@@ -54,7 +57,9 @@ def book_appointment(time, tutor_netid, student_netid, comments,
 
     except Exception as ex:
         print(ex, file=sys.stderr)
-        # sys.exit(1)
+        return False, ex
+    
+    return True, True
 
 def cancel_appointment(time, tutor_netid):
 
@@ -80,6 +85,8 @@ def cancel_appointment(time, tutor_netid):
                 row.student_netid = None
                 row.comments = None
                 row.coursenum = None
+
+                print("Appointment at {} with {} is cancelled".format(time, tutor_netid))
 
                 session.commit()
 
@@ -112,6 +119,8 @@ def add_appointment(time, tutor_netid):
                                                tutor_netid=tutor_netid)
             
             session.add(appointment)
+
+            print("Appointment at {} with {} added".format(time, tutor_netid))
 
             session.commit()
 
@@ -150,6 +159,8 @@ def modify_appointment_time(prev_time, new_time, tutor_netid):
                 appointment = query_prev.one()
                 appointment.time = new_time
 
+                print("Appointment at {} with {} has new time {}".format(prev_time, tutor_netid, new_time))
+
                 session.commit()
         finally:
             _engine.dispose()
@@ -175,6 +186,9 @@ def delete_appointment(time, tutor_netid):
                 row = query.one() # ensure the appointment time exists
             
                 session.delete(row)
+
+                print("Appointment at {} with {} deleted".format(time, tutor_netid))
+                7
                 session.commit()
 
         finally:
@@ -199,6 +213,8 @@ def update_tutor_bio(tutor_netid, bio):
 
                 row = query.one()
                 row.bio = bio
+
+                print("Tutor {} bio updated".format(tutor_netid))
 
                 session.commit()
 
@@ -225,6 +241,8 @@ def update_showed_up(tutor_netid, time, showed_up):
 
                 row = query.one()
                 row.showed_up = showed_up
+
+                print("Tutor {} marked showed up status for appointment at {} to {}".format(tutor_netid, time, showed_up))
 
                 session.commit()
 
@@ -259,9 +277,39 @@ def add_user(netid, user_type, coursenum, name):
             
             session.add(user)
 
+            if user_type == "tutor":
+                tutor = database.Tutor(netid=netid, bio="")
+                session.add(tutor)
+
+            print("User with netid {}, user type {}, coursenum {} and name {} added".format(netid, user_type, coursenum, name))
             session.commit()
 
         _engine.dispose()
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+        # sys.exit(1)
+
+def delete_user(netid):
+    try:
+        _engine = sqlalchemy.create_engine(_DATABASE_URL)
+
+        try:
+
+            with sqlalchemy.orm.Session(_engine) as session:
+
+                query = (session.query(database.User)
+                    .filter(database.User.netid == netid))
+                row = query.one() # ensure the user exists
+            
+                session.delete(row)
+
+                print("User with netid {} deleted".format(netid))
+
+                session.commit()
+
+        finally:
+            _engine.dispose()
 
     except Exception as ex:
         print(ex, file=sys.stderr)
@@ -320,12 +368,21 @@ def _test_add_user():
     add_user("st333", "student", "1", "Student Three")
 
 def _test():
-    #_test_book_appointment()
+    """
+    
+    Unit tests for db_modify.py. Each function tests a specific 
+    functionality of database modifying operations and prints the 
+    outcome for debugging purposes.
+    
+    
+    """
+
+    _test_book_appointment()
     _test_cancel_appointment()
-    #_test_add_appointment()
-    #_test_delete_appointment()
-    #_test_update_tutor_bio()
-    #_test_add_user()
+    _test_add_appointment()
+    _test_delete_appointment()
+    _test_update_tutor_bio()
+    _test_add_user()
 
 if __name__ == '__main__':
     _test()
