@@ -47,7 +47,7 @@ id_map = {
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
-SEND_MAIL = True
+SEND_MAIL = False
 
 # Mail
 if SEND_MAIL:
