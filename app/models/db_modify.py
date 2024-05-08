@@ -368,12 +368,21 @@ def _test_add_user():
     add_user("st333", "student", "1", "Student Three")
 
 def _test():
-    #_test_book_appointment()
+    """
+    
+    Unit tests for db_modify.py. Each function tests a specific 
+    functionality of database modifying operations and prints the 
+    outcome for debugging purposes.
+    
+    
+    """
+
+    _test_book_appointment()
     _test_cancel_appointment()
-    #_test_add_appointment()
-    #_test_delete_appointment()
-    #_test_update_tutor_bio()
-    #_test_add_user()
+    _test_add_appointment()
+    _test_delete_appointment()
+    _test_update_tutor_bio()
+    _test_add_user()
 
 if __name__ == '__main__':
     _test()

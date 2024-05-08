@@ -11,9 +11,9 @@ import datetime
 import sqlalchemy
 import sqlalchemy.orm
 import dotenv
-from . import user as usermod
-from . import appointment as appointmentmod
-from . import database
+import user as usermod
+import appointment as appointmentmod
+import database
 
 #-----------------------------------------------------------------------
 
@@ -322,18 +322,27 @@ def _test_get_tutor_bio():
     netid = 'tu111'
     print(netid)
     bio = get_tutor_bio(netid)
-    print(bio + "\n")
+    print(bio, "\n")
     print("---------------------------------")
 
     netid = ''
     print(netid)
     bio = get_tutor_bio(netid)
-    print(bio + "\n")
+    print(bio, "\n")
     print("---------------------------------")
 
 def _test():
-    #_test_get_appointments()
-    #_test_get_user_info()
+    """
+    
+    Unit tests for db_queries.py. Each function tests a specific 
+    functionality of database querying operations and prints the 
+    outcome for debugging purposes.
+    
+    
+    """
+
+    _test_get_appointments()
+    _test_get_user_info()
     _test_get_tutor_bio()
 
 if __name__ == '__main__':
