@@ -7,4 +7,3 @@ flask
 pandas
 flask_mail
 icalendar
-user
