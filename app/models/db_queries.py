@@ -11,7 +11,7 @@ import datetime
 import sqlalchemy
 import sqlalchemy.orm
 import dotenv
-import user as usermod
+from . import user as usermod
 import appointment as appointmentmod
 import database
 
