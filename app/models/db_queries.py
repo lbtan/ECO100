@@ -12,8 +12,8 @@ import sqlalchemy
 import sqlalchemy.orm
 import dotenv
 from . import user as usermod
-import appointment as appointmentmod
-import database
+from . import appointment as appointmentmod
+from . import database
 
 #-----------------------------------------------------------------------
 
