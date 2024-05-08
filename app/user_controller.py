@@ -47,10 +47,11 @@ id_map = {
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
-# Mail
-SEND_MAIL = False
+SEND_MAIL = True
 
+# Mail
 if SEND_MAIL:
+    print("Email notification activated.")
     mail_username = os.environ['MAIL_USERNAME']
     mail_password = os.environ['MAIL_PASSWORD']
 
@@ -61,6 +62,8 @@ if SEND_MAIL:
     app.config['MAIL_PASSWORD'] = mail_password
     mail = Mail(app)
     mail_sender = send_email.MailSender(mail, mail_username)
+
+#-----------------------------------------------------------------------
 
 # CAS authentication stuff
 os.environ['APP_SECRET_KEY']
@@ -123,12 +126,16 @@ def user_type():
     username = auth.authenticate()
     # username = 'hpotter'
     if username in testing_ids:
+        print("Authorized ", username, " as tester.")
         html_code = flask.render_template('user_type.html')  
     elif username in student_ids:
+        print("Authorized ", username, " as student.")
         return flask.redirect(flask.url_for('studentview'))
     elif username in tutor_ids:
+        print("Authorized ", username, " as tutor.")
         return flask.redirect(flask.url_for('tutorview'))
     elif username in admin_ids:
+        print("Authorized ", username, " as admin")
         return flask.redirect(flask.url_for('adminview'))
     else:
         failed_authorize()
@@ -203,16 +210,36 @@ def studentview(netid):
     username = auth.authenticate()
     # security testing  
     # username = 'hpotter'
-    if not netid and username in testing_ids:
-        html_code = flask.render_template('user_type.html')  
-        return flask.make_response(html_code)
-    # only allow netid access for testers
-    if netid:
-        authorize(username, 'tester')
-    if not netid:        
-        # If no netid is provided in the URL, use the authenticated username as netid.
+
+    # handle case for test user 
+    # Check if username is a tester
+    if username in testing_ids:
+        if netid is None:
+            # Direct to a specific page for testers when no netid is provided
+            html_code = flask.render_template('user_type.html')
+            return flask.make_response(html_code)
+        elif netid == username or netid in testing_ids:
+            print(f"Authorization failed for user '{username}'. Page does not exist.")
+            html = flask.render_template('error_handling/404.html')
+            response = flask.make_response(html)
+            flask.abort(response)
+        elif netid != username:
+            # If netid is different from username and user is a tester, check netid is a student
+            authorize(netid, 'student')
+
+
+    # Normal users trying to access their own information or when netid is None
+    if netid is None or netid == username:
+        authorize(username, 'student')
+    
+    # deny access to other pages
+    if netid is not None and netid != username:
+        authorize(username, 'testing')
+    
+    if netid is None:
         netid = username
-    authorize(netid, 'student')
+    # only allow free netid access for testers
+    print("netid: ", netid, "username: ", username)
 
     booked_appointments = db_student.get_cur_appoinments_student()
     # user id info
@@ -264,16 +291,35 @@ def tutorview(netid):
     
     username = auth.authenticate()
     #username = 'hpotter'
-    if not netid and username in testing_ids:
-        html_code = flask.render_template('user_type.html')  
-        return flask.make_response(html_code)
-    # only allow netid access to testers
-    if netid:
-        authorize(username, 'tester')
-    if not netid:
-        # If no netid is provided in the URL, use the authenticated username as netid.
+    # handle case for test user 
+    # Check if username is a tester
+    if username in testing_ids:
+        if netid is None:
+            # Direct to a specific page for testers when no netid is provided
+            html_code = flask.render_template('user_type.html')
+            return flask.make_response(html_code)
+        elif netid == username or netid in testing_ids:
+            print(f"Authorization failed for user '{username}'. Page does not exist.")
+            html = flask.render_template('error_handling/404.html')
+            response = flask.make_response(html)
+            flask.abort(response)
+        elif netid != username:
+            # If netid is different from username and user is a tester, check netid is a student
+            authorize(netid, 'tutor')
+        
+
+    # Normal users trying to access their own information or when netid is None
+    if netid is None or netid == username:
+        authorize(username, 'tutor')
+    
+    # deny access to other pages
+    if netid is not None and netid != username:
+        authorize(username, 'testing')
+    
+    if netid is None:
         netid = username
-    authorize(netid, 'tutor')
+    # only allow free netid access for testers
+    print("netid: ", netid, "username: ", username)
     
     appointments = db_tutor.get_times_tutors()
 
@@ -381,16 +427,35 @@ def no_show_update():
 def adminview(netid):
     username = auth.authenticate()
     # username = 'hpotter'
-    if not netid and username in testing_ids:
-        html_code = flask.render_template('user_type.html')  
-        return flask.make_response(html_code)
-    if netid:
-        authorize(username, 'tester')
-    if not netid:
-        # If no netid is provided in the URL, use the authenticated username as netid.
-        netid = username
-    authorize(netid, 'admin')
+    # handle case for test user 
+    # Check if username is a tester
+    if username in testing_ids:
+        if netid is None:
+            # Direct to a specific page for testers when no netid is provided
+            html_code = flask.render_template('user_type.html')
+            return flask.make_response(html_code)
+        elif netid == username or netid in testing_ids:
+            print(f"Authorization failed for user '{username}'. Page does not exist.")
+            html = flask.render_template('error_handling/404.html')
+            response = flask.make_response(html)
+            flask.abort(response)
+        elif netid != username:
+            # If netid is different from username and user is a tester, check netid is a student
+            authorize(netid, 'admin')
 
+    # Normal users trying to access their own information or when netid is None
+    if netid is None or netid == username:
+        authorize(username, 'admin')
+    
+    # deny access to other pages
+    if netid is not None and netid != username:
+        authorize(username, 'testing')
+    
+    if netid is None:
+        netid = username
+    # only allow free netid access for testers
+    print("netid: ", netid, "username: ", username)
+    
     appointments = db_tutor.get_times_tutors()
     apt_times = utils.appointments_by_time(appointments)
     weekly_appointments = utils.group_by_week(apt_times)
