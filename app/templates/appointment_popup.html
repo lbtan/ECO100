@@ -76,7 +76,7 @@
                         {% if user[1] != "student" or appointment.get_booked() %}
                             <textarea class="textarea" name="comments" cols="30" rows="3" disabled>{{appointment.get_comments() if appointment.get_comments() else ''}}</textarea>
                         {% else %}
-                            <textarea class="textarea" name="comments" cols="30" rows="3"></textarea>
+                            <textarea class="textarea" name="comments" cols="30" rows="3" maxlength="1000"></textarea>
                         {% endif %}
                         <br>
             
