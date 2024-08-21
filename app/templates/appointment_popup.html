@@ -23,15 +23,16 @@
 
                     <label for="appt-date">Appointment Date:</label>
                     <br>
-                    <input type="date" name="date" value="{{date}}">
+                    <input type="date" name="new-date" value="{{date}}">
                     <br>
                     
                     <label for="appt-time">Appointment Time:</label>
                     <br>
-                    <input type="time" name="new-time" value="{{appointment.get_time().time()}}">
+                    <input type="time" name="new-time" value="{{appointment.get_time().strftime('%H:%M')}}">
                     <br>
                                             
-                    <input type="hidden" name="prev-time" value="{{appointment.get_time().time()}}">
+                    <input type="hidden" name="prev-time" value="{{appointment.get_time().strftime('%H:%M')}}">
+                    <input type="hidden" name="prev-date" value="{{date}}">
                     <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
                     <button class="btn warm-btn">Edit Appointment</button>
                 </form>
@@ -41,9 +42,9 @@
                 <hr>
                 Click on "Delete Appointment" to delete this time slot.
                 <br>
-                <button class="btn warm-btn" onclick="window.location.href='{{url_for('delete_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}'">Delete Appointment</button>
+                <button class="btn warm-btn" onclick="window.location.href='{{url_for('delete_appointment', time=appointment.get_time().strftime('%Y-%m-%d %H:%M'), tutor_netid=tutor.get_netid())}}'">Delete Appointment</button>
 
-                <!-- Popup for everyone else is locked  -->
+                <!-- Popup for everyone else is locked/bookable  -->
                 {% else %}
                     <form action="/appointment_confirm" method="post">
 
@@ -54,7 +55,7 @@
                         
                         <label for="appt-time">Appointment Time:</label>
                         <br>
-                        <input type="time" name="appt-time" value="{{appointment.get_time().time()}}" disabled>
+                        <input type="time" name="appt-time" value="{{appointment.get_time().strftime('%H:%M')}}" disabled>
                         <br>
                         
                         <label for="tutor_name">Tutor Name:</label>
@@ -82,7 +83,7 @@
             
                         {% if user[1] == "student" and not appointment.get_booked() %}
                         <input type="hidden" name="date" value="{{date}}">
-                        <input type="hidden" name="time" value="{{appointment.get_time().time()}}">
+                        <input type="hidden" name="time" value="{{appointment.get_time().strftime('%H:%M')}}">
                         <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
                         <input type="hidden" name="tutor_name" value="{{tutor.get_name()}}">
                         <input type="hidden" name="student_netid" value="{{user[2]}}">
@@ -94,7 +95,7 @@
                     
                     {% if appointment.get_booked() and (user[2] == appointment.get_student_netid() or user[2] == appointment.get_tutor_netid()) %}
                     <hr>
-                    <button class="btn warm-btn" onclick="window.location.href='{{url_for('cancel_appointment', time=appointment.get_time(), tutor_netid=tutor.get_netid())}}'">Cancel Appointment</button>
+                    <button class="btn warm-btn" onclick="window.location.href='{{url_for('cancel_appointment', time=appointment.get_time().strftime('%Y-%m-%d %H:%M'), tutor_netid=tutor.get_netid())}}'">Cancel Appointment</button>
                     {% endif %}
 
                 {% endif %}  

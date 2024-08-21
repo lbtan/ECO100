@@ -555,7 +555,7 @@ def appointment_confirm():
     tutor_name = flask.request.form.get('tutor_name')
     
     datetime_str = f"{date} {time}"
-    appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M:%S')
+    appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
 
     status, _ = db_modify.book_appointment(appt_time, tutor_netid, student_netid, comments, "1")
     if not status:
@@ -707,7 +707,7 @@ def cancel_appointment():
     tutor = flask.request.args.get('tutor_netid')
     user = get_user_from_cookies()
     
-    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+    time = datetime.strptime(time, '%Y-%m-%d %H:%M')
 
     # Find the appointment
     appts = db_queries.get_appointments({"tutor_netid": tutor, "exact_time": time})
@@ -737,20 +737,17 @@ def cancel_appointment():
 def edit_appointment():
     username = auth.authenticate()
     authorize(username, 'tutor')
-    date = flask.request.form['date']
+    prev_date = flask.request.form['prev-date']
     prev_time = flask.request.form['prev-time']
-    if prev_time.count(':') == 2:
-        prev_time = flask.request.form['prev-time'][:-3] # remove seconds
 
     tutor = flask.request.form['tutor_netid']
+    new_date = flask.request.form['new-date']
     new_time = flask.request.form['new-time']
-    if new_time.count(':') == 2:
-        new_time = flask.request.form['new-time'][:-3] # remove seconds
     
-    datetime_str = f"{date} {new_time}"
+    datetime_str = f"{new_date} {new_time}"
     new_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
 
-    datetime_str = f"{date} {prev_time}"
+    datetime_str = f"{prev_date} {prev_time}"
     prev_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
    
     db_modify.modify_appointment_time(prev_time, new_time, tutor)
@@ -766,7 +763,7 @@ def delete_appointment():
     tutor = flask.request.args.get('tutor_netid')
     user = get_user_from_cookies()
     
-    time = datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+    time = datetime.strptime(time, '%Y-%m-%d %H:%M')
     db_modify.delete_appointment(time, tutor)
 
     return flask.redirect(flask.url_for(f"{user[1]}view", netid=user[2]))
