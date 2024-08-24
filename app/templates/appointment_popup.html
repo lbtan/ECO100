@@ -20,6 +20,10 @@
                 You can edit the date and time for this time slot below, and click "Edit Appointment" to submit your changes.
                 <br><br>
                 <form action="/edit_appointment" method="post">
+                    <label for="appt-date">Appointment Location:</label>
+                    <br>
+                    <input type="text" name="location" value="{{appointment.get_location()}}" disabled>
+                    <br>
 
                     <label for="appt-date">Appointment Date:</label>
                     <br>
@@ -47,6 +51,10 @@
                 <!-- Popup for everyone else is locked/bookable  -->
                 {% else %}
                     <form action="/appointment_confirm" method="post">
+                        <label for="appt-date">Appointment Location:</label>
+                        <br>
+                        <input type="text" name="location" value="{{appointment.get_location()}}" disabled>
+                        <br>
 
                         <label for="appt-date">Appointment Date:</label>
                         <br>

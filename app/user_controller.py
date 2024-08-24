@@ -690,6 +690,7 @@ def add_appt_submit():
     date = flask.request.form['date']
     time = flask.request.form['time']
     tutor = flask.request.form['tutor']
+    location = flask.request.form['location']
     
     datetime_str = f"{date} {time}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
