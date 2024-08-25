@@ -34,6 +34,7 @@
                     <input type="hidden" name="prev-time" value="{{appointment.get_time().strftime('%H:%M')}}">
                     <input type="hidden" name="prev-date" value="{{date}}">
                     <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
+                    <br>
                     <button class="btn warm-btn">Edit Appointment</button>
                 </form>
 
@@ -87,6 +88,7 @@
                         <input type="hidden" name="tutor_netid" value="{{tutor.get_netid()}}">
                         <input type="hidden" name="tutor_name" value="{{tutor.get_name()}}">
                         <input type="hidden" name="student_netid" value="{{user[2]}}">
+                        <br>
                         <button class="btn warm-btn">Book Appointment</button>
                         {% endif %}
                         <br>
