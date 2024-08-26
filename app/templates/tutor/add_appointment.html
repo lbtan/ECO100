@@ -22,27 +22,25 @@
         
                     <label for="time">Time:</label>
                     <br>
-                    <select name="time">
-                        <!-- Generate options from 9:00 AM to 11:30 AM -->
-                        {% for hour in range(9, 12) %}
-                            {% for minute in [0, 30] %}
-                                <option value="{{ '%02d' % hour }}:{{ '%02d' % minute }}">
-                                    {{ '%02d' % hour }}:{{ '%02d' % minute }} AM
-                                </option>
-                            {% endfor %}
-                        {% endfor %}
-                        <!-- Add options for 12:00 PM to 12:30 PM -->
-                        <option value="12:00">12:00 PM</option>
-                        <option value="12:30">12:30 PM</option>
-                        <!-- Generate options from 1:00 PM (13:00) to 10:00 PM (22:00) -->
-                        {% for hour in range(13, 23) %}
-                            {% for minute in [0, 30] %}
-                                <option value="{{ '%02d' % hour }}:{{ '%02d' % minute }}">
-                                    {{ '%02d' % (hour-12) }}:{{ '%02d' % minute }} PM
-                                </option>
-                            {% endfor %}
+                    <!-- Hour Dropdown -->
+                    <select name="hour">
+                        {% for hour in range(1, 13) %}
+                            <option value="{{ '%02d' % hour }}">{{ '%02d' % hour }}</option>
                         {% endfor %}
                     </select>
+
+                    <!-- Minute Dropdown -->
+                    <select name="minute">
+                        <option value="00">00</option>
+                        <option value="30">30</option>
+                    </select>
+
+                    <!-- AM/PM Dropdown -->
+                    <select name="ampm">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
+
                     <br>
 
                     <button class="btn warm-btn mt-3">Add Time</button>        
