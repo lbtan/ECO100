@@ -63,8 +63,7 @@ def copy_prev_week_times(min_date, max_date, tutor_netid):
     future_appointments = db_queries.get_appointments({"tutor_netid": tutor_netid, "start_time": min_date, "end_time": max_date, "booked": False})
     for appointment in future_appointments:
         db_modify.delete_appointment(appointment.get_time(), appointment.get_tutor_netid())
-
-    prev_appointments = db_queries.get_appointments({"tutor_netid": tutor_netid, "start_time": min_date - datetime.timedelta(days=7), "end_time": max_date - datetime.timedelta(days=7)})
+    prev_appointments = db_queries.get_appointments({"tutor_netid": tutor_netid, "start_time": min_date - datetime.timedelta(days=7), "end_time": max_date - datetime.timedelta(days=6)})
     for appointment in prev_appointments:
         new_time = appointment.get_time() + datetime.timedelta(days=7)
         db_modify.add_appointment(new_time, appointment.get_tutor_netid())
