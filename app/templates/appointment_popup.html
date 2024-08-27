@@ -25,11 +25,6 @@
                     <input type="text" name="location" value="{{appointment.get_location()}}" disabled>
                     <br>
 
-                    <label for="student-email">Student Email: </label>
-                    <br>
-                    <input type="text" name="student_email" value="{{appointment.get_student_netid}}@princeton.edu">
-                    <br>
-
                     <label for="appt-date">Appointment Date:</label>
                     <br>
                     <input type="date" name="new-date" value="{{date}}">
@@ -61,11 +56,6 @@
                         <br>
                         <input type="text" name="location" value="{{appointment.get_location()}}" disabled>
                         <br>
-                        
-                        <label for="tutor-email">Tutor Email: </label>
-                        <br>
-                        <input type="text" name="tutor_email" value="{{appointment.get_netid}}@princeton.edu">
-                        <br>
 
                         <label for="appt-date">Appointment Date:</label>
                         <br>
@@ -81,6 +71,20 @@
                         <br>
                         <input type="text" value="{{tutor.get_name()}}" disabled>
                         <br>
+                        
+                        {% if user[1] == "student" and appointment.get_booked()%}
+                        <label for="tutor-email">Tutor Email: </label>
+                        <br>
+                        <input type="text" name="tutor_email" value="{{appointment.get_tutor_netid()}}@princeton.edu" disabled>
+                        <br>
+                        {% endif %}
+
+                        {% if user[1] == "tutor" and appointment.get_booked()%}
+                        <label for="student-email">Student Email: </label>
+                        <br>
+                        <input type="text" name="student_email" value="{{appointment.get_student_netid()}}@princeton.edu" disabled>
+                        <br>
+                        {% endif %}
                         
                         <label for="student_name">Student Name:</label>
                         <br>
