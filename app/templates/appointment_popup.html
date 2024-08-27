@@ -20,7 +20,7 @@
                 You can edit the date and time for this time slot below, and click "Edit Appointment" to submit your changes.
                 <br><br>
                 <form action="/edit_appointment" method="post">
-                    <label for="appt-date">Appointment Location:</label>
+                    <label for="appt-location">Appointment Location:</label>
                     <br>
                     <input type="text" name="location" value="{{appointment.get_location()}}" disabled>
                     <br>
@@ -71,6 +71,20 @@
                         <br>
                         <input type="text" value="{{tutor.get_name()}}" disabled>
                         <br>
+                        
+                        {% if user[1] == "student" and appointment.get_booked()%}
+                        <label for="tutor-email">Tutor Email: </label>
+                        <br>
+                        <input type="text" name="tutor_email" value="{{appointment.get_tutor_netid()}}@princeton.edu" disabled>
+                        <br>
+                        {% endif %}
+
+                        {% if user[1] == "tutor" and appointment.get_booked()%}
+                        <label for="student-email">Student Email: </label>
+                        <br>
+                        <input type="text" name="student_email" value="{{appointment.get_student_netid()}}@princeton.edu" disabled>
+                        <br>
+                        {% endif %}
                         
                         <label for="student_name">Student Name:</label>
                         <br>
