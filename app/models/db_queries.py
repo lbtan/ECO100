@@ -78,6 +78,11 @@ def get_appointments(props={}):
                     database.Appointment.booked.is_(props["booked"])
                 )
             
+            if "location" in props:
+                query = query.filter(
+                    database.Appointment.location.is_(props["location"])
+                )
+            
             table = query.all()
             for row in table:
                 appt = appointmentmod.Appointment(row.time, 
@@ -86,7 +91,8 @@ def get_appointments(props={}):
                                                 row.student_netid, 
                                                 row.comments, 
                                                 row.coursenum,
-                                                row.showed_up)
+                                                row.showed_up,
+                                                row.location)
                 appts.append(appt)
 
         _engine.dispose()

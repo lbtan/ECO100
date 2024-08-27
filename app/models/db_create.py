@@ -115,7 +115,7 @@ def main():
 
         # DB for prototype. Generated with help from GPT.
 
-        start_date = datetime.datetime(2024, 8, 25)
+        start_date = datetime.datetime(2024, 8, 23)
         end_date = datetime.datetime(2024, 9, 25)
 
         booked_appointments = {}  # Dictionary to track booked appointments for each student
@@ -128,6 +128,8 @@ def main():
             tutor_netid = random.choice([tutor[0] for tutor in tutors_info])
             booked = random.choice([True, False])
             showed_up = None
+
+            # print(time)
 
             existing_appointment = session.query(Appointment).filter_by(time=time, tutor_netid=tutor_netid).first()
             if existing_appointment:
