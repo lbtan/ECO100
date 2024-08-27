@@ -692,6 +692,8 @@ def add_appt_submit():
     minute = flask.request.form['minute']
     ampm = flask.request.form['ampm']
     tutor = flask.request.form['tutor']
+    location = flask.request.form['location']
+
     # Convert to 24-hour format
     if ampm == "PM" and hour != 12:
         hour += 12

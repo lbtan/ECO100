@@ -31,3 +31,4 @@ class Appointment (Base):
     student_netid = sqlalchemy.Column(sqlalchemy.String)
     comments = sqlalchemy.Column(sqlalchemy.String)
     coursenum = sqlalchemy.Column(sqlalchemy.String)
+    location = sqlalchemy.Column(sqlalchemy.String)

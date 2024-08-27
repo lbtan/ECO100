@@ -97,7 +97,7 @@ def cancel_appointment(time, tutor_netid):
         print(ex, file=sys.stderr)
         # sys.exit(1)
 
-def add_appointment(time, tutor_netid):
+def add_appointment(time, tutor_netid, location):
 
     try:
         _engine = sqlalchemy.create_engine(_DATABASE_URL)
@@ -116,11 +116,12 @@ def add_appointment(time, tutor_netid):
             
             appointment = database.Appointment(time=time, 
                                                booked=False, 
-                                               tutor_netid=tutor_netid)
+                                               tutor_netid=tutor_netid,
+                                               location=location)
             
             session.add(appointment)
 
-            print("Appointment at {} with {} added".format(time, tutor_netid))
+            print("Appointment at {} with {} added. Location is {}".format(time, tutor_netid, location))
 
             session.commit()
 
@@ -347,7 +348,7 @@ def _test_add_appointment():
     #add_appointment(datetime.datetime(2024, 3, 16, 9, 30), 'tu222')
     
     # this time is not in the table
-    add_appointment(datetime.datetime(2024, 3, 25, 9, 30), 'tu222')
+    add_appointment(datetime.datetime(2024, 3, 25, 9, 30), 'tu222', 'whitman common room')
 
 def _test_delete_appointment():
     # this is not in the table

@@ -34,14 +34,15 @@ def add_user(netid, name, user_type, coursenum, session):
 #-----------------------------------------------------------------------
     
 
-def add_appointment(session, time, tutor_netid, booked=False, student_netid=None, comments=None, coursenum=None, showed_up=None):
+def add_appointment(session, time, tutor_netid, booked=False, student_netid=None, comments=None, coursenum=None, showed_up=None, location=None):
     """
     
     Functions that help with adding to database
     """
     
     appointment = database.Appointment(time=time, booked=booked, tutor_netid=tutor_netid,
-                                       student_netid=student_netid, comments=comments, coursenum=coursenum, showed_up=showed_up)
+                                       student_netid=student_netid, comments=comments, coursenum=coursenum, showed_up=showed_up,
+                                       location=location)
     session.add(appointment)
     return
 
@@ -114,8 +115,8 @@ def main():
 
         # DB for prototype. Generated with help from GPT.
 
-        start_date = datetime.datetime(2024, 4, 25)
-        end_date = datetime.datetime(2024, 5, 25)
+        start_date = datetime.datetime(2024, 8, 23)
+        end_date = datetime.datetime(2024, 9, 25)
 
         booked_appointments = {}  # Dictionary to track booked appointments for each student
 
@@ -127,6 +128,8 @@ def main():
             tutor_netid = random.choice([tutor[0] for tutor in tutors_info])
             booked = random.choice([True, False])
             showed_up = None
+
+            # print(time)
 
             existing_appointment = session.query(Appointment).filter_by(time=time, tutor_netid=tutor_netid).first()
             if existing_appointment:
@@ -153,8 +156,10 @@ def main():
                 if week_number not in booked_appointments:
                     booked_appointments[week_number] = {}
                 booked_appointments[week_number][student_netid] = time
+            
+            location = "whitman common room"
 
-            add_appointment(session, time, tutor_netid, booked, student_netid, comments, coursenum, showed_up)
+            add_appointment(session, time, tutor_netid, booked, student_netid, comments, coursenum, showed_up, location)
 
         session.commit()
 
