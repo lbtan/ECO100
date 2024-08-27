@@ -687,7 +687,7 @@ def add_appt_submit():
     datetime_str = f"{date} {time_str}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
    
-    db_modify.add_appointment(appt_time, tutor)
+    db_modify.add_appointment(appt_time, tutor, location)
 
     user = get_user_from_cookies()
     return flask.redirect(flask.url_for('tutorview', netid=user[2]))
