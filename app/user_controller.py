@@ -105,7 +105,7 @@ def authorize(username, types):
         if username in role_ids:
             print(f"Authorization successful for {username}.")
             return True
-
+    # print(admin_ids)
     print(f"Authorization failed for user '{username}'. Not found in ids for type(s): {', '.join(types)}.")
     failed_authorize()
 
@@ -688,11 +688,20 @@ def add_appt_submit():
     username = auth.authenticate()
     authorize(username, 'tutor')
     date = flask.request.form['date']
-    time = flask.request.form['time']
+    hour = int(flask.request.form['hour'])
+    minute = flask.request.form['minute']
+    ampm = flask.request.form['ampm']
     tutor = flask.request.form['tutor']
     location = flask.request.form['location']
+
+    # Convert to 24-hour format
+    if ampm == "PM" and hour != 12:
+        hour += 12
+    elif ampm == "AM" and hour == 12:
+        hour = 0
     
-    datetime_str = f"{date} {time}"
+    time_str = f"{hour:02d}:{minute}"
+    datetime_str = f"{date} {time_str}"
     appt_time = datetime.strptime(datetime_str, '%Y-%m-%d %H:%M')
    
     db_modify.add_appointment(appt_time, tutor)
