@@ -11,6 +11,9 @@ from . import db_modify
 import datetime
 from . import date
 
+# NOTE: This date should be updated every semester.
+semester_start_date = datetime.date(year=2024, month=8, day=12)
+
 def import_users(csv_path, user_type, coursenum):
     df = pd.read_csv(csv_path)
     for _, row in df.iterrows():
@@ -25,6 +28,17 @@ def import_users(csv_path, user_type, coursenum):
     
     return 'Upload Confirmation', 'Succesfully uploaded and processed file.'
 
+def weekly_summaries(coursenum):
+    summaries = []
+    curr_date = date.today()
+    while curr_date >= semester_start_date:
+        summary = weekly_summary(coursenum, today=curr_date)
+        if summary[0] == False:
+            return False
+        summaries.append(summary)
+        curr_date -= datetime.timedelta(days=7)
+    return summaries
+
 def weekly_summary(coursenum, today=date.today()):
     # https://stackoverflow.com/questions/19216334/python-give-start-and-end-of-week-data-from-a-given-date
     week_start = today - datetime.timedelta(days=today.weekday())
@@ -33,8 +47,7 @@ def weekly_summary(coursenum, today=date.today()):
                                          "end_time": week_end,
                                          "booked": True,
                                          "coursenum": coursenum})
-
-    if appts[0] == False:
+    if len(appts) > 0 and appts[0] == False:
         return False, False
     
     summary = {}
@@ -42,7 +55,7 @@ def weekly_summary(coursenum, today=date.today()):
 
     tutors = db_queries.get_user_info({"user_type": "tutor",
                                        "coursenum": coursenum})
-    if tutors[0] == False:
+    if len(tutors) > 0 and tutors[0] == False:
         return False, False
 
     appts_by_tutor = {tutor.get_netid(): 0 for tutor in tutors}

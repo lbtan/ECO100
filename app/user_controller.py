@@ -580,30 +580,13 @@ def weekly_summary():
     user = get_user_from_cookies()
 
     # for now everything is under coursenum 1
-    summary, dates = backend_admin.weekly_summary("1") 
-    if summary == False:
+    summaries = backend_admin.weekly_summaries("1")
+    if summaries == False:
         html_code = flask.render_template('error_handling/db_error.html')
         response = flask.make_response(html_code)
         return response
 
-    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates, names=netids_to_names)
-    response = flask.make_response(html_code)
-    return response
-
-@app.route('/prev_week')
-def prev_week():
-    username = auth.authenticate()
-    authorize(username, 'admin')
-    user = get_user_from_cookies()
-
-    # for now everything is under coursenum 1
-    summary, dates = backend_admin.weekly_summary("1", today=today()-timedelta(days=7))
-    if summary == False:
-        html_code = flask.render_template('error_handling/db_error.html')
-        response = flask.make_response(html_code)
-        return response
-
-    html_code = flask.render_template('admin/weekly_summary.html', summary=summary, user=user, dates=dates, names=netids_to_names)
+    html_code = flask.render_template('admin/weekly_summary.html', summaries=summaries, user=user, names=netids_to_names, show_modal=True)
     response = flask.make_response(html_code)
     return response
 

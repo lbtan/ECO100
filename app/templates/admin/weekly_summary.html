@@ -11,11 +11,26 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalLabel">Weekly Summary for {{dates[0].strftime('%B %d')}} to {{dates[1].strftime('%B %d')}}</h5>
+                <h5 class="modal-title" id="modalLabel">Weekly Summary</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <b>{{summary["Total Appointments"]}} Appointments:</b><br><br>
+
+                <div>
+                    <button class="btn warm-btn update-summary-calendar" data-week="1" id="prev-week-summary">Previous Week</button>
+                    <button class="btn warm-btn update-summary-calendar" data-week="-1" id="next-week-summary" disabled>Next Week</button>
+                </div>
+
+                <br>
+
+                {% for summary, dates in summaries %}
+
+                {% set week = loop %}
+
+                <div id="summary-calendar-{{week.index0}}" style="display:none">
+
+                <b>{{dates[0].strftime('%B %d')}} to {{dates[1].strftime('%B %d')}} ({{summary["Total Appointments"]}} Appointments):</b><br><br>
+
                 {% for tutor in summary["Total Appointments (By Tutor)"] %}
 
                 {{tutor}}: {{summary["Total Appointments (By Tutor)"][tutor]}}
@@ -31,6 +46,10 @@
                 <br>
                 {% endfor %}
                 {% endif %}
+
+                </div>
+
+                {% endfor %}
 
             </div>
         </div>

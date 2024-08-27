@@ -16,10 +16,10 @@
             <div class="modal-body">
 
                 Please upload a CSV file (such as one exported from Canvas) with columns Name and Netid.
-                <br>
+                <br><br>
 
                 <form method="POST" action="/upload" enctype="multipart/form-data">
-                    <label for="user_type">User Type:</label>
+                    <label for="user_type">Which category do the new users belong to?</label>
                     <select name="user_type" id="user_type">
                         <option value="admin">Admin</option>
                         <option value="tutor">Tutor</option>
@@ -28,7 +28,7 @@
                     <br>
                     
                     <input type="file" id="users_file" name="users_file">
-                    <br>
+                    <br><br>
 
                     <input type="submit" class="btn warm-btn float-none" value="Upload">
 
