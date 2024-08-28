@@ -70,7 +70,6 @@ def main():
             ('fweasley', 'Fred Weasley'),
             ('gweasley2', 'George Weasley'),
             ('ppatil2', 'Parvati Patil'),
-            ('cs-hd5234', 'Haichen Dong'),
             ('ldraco', 'Draco Malfoy'),
             ('gweasley', 'Ginny Weasley'),
             ('sfinnigan', 'Seamus Finnigan'),
@@ -78,7 +77,7 @@ def main():
         for netid, name in student_base_info:
             add_user(netid, name, 'student', '1',session)
 
-        for netid in ['at6145', 'sm8765', 'hg7270', 'hd5234', 'anaikam', 'lgose', 'uchang', 'eag2', 'jc4557', 'elisem', 'jennyn', 'chaewonh', 'bo4', 'gw19', 'gloriawang', 'sls5']:
+        for netid in ['at6145', 'sm8765', 'hg7270', 'hd5234', 'anaikam']:
             user = database.User(netid=netid, name='', user_type='tester', coursenum="1")
             session.add(user)
 
@@ -97,7 +96,8 @@ def main():
         # Admins
         admins_info = [
             ('dmbd', 'Dumbledore'),
-            ('snp', 'Snape')
+            ('snp', 'Snape'),
+            ('knoonan', 'Professor Noonan')
         ]
         for netid, name in admins_info:
             add_user(netid, name, 'admin', '1', session)
@@ -115,7 +115,7 @@ def main():
 
         # DB for prototype. Generated with help from GPT.
 
-        start_date = datetime.datetime(2024, 8, 23)
+        start_date = datetime.datetime(2024, 8, 10)
         end_date = datetime.datetime(2024, 9, 25)
 
         booked_appointments = {}  # Dictionary to track booked appointments for each student
