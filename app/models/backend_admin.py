@@ -12,10 +12,11 @@ import datetime
 from . import date
 
 # NOTE: This date should be updated every semester.
-semester_start_date = datetime.date(year=2024, month=8, day=12)
+semester_start_date = datetime.date(year=2024, month=9, day=2)
 
 def import_users(csv_path, user_type, coursenum):
     df = pd.read_csv(csv_path)
+    df.columns = df.columns.str.strip()
     for _, row in df.iterrows():
         try:
             name = row['Name']
@@ -23,7 +24,8 @@ def import_users(csv_path, user_type, coursenum):
             if type(name) != str or len(netid) > 15:
                 continue
             db_modify.add_user(netid, user_type, coursenum, name)
-        except:
+        except Exception as ex:
+            print(ex)
             return 'Error', 'Unable to process. Please make sure your file contains two columns, Name and Netid.'
     
     return 'Upload Confirmation', 'Succesfully uploaded and processed file.'
