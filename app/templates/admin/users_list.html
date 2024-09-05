@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<!-- =========================================================== -->
+<!-- users_list.html                                        -->
+<!-- Author: Hita Gupta                                          -->
+<!-- =========================================================== -->
+
+<div class="modal fade" id="usersListModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Users List</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for user_type in users %}
+                    <strong>{{user_type.capitalize()}}s</strong>
+                    <br>
+                    {% for user in users[user_type] %}
+                        {{user[0]}} ({{user[1]}})
+                        <br>
+                    {% endfor %}
+                    <hr>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
