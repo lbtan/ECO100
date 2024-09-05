@@ -787,3 +787,14 @@ def generate_ics():
     }
 
     return cal.to_ical(), 200, headers
+
+@app.route('/users_list')
+def view_users_list():
+    username = auth.authenticate()
+    authorize(username, 'admin')
+
+    users = utils.get_users()
+
+    html_code = flask.render_template('admin/users_list.html', users=users)
+    response = flask.make_response(html_code)
+    return response

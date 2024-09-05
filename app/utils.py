@@ -162,6 +162,18 @@ def get_admin_ids():
         tutor_ids.append(user_id.get_netid())
     return tutor_ids
 
+def get_users():
+    users = db_queries.get_user_info()
+    id_map = {k: [] for k in ['tester', 'student', 'tutor', 'admin']}
+    for user in users:
+        id_map[user.get_user_type()].append((user.get_netid(), user.get_name()))
+
+    
+    # sort by netid
+    id_map = {user_type: sorted(users, key=lambda x:x[0]) for user_type, users in id_map.items()}
+
+    return id_map
+
 def get_names():
     users = db_queries.get_user_info({"coursenum": "1"})
     return {user.get_netid(): user.get_name() for user in users}
