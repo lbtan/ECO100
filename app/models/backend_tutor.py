@@ -4,9 +4,6 @@
 # database.py
 # Author: Anaika Mehra
 #-----------------------------------------------------------------------
-import os
-import time
-import flask
 from . import db_queries
 from . import db_modify
 import datetime 

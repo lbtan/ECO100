@@ -77,7 +77,7 @@ def main():
         for netid, name in student_base_info:
             add_user(netid, name, 'student', '1',session)
 
-        for netid in ['at6145', 'sm8765', 'hg7270', 'hd5234', 'anaikam']:
+        for netid in ['at6145', 'sm8765', 'hg7270', 'anaikam']:
             user = database.User(netid=netid, name='', user_type='tester', coursenum="1")
             session.add(user)
 

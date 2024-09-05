@@ -12,7 +12,6 @@ import sqlalchemy
 import sqlalchemy.orm
 import dotenv
 from . import database
-# import database 
 
 #-----------------------------------------------------------------------
 
@@ -295,11 +294,39 @@ def delete_user(netid):
 
                 query = (session.query(database.User)
                     .filter(database.User.netid == netid))
+                #row = query.one() # ensure the user exists
+
+                for row in query.all():
+                    if row.user_type == 'tutor':
+                        delete_tutor(netid)
+                
+                    session.delete(row)
+
+                    print("User with netid {} deleted".format(netid))
+
+                session.commit()
+
+        finally:
+            _engine.dispose()
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+
+def delete_tutor(netid):
+    try:
+        _engine = sqlalchemy.create_engine(_DATABASE_URL)
+
+        try:
+
+            with sqlalchemy.orm.Session(_engine) as session:
+
+                query = (session.query(database.Tutor)
+                    .filter(database.Tutor.netid == netid))
                 row = query.one() # ensure the user exists
             
                 session.delete(row)
 
-                print("User with netid {} deleted".format(netid))
+                print("Tutor with netid {} deleted".format(netid))
 
                 session.commit()
 
@@ -371,12 +398,14 @@ def _test():
     
     """
 
-    _test_book_appointment()
-    _test_cancel_appointment()
-    _test_add_appointment()
-    _test_delete_appointment()
-    _test_update_tutor_bio()
-    _test_add_user()
+    #_test_book_appointment()
+    #_test_cancel_appointment()
+    #_test_add_appointment()
+    #_test_delete_appointment()
+    #_test_update_tutor_bio()
+    #_test_add_user()
+    delete_user('fs1582')
+    delete_user('cd5678')
 
 if __name__ == '__main__':
     _test()

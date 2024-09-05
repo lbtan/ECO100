@@ -31,19 +31,17 @@ dotenv.load_dotenv()
 
 #----------------------------------------------------------------------#
 
-# for testing purposes
-testing_ids = db_queries.get_testing_ids()
-student_ids = utils.get_student_ids()
-tutor_ids = utils.get_tutor_ids()
-admin_ids = utils.get_admin_ids()
-netids_to_names = utils.get_names()
-# Role to ID mapping
-id_map = {
-    'testing': testing_ids,
-    'student': student_ids,
-    'tutor': tutor_ids,
-    'admin': admin_ids
-}
+def get_ids():
+    # for testing purposes
+    users = db_queries.get_user_info()
+    netids_to_names = {user.get_netid(): user.get_name() for user in users}
+
+    # Role to ID mapping
+    id_map = {k: [] for k in ['tester', 'student', 'tutor', 'admin']}
+    for user in users:
+        id_map[user.get_user_type()].append(user.get_netid())
+
+    return id_map, netids_to_names
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
@@ -89,8 +87,10 @@ def authorize(username, types):
     if isinstance(types, str):
         types = [types]
 
+    id_map, _ = get_ids()
+
     # Special access for "testing" type
-    if username in testing_ids:
+    if username in id_map['tester']:
         print(f"Authorization granted: {username} as tester.")
         return True
     
@@ -123,18 +123,20 @@ def user_type():
     """
     Direct user to respective view of different pages.
     """
+    id_map, _ = get_ids()
+
     username = auth.authenticate()
     # username = 'hpotter'
-    if username in testing_ids:
+    if username in id_map['tester']:
         print("Authorized ", username, " as tester.")
         html_code = flask.render_template('user_type.html')  
-    elif username in student_ids:
+    elif username in id_map['student']:
         print("Authorized ", username, " as student.")
         return flask.redirect(flask.url_for('studentview'))
-    elif username in tutor_ids:
+    elif username in id_map['tutor']:
         print("Authorized ", username, " as tutor.")
         return flask.redirect(flask.url_for('tutorview'))
-    elif username in admin_ids:
+    elif username in id_map['admin']:
         print("Authorized ", username, " as admin")
         return flask.redirect(flask.url_for('adminview'))
     else:
@@ -157,17 +159,20 @@ def page_not_found(e):
 
 @app.route('/get_student_ids')
 def get_student_ids():
-    return flask.render_template('netid_modal.html', netids=student_ids, modal_id="studentIdModal", user_type='student')
+    id_map, _ = get_ids()
+    return flask.render_template('netid_modal.html', netids=id_map['student'], modal_id="studentIdModal", user_type='student')
 
 
 @app.route('/get_tutor_ids')
 def get_tutor_ids():
-    return flask.render_template('netid_modal.html', netids=tutor_ids, modal_id="tutorIdModal", user_type='tutor')
+    id_map, _ = get_ids()
+    return flask.render_template('netid_modal.html', netids=id_map['tutor'], modal_id="tutorIdModal", user_type='tutor')
 
 
 @app.route('/get_admin_ids')
 def get_admin_ids():
-    return flask.render_template('netid_modal.html', netids=admin_ids, modal_id="adminIdModal", user_type='admin')
+    id_map, _ = get_ids()
+    return flask.render_template('netid_modal.html', netids=id_map['admin'], modal_id="adminIdModal", user_type='admin')
 
 
 @app.route('/process_netid_selection', methods=['POST'])
@@ -206,19 +211,20 @@ def logoutcas():
 @app.route('/studentview', defaults={'netid': None})
 @app.route('/studentview/<netid>')
 def studentview(netid):
-
     username = auth.authenticate()
     # security testing  
     # username = 'hpotter'
 
     # handle case for test user 
     # Check if username is a tester
-    if username in testing_ids:
+
+    id_map, netids_to_names = get_ids()
+    if username in id_map['tester']:
         if netid is None:
             # Direct to a specific page for testers when no netid is provided
             html_code = flask.render_template('user_type.html')
             return flask.make_response(html_code)
-        elif netid == username or netid in testing_ids:
+        elif netid == username or netid in id_map['tester']:
             print(f"Authorization failed for user '{username}'. Page does not exist.")
             html = flask.render_template('error_handling/404.html')
             response = flask.make_response(html)
@@ -234,7 +240,7 @@ def studentview(netid):
     
     # deny access to other pages
     if netid is not None and netid != username:
-        authorize(username, 'testing')
+        authorize(username, 'tester')
     
     if netid is None:
         netid = username
@@ -288,17 +294,17 @@ def studentview(netid):
 @app.route('/tutorview', defaults={'netid': None})
 @app.route('/tutorview/<netid>')
 def tutorview(netid):
-    
     username = auth.authenticate()
     #username = 'hpotter'
     # handle case for test user 
     # Check if username is a tester
-    if username in testing_ids:
+    id_map, netids_to_names = get_ids()
+    if username in id_map['tester']:
         if netid is None:
             # Direct to a specific page for testers when no netid is provided
             html_code = flask.render_template('user_type.html')
             return flask.make_response(html_code)
-        elif netid == username or netid in testing_ids:
+        elif netid == username or netid in id_map['tester']:
             print(f"Authorization failed for user '{username}'. Page does not exist.")
             html = flask.render_template('error_handling/404.html')
             response = flask.make_response(html)
@@ -314,7 +320,7 @@ def tutorview(netid):
     
     # deny access to other pages
     if netid is not None and netid != username:
-        authorize(username, 'testing')
+        authorize(username, 'tester')
     
     if netid is None:
         netid = username
@@ -429,12 +435,14 @@ def adminview(netid):
     # username = 'hpotter'
     # handle case for test user 
     # Check if username is a tester
-    if username in testing_ids:
+
+    id_map, netids_to_names = get_ids()
+    if username in id_map['tester']:
         if netid is None:
             # Direct to a specific page for testers when no netid is provided
             html_code = flask.render_template('user_type.html')
             return flask.make_response(html_code)
-        elif netid == username or netid in testing_ids:
+        elif netid == username or netid in id_map['tester']:
             print(f"Authorization failed for user '{username}'. Page does not exist.")
             html = flask.render_template('error_handling/404.html')
             response = flask.make_response(html)
@@ -449,7 +457,7 @@ def adminview(netid):
     
     # deny access to other pages
     if netid is not None and netid != username:
-        authorize(username, 'testing')
+        authorize(username, 'tester')
     
     if netid is None:
         netid = username
@@ -579,6 +587,8 @@ def weekly_summary():
     authorize(username, 'admin')
     user = get_user_from_cookies()
 
+    _, netids_to_names = get_ids()
+
     # for now everything is under coursenum 1
     summaries = backend_admin.weekly_summaries("1")
     if summaries == False:
@@ -627,7 +637,6 @@ def add_users():
 
 @app.route('/upload', methods=["POST"])
 def upload():
-    global admin_ids, tutor_ids, student_ids, netids_to_names
     username = auth.authenticate()
     authorize(username, 'admin')
     # https://blog.miguelgrinberg.com/post/handling-file-uploads-with-flask
@@ -639,15 +648,6 @@ def upload():
         message = 'Please upload a valid .csv file.'
     else:
         title, message = backend_admin.import_users(uploaded_file, user_type, "1")
-
-    if user_type == "admin":
-        admin_ids = utils.get_admin_ids()
-    elif user_type == "tutor":
-        tutor_ids = utils.get_tutor_ids()
-    elif user_type == "student":
-        student_ids = utils.get_student_ids()
-
-    netids_to_names = utils.get_names()
 
     user = get_user_from_cookies()
     html_code = flask.render_template('admin/upload_confirmation.html', message=message, user=user, title=title)
@@ -787,3 +787,15 @@ def generate_ics():
     }
 
     return cal.to_ical(), 200, headers
+
+@app.route('/view_users_list')
+def view_users_list():
+    username = auth.authenticate()
+    authorize(username, 'admin')
+
+    id_map, netids_to_names = get_ids()
+    id_map = {user_type: sorted(users) for user_type, users in id_map.items()}
+    
+    html_code = flask.render_template('admin/view_users_list.html', id_map=id_map, netids_to_names=netids_to_names)
+    response = flask.make_response(html_code)
+    return response

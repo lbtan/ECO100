@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+
+<!-- =========================================================== -->
+<!-- view_users_list.html                                        -->
+<!-- Author: Hita Gupta                                          -->
+<!-- =========================================================== -->
+ 
+<div class="modal fade" id="viewUsersListModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Users List</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                {% for user_type in id_map %}
+                <strong>{{user_type.capitalize()}}s</strong>
+                    {% for user in id_map[user_type] %}
+                        {{user}} ({{netids_to_names[user]}})
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -181,6 +181,18 @@ $(document).ready(function(){
         });
     }
 
+
+    function view_users_list() {
+        // Load the popup HTML using AJAX
+        $.get('/view_users_list', function(html) {
+            // Create a jQuery object from the HTML string
+            var $modal = $(html);
+            // Add the modified HTML to the modal container and show the modal
+            $('#view-users-list-container').html($modal);
+            $('#viewUsersListModal').modal('show');
+        });
+    }
+
     // Event binding for button click
     $('.time-slot').click(show_appt);
     $('.view-cancel').click(show_appt);
@@ -193,4 +205,5 @@ $(document).ready(function(){
     $('.choose_netid_admin').click(show_admin_ids);
     $('.add-time').click(add_appt_time);
     $('.copy-times').click(show_copy_confirmation);
+    $('.view-users-btn').click(view_users_list);
 });
