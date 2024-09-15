@@ -655,6 +655,34 @@ def upload():
     response = flask.make_response(html_code)
     return response
 
+@app.route('/add_new_user', methods=["POST"])
+def add_new_user():
+    global admin_ids, tutor_ids, student_ids, netids_to_names
+    username = auth.authenticate()
+    authorize(username, 'admin')
+
+    user_type = flask.request.form['user_type']
+    name = flask.request.form['name']
+    netid = flask.request.form['netid']
+
+    # All users under coursenum 1 for now
+    db_modify.add_user(netid, user_type, '1', name)
+
+    if user_type == "admin":
+        admin_ids = utils.get_admin_ids()
+    elif user_type == "tutor":
+        tutor_ids = utils.get_tutor_ids()
+    elif user_type == "student":
+        student_ids = utils.get_student_ids()
+
+    netids_to_names = utils.get_names()
+
+    user = get_user_from_cookies()
+    html_code = flask.render_template('admin/upload_confirmation.html', 
+                                      message=f'Successfully added new {user_type} ({name}, {netid}).', user=user, title='Confirmation')
+    response = flask.make_response(html_code)
+    return response
+
 @app.route('/add_appointment')
 def add_appointment():
     username = auth.authenticate()
