@@ -25,7 +25,7 @@ def get_cur_appoinments_student():
 #----------------------------------------------------------------------- 
 # get_times() -> return list of available times + scheduled studentIDs;
 def get_times_students():
-    available_appointments = db_queries.get_appointments({"start_time": date.now(), "booked": False})
+    available_appointments = db_queries.get_appointments({"start_time": date.now() + datetime.timedelta(hours=8), "booked": False})
     if len(available_appointments) > 0 and available_appointments[0] == False:
         return available_appointments
     times = []
