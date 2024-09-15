@@ -316,7 +316,33 @@ def delete_user(netid, user_type):
                     for row in table:
                         session.delete(row)
 
+                    delete_tutor(netid)
+
                 print("User with netid {} and user_type {} deleted".format(netid, user_type))
+
+                session.commit()
+
+        finally:
+            _engine.dispose()
+
+    except Exception as ex:
+        print(ex, file=sys.stderr)
+
+def delete_tutor(netid):
+    try:
+        _engine = sqlalchemy.create_engine(_DATABASE_URL)
+
+        try:
+
+            with sqlalchemy.orm.Session(_engine) as session:
+
+                query = (session.query(database.Tutor)
+                    .filter(database.Tutor.netid == netid))
+                row = query.one() # ensure the user exists
+            
+                session.delete(row)
+
+                print("Tutor with netid {} deleted".format(netid))
 
                 session.commit()
 
