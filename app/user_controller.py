@@ -6,6 +6,7 @@
 # Handles the logic of different views.
 #-----------------------------------------------------------------------
 
+from collections import defaultdict
 import flask
 from flask_mail import Mail
 import models.backend_tutor as db_tutor
@@ -796,5 +797,27 @@ def view_users_list():
     users = utils.get_users()
 
     html_code = flask.render_template('admin/users_list.html', users=users)
+    response = flask.make_response(html_code)
+    return response
+
+@app.route('/delete_users', methods=['POST'])
+def delete_users():
+    username = auth.authenticate()
+    authorize(username, 'admin')
+
+    users = utils.get_users()
+    deleted_users = defaultdict(list)
+
+    for user_type in users:
+        if user_type == 'tester':
+            continue
+        for user in users[user_type]:
+            checkbox_name = f'{user[0]}-{user_type}-checkbox'
+            if flask.request.form.get(checkbox_name):
+                deleted_users[user_type].append(user)
+                db_modify.delete_user(user[0], user_type)
+
+    user = get_user_from_cookies()
+    html_code = flask.render_template('admin/delete_users_confirmation.html', user=user, deleted_users=deleted_users)
     response = flask.make_response(html_code)
     return response

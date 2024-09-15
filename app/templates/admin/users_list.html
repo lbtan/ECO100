@@ -13,16 +13,42 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+                <form action="/delete_users" method="post">
                 {% for user_type in users %}
                     <strong>{{user_type.capitalize()}}s</strong>
                     <br>
-                    {% for user in users[user_type] %}
+                    {% if user_type == 'tester' %}
+                        {% for user in users[user_type] %}
                         {{user[0]}} ({{user[1]}})
                         <br>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <div>
+                            <input type="checkbox" id="select-all-{{user_type}}" name="select-all-{{user_type}}" onclick="selectAll(this, '{{user_type}}')">
+                            <label for="select-all-{{user_type}}" style="font-weight: bold">Select All</label>
+                        </div>
+                        {% for user in users[user_type] %}
+                        <div>
+                            <input type="checkbox" id="{{user[0]}}-{{user_type}}-checkbox" name="{{user[0]}}-{{user_type}}-checkbox">
+                            <label for="{{user[0]}}-{{user_type}}-checkbox">{{user[0]}} ({{user[1]}})</label>
+                        </div>
+                        {% endfor %}
+                    {% endif %}
                     <hr>
                 {% endfor %}
+                <button class="btn warm-btn">Delete Users</button>
+            </form>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    // https://stackoverflow.com/questions/386281/how-to-implement-a-select-all-checkbox-in-html
+    function selectAll(source, user_type) {
+        var checkboxes = document.querySelectorAll("[id$=-" + user_type + "-checkbox]");
+        for (let i = 0; i < checkboxes.length; i++) {
+          checkboxes[i].checked = source.checked;
+        }
+    }
+</script>

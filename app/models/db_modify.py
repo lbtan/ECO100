@@ -285,7 +285,7 @@ def add_user(netid, user_type, coursenum, name):
     except Exception as ex:
         print(ex, file=sys.stderr)
 
-def delete_user(netid):
+def delete_user(netid, user_type):
     try:
         _engine = sqlalchemy.create_engine(_DATABASE_URL)
 
@@ -293,11 +293,28 @@ def delete_user(netid):
 
             with sqlalchemy.orm.Session(_engine) as session:
 
-                query = (session.query(database.User)
-                    .filter(database.User.netid == netid))
-                row = query.one() # ensure the user exists
+                user_query = (session.query(database.User)
+                    .filter(database.User.netid == netid)
+                    .filter(database.User.user_type == user_type))
+                row = user_query.one() # ensure the user exists
             
                 session.delete(row)
+
+                if user_type == 'student':
+                    appt_query = (session.query(database.Appointment)
+                                  .filter(database.Appointment.student_netid == netid))
+                    table = appt_query.all() 
+
+                    for row in table:
+                        session.delete(row)
+
+                elif user_type == 'tutor':
+                    appt_query = (session.query(database.Appointment)
+                                  .filter(database.Appointment.tutor_netid == netid))
+                    table = appt_query.all() 
+
+                    for row in table:
+                        session.delete(row)
 
                 print("User with netid {} deleted".format(netid))
 
@@ -370,13 +387,12 @@ def _test():
     
     
     """
-
     _test_book_appointment()
     _test_cancel_appointment()
     _test_add_appointment()
     _test_delete_appointment()
     _test_update_tutor_bio()
     _test_add_user()
-
+    
 if __name__ == '__main__':
     _test()
