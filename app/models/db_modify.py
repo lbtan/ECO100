@@ -316,7 +316,7 @@ def delete_user(netid, user_type):
                     for row in table:
                         session.delete(row)
 
-                print("User with netid {} deleted".format(netid))
+                print("User with netid {} and user_type {} deleted".format(netid, user_type))
 
                 session.commit()
 

@@ -15,6 +15,8 @@
             
             <div class="modal-body">
 
+                <strong>Method 1</strong><br>
+
                 Please upload a CSV file (such as one exported from Canvas) with columns Name and Netid.
                 <br><br>
 
@@ -33,6 +35,37 @@
                     <input type="submit" class="btn warm-btn float-none" value="Upload">
 
                 </form>
+
+                <hr>
+
+                <strong>Method 2</strong><br>
+
+                Use the form below to quickly add a single user.
+                <br><br>
+                
+                <form method="POST" action="/add_new_user">
+                    <label for="user_type">Which category does the new user belong to?</label>
+                    <select name="user_type" id="user_type">
+                        <option value="admin">Admin</option>
+                        <option value="tutor">Tutor</option>
+                        <option value="student">Student</option>
+                    </select>
+                    <br>
+
+                    <label for="name">Name:</label>
+                    <br>
+                    <input type="text" name="name">
+                    <br>
+
+                    <label for="netid">Netid:</label>
+                    <br>
+                    <input type="text" name="netid">
+                    <br><br>
+                    
+                    <input type="submit" class="btn warm-btn float-none" value="Submit">
+
+                </form>
+
             </div>
         </div>
     </div>
