@@ -387,15 +387,12 @@ def _test():
     
     
     """
-    '''
     _test_book_appointment()
     _test_cancel_appointment()
     _test_add_appointment()
     _test_delete_appointment()
     _test_update_tutor_bio()
     _test_add_user()
-    '''
-    delete_user()
     
 if __name__ == '__main__':
     _test()
