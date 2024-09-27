@@ -84,16 +84,11 @@ def appointments_by_student(appointments, studentId):
     sorted_appointments = sorted(student_appointments, key=lambda x: x[0])
     return sorted_appointments
 
-def available_appointments_by_time(appointments, booked_appts):
+def available_appointments_by_time(appointments, tutor_appt_counts):
     """
     Parses db input appointments for html code, return all unbooked appointments  
     in chronological order for each tutor. (adapted from Angela's code)
     """ 
-    # tutors can only have 8 hours a week
-    tutor_appt_counts = defaultdict(lambda: defaultdict(int))
-    for appt in booked_appts:
-        tutor_appt_counts[appt[0].isocalendar()[:2]][appt[2]] += 1
-
     sorted_appointments = sorted(appointments, key=lambda x: x[0])
     appointments_by_date = defaultdict(lambda: defaultdict(list))
 

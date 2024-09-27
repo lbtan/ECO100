@@ -9,6 +9,7 @@
 from collections import defaultdict
 import flask
 from flask_mail import Mail
+from models.date import today
 import models.backend_tutor as db_tutor
 import models.backend_student as db_student
 import utils
@@ -22,7 +23,6 @@ import auth
 import dotenv, os
 import ssl
 import models.send_email as send_email
-from models.date import today
 
 #  https://stackoverflow.com/questions/44649449/brew-installation-of-python-3-6-1-ssl-certificate-verify-failed-certificate/44649450#44649450 
 ssl._create_default_https_context = ssl._create_stdlib_context
@@ -249,7 +249,16 @@ def studentview(netid):
     cur_appointments = utils.appointments_by_student(booked_appointments, user[2])
 
     available_appointments = db_student.get_times_students()
-    chronological_appointments = utils.available_appointments_by_time(available_appointments, booked_appointments)
+
+    week_start = today() - timedelta(days=today().weekday())
+    booked_appts_from_week_start = db_student.get_cur_appoinments_student(week_start)
+    
+    # tutors can only have 8 hours a week
+    tutor_appt_counts = defaultdict(lambda: defaultdict(int))
+    for appt in booked_appts_from_week_start:
+        tutor_appt_counts[appt[0].isocalendar()[:2]][appt[2]] += 1
+
+    chronological_appointments = utils.available_appointments_by_time(available_appointments, tutor_appt_counts)
     weekly_appointments = utils.group_by_week(chronological_appointments)
 
     can_book = utils.get_can_book(cur_appointments, weekly_appointments)

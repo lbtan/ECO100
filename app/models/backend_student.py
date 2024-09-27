@@ -14,8 +14,8 @@ from . import date
 
 # get_cur_appointment_student() -> list of scheduled appointments + tutor + student + comments 
 # can add coursenum as parameter later
-def get_cur_appoinments_student():
-    curr_appointments = db_queries.get_appointments({"start_time": date.now(), "booked": True})
+def get_cur_appoinments_student(start_date=date.now()):
+    curr_appointments = db_queries.get_appointments({"start_time": start_date, "booked": True})
     if len(curr_appointments) > 0 and curr_appointments[0] == False:
         return curr_appointments
     appointments = []
