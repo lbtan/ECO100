@@ -93,7 +93,7 @@ def available_appointments_by_time(appointments, tutor_appt_counts):
     appointments_by_date = defaultdict(lambda: defaultdict(list))
 
     for appt_time, student, tutor in sorted_appointments:
-        if tutor_appt_counts[appt_time.isocalendar()[:2]][tutor] > 8:
+        if tutor_appt_counts[appt_time.isocalendar()[:2]][tutor] >= 8:
             continue
         date_key = appt_time.date()
         appointments_by_date[date_key][tutor].append(appt_time)
