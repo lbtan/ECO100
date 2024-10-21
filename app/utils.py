@@ -57,8 +57,11 @@ def appointments_by_time(appointments, tutor=None):
     
     # If tutor, add all dates until end of semester
     if tutor:
-        last_appt_date = max(appointments_by_date)
-        curr = last_appt_date + datetime.timedelta(days=1)
+        if len(appointments_by_date) > 0: 
+            curr = max(appointments_by_date) + datetime.timedelta(days=1)
+        else:
+            curr = datetime.date.today()
+
         while curr <= semester_end_date:
             appointments_by_date[curr] = {}
             curr += datetime.timedelta(days=1)
