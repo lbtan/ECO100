@@ -13,8 +13,7 @@ import models.db_queries as db_queries
 
 #-----------------------------------------------------------------------
 
-# NOTE: This date should be updated every semester.
-semester_end_date = datetime.date(year=2024, month=12, day=20)
+year_end_date = datetime.date(year=datetime.date.today().year, month=12, day=31)
 
 def appointments_by_tutor(appointments, userId):
     """
@@ -55,14 +54,14 @@ def appointments_by_time(appointments, tutor=None):
         appointments_by_date[date_key][tutor_netid].append((appt_time, booked))
         last_date = date_key
     
-    # If tutor, add all dates until end of semester
+    # If tutor, add all dates until end of year
     if tutor:
         if len(appointments_by_date) > 0: 
             curr = max(appointments_by_date) + datetime.timedelta(days=1)
         else:
             curr = datetime.date.today()
 
-        while curr <= semester_end_date:
+        while curr <= year_end_date:
             appointments_by_date[curr] = {}
             curr += datetime.timedelta(days=1)
 
