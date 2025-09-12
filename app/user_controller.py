@@ -38,13 +38,6 @@ student_ids = utils.get_student_ids()
 tutor_ids = utils.get_tutor_ids()
 admin_ids = utils.get_admin_ids()
 netids_to_names = utils.get_names()
-# Role to ID mapping
-id_map = {
-    'testing': testing_ids,
-    'student': student_ids,
-    'tutor': tutor_ids,
-    'admin': admin_ids
-}
 
 app = flask.Flask(__name__, template_folder = 'templates',  static_folder='static')
 
@@ -96,17 +89,20 @@ def authorize(username, types):
         return True
     
     for type in types:
-        # Check if the type is valid
-        if type not in id_map:
-            print(f"Authorization error: Unknown type '{type}'.")
-            failed_authorize()
-
-        # Retrieve the correct ID list based on the type
-        role_ids = id_map[type]
-        if username in role_ids:
-            print(f"Authorization successful for {username}.")
+        authorization_successful = f"Authorization successful for {username}."
+        if type == "testing" and username in testing_ids:
+            print(authorization_successful)
             return True
-    # print(admin_ids)
+        elif type == "student" and username in student_ids:
+            print(authorization_successful)
+            return True
+        elif type == "tutor" and username in tutor_ids:
+            print(authorization_successful)
+            return True
+        elif type == "admin" and username in admin_ids:
+            print(authorization_successful)
+            return True
+
     print(f"Authorization failed for user '{username}'. Not found in ids for type(s): {', '.join(types)}.")
     failed_authorize()
 
@@ -839,6 +835,7 @@ def view_users_list():
 
 @app.route('/delete_users', methods=['POST'])
 def delete_users():
+    global admin_ids, tutor_ids, student_ids, netids_to_names
     username = auth.authenticate()
     authorize(username, 'admin')
 
@@ -853,6 +850,11 @@ def delete_users():
             if flask.request.form.get(checkbox_name):
                 deleted_users[user_type].append(user)
                 db_modify.delete_user(user[0], user_type)
+
+    student_ids = utils.get_student_ids()
+    tutor_ids = utils.get_tutor_ids()
+    admin_ids = utils.get_admin_ids()
+    netids_to_names = utils.get_names()
 
     user = get_user_from_cookies()
     html_code = flask.render_template('admin/delete_users_confirmation.html', user=user, deleted_users=deleted_users)
